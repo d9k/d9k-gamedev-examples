@@ -1,6 +1,4 @@
-# Sprites example copy
-
-Copied from [Butano 18.1.0](https://github.com/GValiente/butano/tree/18.1.0/examples/sprites).
+# Sprite edit pixels
 
 ## Build
 
@@ -14,11 +12,14 @@ Then run
 make
 ```
 
-`sprites-example-copy.gba` would be built.
+`sprite-edit-pixels.gba` would be built.
 
 ## Run
 
 ```bash
-mgba-qt sprites-example-copy.gba
+mgba-qt sprite-edit-pixels.gba
 ```
 
+## Credits
+
+Thanks to `Fralacticus` from `gbadev` Discord.
