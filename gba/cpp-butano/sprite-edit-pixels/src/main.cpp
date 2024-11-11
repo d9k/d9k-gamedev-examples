@@ -17,7 +17,7 @@ namespace
     void colorize_sprite_pixel(bn::span<bn::tile> tile_span, int x, int y, uint8_t value) {
         int x_in_tile = x % 8;
         int y_in_tile = y % 8;
-        int pix_num_in_tile = x * y * 8;
+        // int pix_num_in_tile = x_in_tile + y_in_tile * 8;
 
         int tile_index = (x / 8) + 2 * (y / 8);
         bn::tile& tile = tile_span[tile_index];
