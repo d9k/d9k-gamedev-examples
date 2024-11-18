@@ -1,0 +1,16 @@
+{
+    "C_Cpp.intelliSenseEngine" : "Tag Parser",
+    "files.associations": {
+        "cstddef": "cpp",
+        "unordered_map": "cpp",
+        "deque": "cpp",
+        "string": "cpp",
+        "vector": "cpp",
+        "array": "cpp",
+        "string_view": "cpp",
+        "initializer_list": "cpp",
+        "utility": "cpp",
+        "valarray": "cpp",
+        "list": "cpp"
+    }
+}
