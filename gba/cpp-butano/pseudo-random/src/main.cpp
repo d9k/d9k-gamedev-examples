@@ -10,25 +10,77 @@
 #include "bn_sprite_ptr.h"
 #include "bn_bg_palettes.h"
 #include "bn_sprite_text_generator.h"
+#include "bn_log.h"
+#include "bn_string.h"
+#include "bn_timer.h"
+#include "bn_timers.h"
 
 #include "common_variable_8x16_sprite_font.h"
 
 namespace
 {
-    constexpr bn::fixed text_y_inc = 14;
-    constexpr bn::fixed text_y_limit = (bn::display::height() / 2) - text_y_inc;
+    constexpr int text_y_inc = 14;
+    constexpr bn::fixed text_y_limit_f = (bn::display::height() / 2) - text_y_inc;
+    constexpr int text_y_limit = text_y_limit_f.integer();
+    constexpr int x_dynamic_padding = 8;
 
     void text_scene()
     {
+        int a = 65535;
+        int b = 65536;
+        int c = 65537;
+
+        int frames_approximate_count = 0;
+
+        bn::timer timer;
+        uint64_t timer_total_ticks = 0;
+
         bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
-        text_generator.set_center_alignment();
 
         bn::vector<bn::sprite_ptr, 32> text_sprites;
+        bn::vector<bn::sprite_ptr, 32> dynamic_text_sprites;
+        text_generator.set_center_alignment();
         text_generator.generate(0, -text_y_limit, "Text", text_sprites);
+
+        int text_frames_approximate_y = -text_y_limit + text_y_inc;
+        int text_frames_y = -text_y_limit + 2 * text_y_inc;
+
+        text_generator.set_right_alignment();
+        text_generator.generate(0, text_frames_approximate_y, "frames approx.:", text_sprites);
+
+        text_generator.set_right_alignment();
+        text_generator.generate(0, text_frames_y, "frames:", text_sprites);
+
+        BN_LOG("a:", a, ", b:", b, ", c:", c);
+
+        text_generator.set_center_alignment();
         text_generator.generate(0, text_y_limit, "START: go to next scene", text_sprites);
 
-        while(! bn::keypad::start_pressed())
+        while (!bn::keypad::start_pressed())
         {
+            frames_approximate_count++;
+            dynamic_text_sprites.clear();
+            text_generator.set_left_alignment();
+
+            timer_total_ticks += timer.elapsed_ticks_with_restart();
+
+            uint64_t frames_count = timer_total_ticks / bn::timers::ticks_per_frame();
+            uint64_t seconds = timer_total_ticks / bn::timers::ticks_per_second();
+
+            bn::string<32> frames_approximate_text;
+            bn::ostringstream frames_approximate_text_steam(frames_approximate_text);
+            frames_approximate_text_steam.append(frames_approximate_count);
+
+            bn::string<32> frames_text;
+            bn::ostringstream frames_text_stream(frames_text);
+            frames_text_stream.append(frames_count);
+
+            text_generator.set_left_alignment();
+            text_generator.generate(x_dynamic_padding, text_frames_approximate_y, frames_approximate_text, dynamic_text_sprites);
+
+            text_generator.set_left_alignment();
+            text_generator.generate(x_dynamic_padding, text_frames_y, frames_text, dynamic_text_sprites);
+
             bn::core::update();
         }
     }
@@ -53,7 +105,7 @@ namespace
         text_generator.set_center_alignment();
         text_generator.generate(0, text_y_limit, "START: go to next scene", text_sprites);
 
-        while(! bn::keypad::start_pressed())
+        while (!bn::keypad::start_pressed())
         {
             bn::core::update();
         }
@@ -77,22 +129,22 @@ namespace
         bn::fixed angle;
         bn::fixed angle_inc = 6;
 
-        while(! bn::keypad::start_pressed())
+        while (!bn::keypad::start_pressed())
         {
             angle += angle_inc;
 
-            if(angle >= 360)
+            if (angle >= 360)
             {
                 angle -= 360;
             }
 
             bn::fixed local_angle = angle;
 
-            for(bn::sprite_ptr& character_sprite : character_sprites)
+            for (bn::sprite_ptr &character_sprite : character_sprites)
             {
                 local_angle += angle_inc;
 
-                if(local_angle >= 360)
+                if (local_angle >= 360)
                 {
                     local_angle -= 360;
                 }
@@ -114,7 +166,7 @@ namespace
         text_generator.generate(0, 0, "UTF-8 characters: áéñÁÉÑ", text_sprites);
         text_generator.generate(0, text_y_limit, "START: go to next scene", text_sprites);
 
-        while(! bn::keypad::start_pressed())
+        while (!bn::keypad::start_pressed())
         {
             bn::core::update();
         }
@@ -127,7 +179,7 @@ int main()
 
     bn::bg_palettes::set_transparent_color(bn::color(16, 16, 16));
 
-    while(true)
+    while (true)
     {
         text_scene();
         bn::core::update();

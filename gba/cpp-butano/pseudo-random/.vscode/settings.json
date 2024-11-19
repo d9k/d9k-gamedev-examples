@@ -11,6 +11,8 @@
         "initializer_list": "cpp",
         "utility": "cpp",
         "valarray": "cpp",
-        "list": "cpp"
+        "list": "cpp",
+        "cstdio": "cpp",
+        "*.tcc": "cpp"
     }
 }
