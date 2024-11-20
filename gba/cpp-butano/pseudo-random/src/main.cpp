@@ -14,6 +14,7 @@
 #include "bn_string.h"
 #include "bn_timer.h"
 #include "bn_timers.h"
+#include "bn_memory.h"
 
 #include "common_variable_8x16_sprite_font.h"
 
@@ -24,16 +25,23 @@ namespace
     constexpr int text_y_limit = text_y_limit_f.integer();
     constexpr int x_dynamic_padding = 8;
 
+    int frames_approximate_count = 0;
+    int seed = 0;
+
     void text_scene()
     {
-        int a = 65535;
-        int b = 65536;
-        int c = 65537;
+        // int a = 2'147'483'647;
 
-        int frames_approximate_count = 0;
+        // [Fundamental types - cppreference.com](https://en.cppreference.com/w/cpp/language/types)
+        // overflow 32 bit signed nt
+        // int b = 2'147'483'649;
+        // int c = -1;
 
         bn::timer timer;
-        uint64_t timer_total_ticks = 0;
+        // uint64_t timer_total_ticks = 0;
+        // __UINT64_TYPE__ timer_total_ticks = 0;
+        // __uint64_t timer_total_ticks = 0;
+        __fsblkcnt_t timer_total_ticks = 0;
 
         bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
 
@@ -44,6 +52,7 @@ namespace
 
         int text_frames_approximate_y = -text_y_limit + text_y_inc;
         int text_frames_y = -text_y_limit + 2 * text_y_inc;
+        int text_ram_y = -text_y_limit + 4 * text_y_inc;
 
         text_generator.set_right_alignment();
         text_generator.generate(0, text_frames_approximate_y, "frames approx.:", text_sprites);
@@ -51,7 +60,10 @@ namespace
         text_generator.set_right_alignment();
         text_generator.generate(0, text_frames_y, "frames:", text_sprites);
 
-        BN_LOG("a:", a, ", b:", b, ", c:", c);
+        // BN_LOG("a:", a, ", b:", b, ", c:", c);
+
+        text_generator.set_right_alignment();
+        text_generator.generate(0, text_ram_y, "ram:", text_sprites);
 
         text_generator.set_center_alignment();
         text_generator.generate(0, text_y_limit, "START: go to next scene", text_sprites);
@@ -128,6 +140,9 @@ namespace
 
         bn::fixed angle;
         bn::fixed angle_inc = 6;
+
+        int ram_ew_available = bn::memory::available_alloc_ewram();
+        // int ram_ew_available = bn::memory::available_alloc_ewram();
 
         while (!bn::keypad::start_pressed())
         {
