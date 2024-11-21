@@ -17,7 +17,7 @@
 #include "bn_timers.h"
 #include "bn_memory.h"
 
-#include "prn_256.h"
+#include "prn_data_256.h"
 
 #include "common_variable_8x16_sprite_font.h"
 
@@ -74,8 +74,9 @@ namespace
         int text_frames_y = -text_y_limit + 2 * text_y_inc;
         int text_frame_in_second_y = -text_y_limit + 3 * text_y_inc;
         int text_ram_ew_y = -text_y_limit + 4 * text_y_inc;
-        int text_seed_inc_y = -text_y_limit + 5 * text_y_inc;
-        int text_seed_y = -text_y_limit + 6 * text_y_inc;
+        int text_ram_iw_y = -text_y_limit + 5 * text_y_inc;
+        int text_seed_inc_y = -text_y_limit + 6 * text_y_inc;
+        int text_seed_y = -text_y_limit + 7 * text_y_inc;
 
         // BN_LOG("a:", a, ", b:", b, ", c:", c);
 
@@ -83,7 +84,8 @@ namespace
         text_generator.generate(0, text_frames_approximate_y, "frames approx.:", text_sprites);
         text_generator.generate(0, text_frame_in_second_y, "frame in second:", text_sprites);
         text_generator.generate(0, text_frames_y, "frames:", text_sprites);
-        text_generator.generate(0, text_ram_ew_y, "EWRAM:", text_sprites);
+        text_generator.generate(0, text_ram_ew_y, "EWRAM,static+alloc:", text_sprites);
+        text_generator.generate(0, text_ram_iw_y, "IWRAM,static+stack:", text_sprites);
 
         text_generator.set_right_alignment();
         text_generator.generate(0, text_seed_inc_y, "seed inc:", text_sprites);
@@ -102,7 +104,11 @@ namespace
 
             frame_in_second = frames_approximate_count % 60 + 1;
 
-            uint64_t ram_ew_free = bn::memory::available_alloc_ewram();
+            // uint64_t ram_ew_free = bn::memory::available_alloc_ewram();
+            uint64_t ram_ew_used_static = bn::memory::used_static_ewram();
+            uint64_t ram_ew_used_alloc = bn::memory::used_alloc_ewram();
+            uint64_t ram_iw_used_static = bn::memory::used_static_iwram();
+            uint64_t ram_iw_used_stack = bn::memory::used_stack_iwram();
             int seed_inc_multiplier_new = 0;
 
             if (bn::keypad::left_pressed()) {
@@ -137,7 +143,20 @@ namespace
 
             bn::string<16> text_frames_approximate = bn::to_string<16>(frames_approximate_count);
             bn::string<16> text_frames = bn::to_string<16>(frames_count);
-            bn::string<16> text_ram_ew_free = bn::to_string<16>(ram_ew_free);
+            // bn::string<32> text_ram_ew_used = bn::to_string<16>(ram_ew_used_static);
+
+            bn::string<32> text_ram_ew_used = "";
+            bn::ostringstream text_ram_ew_used_stream(text_ram_ew_used);
+            text_ram_ew_used_stream << ram_ew_used_static;
+            text_ram_ew_used_stream << " + ";
+            text_ram_ew_used_stream << ram_ew_used_alloc;
+
+            bn::string<32> text_ram_iw_used = "";
+            bn::ostringstream text_ram_iw_used_stream(text_ram_iw_used);
+            text_ram_iw_used_stream << ram_iw_used_static;
+            text_ram_iw_used_stream << " + ";
+            text_ram_iw_used_stream << ram_iw_used_stack;
+
             bn::string<16> text_frame_in_second = bn::to_string<16>(frame_in_second);
             bn::string<16> text_seed = bn::to_string<16>(seed);
 
@@ -145,7 +164,8 @@ namespace
             text_generator.set_left_alignment();
             text_generator.generate(x_dynamic_padding, text_frames_approximate_y, text_frames_approximate, dynamic_text_sprites);
             text_generator.generate(x_dynamic_padding, text_frames_y, text_frames, dynamic_text_sprites);
-            text_generator.generate(x_dynamic_padding, text_ram_ew_y, text_ram_ew_free, dynamic_text_sprites);
+            text_generator.generate(x_dynamic_padding, text_ram_ew_y, text_ram_ew_used, dynamic_text_sprites);
+            text_generator.generate(x_dynamic_padding, text_ram_iw_y, text_ram_iw_used, dynamic_text_sprites);
             text_generator.generate(x_dynamic_padding, text_frame_in_second_y, text_frame_in_second, dynamic_text_sprites);
             text_generator.generate(x_dynamic_padding, text_seed_inc_y, text_seed_inc, dynamic_text_sprites);
             text_generator.generate(x_dynamic_padding, text_seed_y, text_seed, dynamic_text_sprites);
@@ -175,8 +195,8 @@ int main()
 {
     bn::core::init();
 
-    BN_LOG("prn_256::values[3]: ", prn_256::values[3]);
-    BN_LOG("prn_256::max: ", prn_256::max);
+    BN_LOG("prn_data_256::values[3]: ", prn_data_256::values[3]);
+    BN_LOG("prn_data_256::max: ", prn_data_256::max);
 
     bn::bg_palettes::set_transparent_color(bn::color(16, 16, 16));
 

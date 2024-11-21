@@ -44,47 +44,55 @@ void output_to_file_h(char output_path_h[STRING_PATH_SIZE], int max, int repeat)
     output_file_h = fopen(output_path_h, "w");
 
     char headerFileDefine[STRING_NAME_SIZE] = "";
-    sprintf(headerFileDefine, "PRN_%i_H", max);
+    sprintf(headerFileDefine, "PRN_DATA_%i_H", max);
 
     fprintf(output_file_h, "#ifndef %s\n", headerFileDefine);
     fprintf(output_file_h, "#define %s\n", headerFileDefine);
     fprintf(output_file_h, "\n");
     fprintf(output_file_h, "#include \"bn_common.h\"\n");
     fprintf(output_file_h, "\n");
-    fprintf(output_file_h, "#define PRN_%i_SIZE %i\n", max, size);
+    fprintf(output_file_h, "#define PRN_DATA_%i_SIZE %i\n", max, size);
     fprintf(output_file_h, "\n");
-    fprintf(output_file_h, "namespace prn_%i\n", max);
+    fprintf(output_file_h, "namespace prn_data_%i\n", max);
     fprintf(output_file_h, "{\n"); // namespace begin
     fprintf(output_file_h, "  extern int max;\n");
     fprintf(output_file_h, "  extern int repeat;\n");
     fprintf(output_file_h, "  extern int size;\n");
     // TODO or BN_DATA_EWRAM_BSS?
-    fprintf(output_file_h, "  extern BN_DATA_EWRAM int values[PRN_%i_SIZE];\n", max);
+    fprintf(output_file_h, "  extern BN_DATA_EWRAM int values[PRN_DATA_%i_SIZE];\n", max);
     fprintf(output_file_h, "}\n"); // namespace end
     fprintf(output_file_h, "\n");
     fprintf(output_file_h, "#endif");
     fclose(output_file_h);
 }
 
-void output_to_file_cpp(char output_path_cpp[STRING_PATH_SIZE], char header_name[STRING_NAME_SIZE], std::vector<int> result, int max, int repeat) {
-    int size = result.size();
+struct OUTPUT_TO_FILE_CPP_ARGS {
+    char (& output_path_cpp)[STRING_PATH_SIZE];
+    char (& header_name)[STRING_NAME_SIZE];
+    std::vector<int> &result;
+    int max;
+    int repeat;
+};
+
+void output_to_file_cpp(OUTPUT_TO_FILE_CPP_ARGS &args) {
+    int size = args.result.size();
 
     FILE *output_file_cpp;
-    output_file_cpp = fopen(output_path_cpp, "w");
-    // fprintf(output_file_cpp, "#include \"bn_common.h\"\n");
-    fprintf(output_file_cpp, "#include \"%s\"\n", header_name);
+    output_file_cpp = fopen(args.output_path_cpp, "w");
+
+    fprintf(output_file_cpp, "#include \"%s\"\n", args.header_name);
     fprintf(output_file_cpp, "\n");
-    fprintf(output_file_cpp, "namespace prn_%i\n", max);
+    fprintf(output_file_cpp, "namespace prn_data_%i\n", args.max);
     fprintf(output_file_cpp, "{\n"); // namespace begin
-    fprintf(output_file_cpp, "  int max = %i;\n", max);
-    fprintf(output_file_cpp, "  int repeat = %i;\n", repeat);
+    fprintf(output_file_cpp, "  int max = %i;\n", args.max);
+    fprintf(output_file_cpp, "  int repeat = %i;\n", args.repeat);
     fprintf(output_file_cpp, "  int size = %i;\n", size);
     fprintf(output_file_cpp, "\n");
     // TODO or BN_DATA_EWRAM_BSS?
-    fprintf(output_file_cpp, "  BN_DATA_EWRAM int values[PRN_%i_SIZE] = {\n", max);
+    fprintf(output_file_cpp, "  BN_DATA_EWRAM int values[PRN_DATA_%i_SIZE] = {\n", args.max);
 
-    for (int i=0; i < result.size(); i++) {
-        int n = result[i];
+    for (int i=0; i < args.result.size(); i++) {
+        int n = args.result[i];
         fprintf(output_file_cpp, "    %i, // %i\n", n, i);
     }
 
@@ -103,9 +111,9 @@ int main() {
     char output_path_h[STRING_PATH_SIZE] = "";
     char output_path_cpp[STRING_PATH_SIZE] = "";
 
-    sprintf(output_file_name_h, "prn_%i.h", max);
+    sprintf(output_file_name_h, "prn_data_%i.h", max);
     sprintf(output_path_h, "include/%s", output_file_name_h);
-    sprintf(output_path_cpp, "src/prn_%i.cpp", max);
+    sprintf(output_path_cpp, "src/prn_data_%i.cpp", max);
 
     std::vector<int> result = generate_pseudo_random_array(max, repeat);
 
@@ -115,7 +123,16 @@ int main() {
     // }
 
     output_to_file_h(output_path_h, max, repeat);
-    output_to_file_cpp(output_path_cpp, output_file_name_h, result, max, repeat);
+
+    OUTPUT_TO_FILE_CPP_ARGS output_to_file_cpp_args = {
+        .output_path_cpp = output_path_cpp,
+        .header_name = output_file_name_h,
+        .result = result,
+        .max = max,
+        .repeat = repeat,
+    };
+
+    output_to_file_cpp(output_to_file_cpp_args);
 
     printf("%s", output_path_cpp);
 }
