@@ -17,6 +17,8 @@
 #include "bn_timers.h"
 #include "bn_memory.h"
 
+#include "prn_256.h"
+
 #include "common_variable_8x16_sprite_font.h"
 
 namespace
@@ -48,11 +50,6 @@ namespace
         text_seed_inc_stream << seed_inc_multiplier;
         text_seed_inc_stream << " = ";
         text_seed_inc_stream << seed_inc;
-        // text_seed_inc.append("__TEST__");
-        // text_seed_inc.append(" x ");
-        // text_seed_inc.append(seed_inc_multiplier);
-        // text_seed_inc.append(" = ");
-        // text_seed_inc.append(seed_inc);
     }
 
     void seed_scene()
@@ -177,6 +174,9 @@ namespace
 int main()
 {
     bn::core::init();
+
+    BN_LOG("prn_256::values[3]: ", prn_256::values[3]);
+    BN_LOG("prn_256::max: ", prn_256::max);
 
     bn::bg_palettes::set_transparent_color(bn::color(16, 16, 16));
 
