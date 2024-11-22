@@ -10,7 +10,7 @@ namespace prn_data_256
   extern int max;
   extern int repeat;
   extern int size;
-  extern BN_DATA_EWRAM int values[PRN_DATA_256_SIZE];
+  extern BN_DATA_EWRAM uint8_t values[PRN_DATA_256_SIZE];
 }
 
 #endif
