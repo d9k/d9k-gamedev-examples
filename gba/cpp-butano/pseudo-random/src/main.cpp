@@ -1,5 +1,6 @@
 #include "bn_core.h"
 #include "bn_math.h"
+// #include "bn_bitset.h"
 #include "bn_keypad.h"
 #include "bn_display.h"
 #include "bn_string.h"
@@ -11,8 +12,10 @@
 #include "bn_timer.h"
 #include "bn_timers.h"
 #include "bn_memory.h"
+// #include "bit_ops.h"
 
-#include "prn_data_256.h"
+// #include "prn_data_256.h"
+#include "prn_256.h"
 
 #include "common_variable_8x16_sprite_font.h"
 
@@ -54,6 +57,7 @@ namespace
         // int b = 2'147'483'649;
         // int a = 2'147'483'647;
         // int c = -1;
+        // BN_LOG("a:", a, ", b:", b, ", c:", c);
 
         bn::timer timer;
         uint64_t timer_total_ticks = 0;
@@ -72,8 +76,6 @@ namespace
         int text_ram_iw_y = -text_y_limit + 5 * text_y_inc;
         int text_seed_inc_y = -text_y_limit + 6 * text_y_inc;
         int text_seed_y = -text_y_limit + 7 * text_y_inc;
-
-        // BN_LOG("a:", a, ", b:", b, ", c:", c);
 
         text_generator.set_right_alignment();
         text_generator.generate(0, text_frames_approximate_y, "frames approx.:", text_sprites);
@@ -190,13 +192,18 @@ int main()
 {
     bn::core::init();
 
-    BN_LOG("prn_data_256::values[3]: ", prn_data_256::values[3]);
-    BN_LOG("prn_data_256::max: ", prn_data_256::max);
+    // BN_LOG("prn_data_256::values[3]: ", prn_data_256::values[3]);
+    // BN_LOG("prn_data_256::max: ", prn_data_256::max);
 
     bn::bg_palettes::set_transparent_color(bn::color(16, 16, 16));
 
     while (true)
     {
+        int _seed = 0b01101011;
+        prn_256::POS_AND_SHIFT pos_and_shift = prn_256::seed_to_pos_and_shift(_seed);
+        BN_LOG("result pos: ", pos_and_shift.index);
+        BN_LOG("result shift: ", pos_and_shift.shift);
+
         seed_scene();
         bn::core::update();
 
