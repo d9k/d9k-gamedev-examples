@@ -2,7 +2,22 @@
 
 namespace prn_256
 {
-    constexpr int SEED_LIMIT = 1 << (8+7);
+    Generator::Generator(int seed)
+    {
+        POS_AND_SHIFT pos_and_shift = seed_to_pos_and_shift(seed);
+        pos = pos_and_shift.pos;
+        shift = pos_and_shift.shift;
+    }
+
+    uint8_t Generator::generate()
+    {
+        int result = prn_data_256::values[pos];
+        pos += shift;
+        if (pos > POS_LIMIT) {
+            pos -= POS_LIMIT;
+        }
+        return result;
+    }
 
     POS_AND_SHIFT seed_to_pos_and_shift(int seed)
     {
@@ -45,17 +60,4 @@ namespace prn_256
 
         return result;
     }
-
-    class prn_generator_256
-    {
-        void construct(int seed)
-        {
-        }
-
-        void generate()
-        {
-        }
-
-        // int set
-    };
 }
