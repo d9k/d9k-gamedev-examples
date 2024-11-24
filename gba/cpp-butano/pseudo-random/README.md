@@ -22,3 +22,20 @@ make
 mgba-qt pseudo-random.gba
 ```
 
+or just
+
+```bash
+make start
+```
+
+## Regenerate pre-defined pseudo-random array
+
+```bash
+generate-pseudo-random-array
+```
+
+## List available make actions
+
+```
+make list
+```
