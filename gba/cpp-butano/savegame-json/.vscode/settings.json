@@ -1,0 +1,32 @@
+{
+    // "C_Cpp.intelliSenseEngine" : "Tag Parser",
+    "C_Cpp.intelliSenseEngine" : "default",
+    "files.associations": {
+        "cstddef": "cpp",
+        "unordered_map": "cpp",
+        "deque": "cpp",
+        "string": "cpp",
+        "vector": "cpp",
+        "array": "cpp",
+        "string_view": "cpp",
+        "initializer_list": "cpp",
+        "utility": "cpp",
+        "valarray": "cpp",
+        "list": "cpp",
+        "cstdio": "cpp",
+        "*.tcc": "cpp",
+        "memory": "cpp",
+        "cstring": "cpp",
+        "limits": "cpp",
+        "ostream": "cpp",
+        "cstdint": "cpp",
+        "iosfwd": "cpp"
+    },
+    "makefile.configureOnOpen": true,
+    "C_Cpp.default.compilerPath": "/opt/wonderful/toolchain/gcc-arm-none-eabi/bin/arm-none-eabi-g++",
+    // "C_Cpp.default.compilerPath": "/usr/bin/g++"
+    /** https://marketplace.visualstudio.com/items?itemName=BlueGlassBlock.better-json5 */
+    "json5.format.enable": true,
+    "json5.format.keyQuotes": "none-double",
+    "json5.format.stringQuotes": "double",
+}
