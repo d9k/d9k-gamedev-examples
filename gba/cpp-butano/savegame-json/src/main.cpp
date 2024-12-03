@@ -51,7 +51,7 @@ struct MyHandler : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>, MyHand
     // bool Uint64(uint64_t u) { cout << "Uint64(" << u << ")" << endl; return true; }
     // bool Double(double d) { cout << "Double(" << d << ")" << endl; return true; }
     bool String(const char* str, rapidjson::SizeType length, bool copy) {
-        bn::string<255> text;
+        bn::string<1024> text;
         bn::ostringstream ss(text);
             ss << "String(" << str << ", " << length << ", " << copy << ")"; // << endl;
         BN_LOG(text);
@@ -119,6 +119,9 @@ int main()
         palestinian_movies_cut_json_begin[i] = palestinian_movies_cut_json[i];
     }
     palestinian_movies_cut_json_begin[len] = 0;
+
+    rapidjson::StringStream ssBig(palestinian_movies_cut_json);
+    reader.Parse(ssBig, handler);
 
     // BN_LOG('chars: ', palestinian_movies_cut_json[6], palestinian_movies_cut_json[7]);
     BN_LOG("chars: ", palestinian_movies_cut_json_begin);
