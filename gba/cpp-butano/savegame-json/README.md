@@ -1,8 +1,8 @@
-# Pseudo random example
+# Savegame JSON example
 
 Forked from [Butano 18.1.0](https://github.com/GValiente/butano/tree/18.1.0/examples/text).
 
-Example data in [include/palestinian_movies_json5.h](./include/palestinian_movies_json5.h) is from the https://www.kaggle.com/datasets/sondosaabed/palestinian-movies-json-dataset.
+Example data in [include/palestinian_movies_cut_json.h](./include/palestinian_movies_cut_json.h) is from the https://www.kaggle.com/datasets/sondosaabed/palestinian-movies-json-dataset.
 
 ## Build
 
@@ -21,7 +21,7 @@ make
 ## Run
 
 ```bash
-mgba-qt pseudo-random.gba
+mgba-qt savegame-json.gba
 ```
 
 or just
