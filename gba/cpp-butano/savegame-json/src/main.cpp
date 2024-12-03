@@ -3,6 +3,8 @@
  * zlib License, see LICENSE file.
  */
 
+#define BN_CFG_LOG_MAX_SIZE 1024
+
 #include "bn_core.h"
 #include "bn_log.h"
 #include "bn_sram.h"
@@ -18,6 +20,7 @@
 #include "rapidjson/reader.h"
 // #include <iostream>
 #include <sstream>
+
 
 // using std::cout;
 // using std::endl;
@@ -41,8 +44,20 @@ BN_DATA_EWRAM char palestinian_movies_cut_json_begin[255];
 // bn::string<255> palestinian_movies_cut_json_begin;
 // BN_DATA_EWRAM std::string palestinian_movies_cut_json_begin;
 
+// BN_DATA_EWRAM bn::string<4096> text;
+
 /** [RapidJSON: SAX](https://rapidjson.org/md_doc_sax.html) */
 struct MyHandler : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>, MyHandler> {
+    bool String(const char* str, rapidjson::SizeType length, bool copy) {
+        bn::string<1024> textTemp;
+        bn::ostringstream ssTemp(textTemp);
+        // text = "";
+        ssTemp << "String(" << str << ", " << length << ", " << copy << ")"; // << endl;
+        BN_LOG(textTemp);
+        // BN_LOG("+");
+        bn::core::update();
+        return true;
+    }
     // bool Null() { cout << "Null()" << endl; return true; }
     // bool Bool(bool b) { cout << "Bool(" << std::boolalpha << b << ")" << endl; return true; }
     // bool Int(int i) { cout << "Int(" << i << ")" << endl; return true; }
@@ -50,13 +65,6 @@ struct MyHandler : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>, MyHand
     // bool Int64(int64_t i) { cout << "Int64(" << i << ")" << endl; return true; }
     // bool Uint64(uint64_t u) { cout << "Uint64(" << u << ")" << endl; return true; }
     // bool Double(double d) { cout << "Double(" << d << ")" << endl; return true; }
-    bool String(const char* str, rapidjson::SizeType length, bool copy) {
-        bn::string<1024> text;
-        bn::ostringstream ss(text);
-            ss << "String(" << str << ", " << length << ", " << copy << ")"; // << endl;
-        BN_LOG(text);
-        return true;
-    }
     // bool StartObject() { cout << "StartObject()" << endl; return true; }
     // bool Key(const char* str, rapidjson::SizeType length, bool copy) {
     //     cout << "Key(" << str << ", " << length << ", " << std::boolalpha << copy << ")" << endl;
@@ -90,12 +98,16 @@ int main()
 {
     bn::core::init();
 
+    // ssTemp << "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789";
+    // BN_LOG("text:", text);
+    // BN_LOG("SIZE: ", BN_CFG_LOG_MAX_SIZE);
+
     const char json[] = " { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3, 4] } ";
 
-    MyHandler handler;
-    rapidjson::Reader reader;
-    rapidjson::StringStream ss(json);
-    reader.Parse(ss, handler);
+    MyHandler handler1;
+    rapidjson::Reader reader1;
+    rapidjson::StringStream ss1(json);
+    reader1.Parse(ss1, handler1);
 
     // int sram_size = bn::hw::sram::size();
 
@@ -120,8 +132,12 @@ int main()
     }
     palestinian_movies_cut_json_begin[len] = 0;
 
+    bn::core::update();
+
+    MyHandler handler2;
+    rapidjson::Reader reader2;
     rapidjson::StringStream ssBig(palestinian_movies_cut_json);
-    reader.Parse(ssBig, handler);
+    reader2.Parse(ssBig, handler2);
 
     // BN_LOG('chars: ', palestinian_movies_cut_json[6], palestinian_movies_cut_json[7]);
     BN_LOG("chars: ", palestinian_movies_cut_json_begin);

@@ -50,9 +50,12 @@ USERLIBS    	:=
 # [Frequently asked questions (FAQ) | Butano Docs](https://gvaliente.github.io/butano/faq.html#faq_standard)
 # You need to link the standard system libraries to use standard functions like strlen and standard classes like std::shared_ptr. Since you are now linking the standard system libraries, you must comply with their license.
 DEFAULTLIBS 	:= true
-STACKTRACE		:=
+STACKTRACE		:= true
 USERBUILD   	:=
 EXTTOOL     	:=
+# RAPIDJSON_UNSAFE_IGNORE_STACK_POP_ASSERT := true
+# Doesn't work?! Added to main.cpp
+# BN_CFG_LOG_MAX_SIZE := 1024
 
 
 #---------------------------------------------------------------------------------------------------------------------
