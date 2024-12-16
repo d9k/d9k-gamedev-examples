@@ -15,7 +15,10 @@
         "list": "cpp",
         "cstdio": "cpp",
         "*.tcc": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "atomic": "cpp",
+        "compare": "cpp",
+        "cstdint": "cpp"
     },
     "makefile.configureOnOpen": true,
     "C_Cpp.default.compilerPath": "/opt/wonderful/toolchain/gcc-arm-none-eabi/bin/arm-none-eabi-g++"
