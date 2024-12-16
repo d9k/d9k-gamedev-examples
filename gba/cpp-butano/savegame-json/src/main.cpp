@@ -6,11 +6,11 @@
 #define BN_CFG_LOG_MAX_SIZE 1024
 
 #include <sstream>
+#include <stdio.h>
 
 #include "bn_core.h"
 #include "bn_log.h"
 #include "bn_sram.h"
-// #include "../../../butano/hw/include/bn_hw_sram.h"
 #include "bn_string.h"
 #include "bn_bg_palettes.h"
 #include "bn_sprite_text_generator.h"
@@ -28,7 +28,7 @@ BN_DATA_EWRAM char palestinian_movies_cut_json_begin[255];
 using namespace std::string_literals;
 
 /** [RapidJSON: SAX](https://rapidjson.org/md_doc_sax.html) */
-struct MyHandler : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>, MyHandler> {
+struct DemoParseHandler : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>, DemoParseHandler> {
     uint64_t tokensCount = 0;
 
     inline bool _logString(const char* str, rapidjson::SizeType length, bool copy, const char * logPrefix = "string") {
@@ -37,30 +37,70 @@ struct MyHandler : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>, MyHand
         return true;
     }
 
+    template<typename T>
+    inline bool _logToken(const T value, const char * logPrefix = "") {
+        tokensCount++;
+        BN_LOG("#", tokensCount, ": ", logPrefix, strlen(logPrefix) > 0 ? " " : "", value);
+        return true;
+    }
+
     bool String(const char* str, rapidjson::SizeType length, bool copy) {
         return _logString(str, length, copy);
     }
 
-    // bool Null() { cout << "Null()" << endl; return true; }
-    // bool Bool(bool b) { cout << "Bool(" << std::boolalpha << b << ")" << endl; return true; }
-    // bool Int(int i) { cout << "Int(" << i << ")" << endl; return true; }
-    // bool Uint(unsigned u) { cout << "Uint(" << u << ")" << endl; return true; }
-    // bool Int64(int64_t i) { cout << "Int64(" << i << ")" << endl; return true; }
-    // bool Uint64(uint64_t u) { cout << "Uint64(" << u << ")" << endl; return true; }
-    // bool Double(double d) { cout << "Double(" << d << ")" << endl; return true; }
-    // bool StartObject() { cout << "StartObject()" << endl; return true; }
+    bool Null() {
+        return _logToken("null");
+    }
+     bool Bool(bool b) {
+        // cout << "Bool(" << std::boolalpha << b << ")" << endl; return true;
+        return _logToken(b, "bool");
+    }
+
+    bool Int(int i) {
+        return _logToken(i, "int");
+    }
+
+    bool Uint(unsigned u) {
+        return _logToken(u, "uint");
+    }
+
+    bool Int64(int64_t i) {
+        return _logToken(i, "int64");
+    }
+
+    bool Uint64(uint64_t u) {
+        return _logToken(u, "uint64");
+    }
+
+    bool Double(double d) {
+        char doubleText[32];
+        sprintf(doubleText, "%.6f", d);
+        return _logToken(doubleText, "double");
+    }
+
+    bool StartObject() {
+        return _logToken("start object {");
+    }
+
+    bool EndObject(rapidjson::SizeType memberCount) {
+        char objectText[32];
+        sprintf(objectText, "} end object with %d members", memberCount);
+        return _logToken(objectText);
+    }
 
     bool Key(const char* str, rapidjson::SizeType length, bool copy) {
-        // tokensCount++;
-        // BN_LOG("#", tokensCount, ": key \"", str, "\"; len: ", length, copy ? "" : "not copy");
-    //     cout << "Key(" << str << ", " << length << ", " << std::boolalpha << copy << ")" << endl;
-        // return true;
         return _logString(str, length, copy, "key");
     }
 
-    // bool EndObject(rapidjson::SizeType memberCount) { cout << "EndObject(" << memberCount << ")" << endl; return true; }
-    // bool StartArray() { cout << "StartArray()" << endl; return true; }
-    // bool EndArray(rapidjson::SizeType elementCount) { cout << "EndArray(" << elementCount << ")" << endl; return true; }
+    bool StartArray() {
+        return _logToken("start array [");
+    }
+
+    bool EndArray(rapidjson::SizeType elementCount) {
+        char objectText[32];
+        sprintf(objectText, "] end array with %d elements", elementCount);
+        return _logToken(objectText);
+    }
 };
 
 
@@ -85,9 +125,9 @@ namespace
 void parseSmallJson() {
     BN_LOG("\n\n# Parsing small JSON\n");
 
-    const char json[] = " { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3, 4] } ";
+    const char json[] = " { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, -3, 4] } ";
 
-    MyHandler handler1;
+    DemoParseHandler handler1;
     rapidjson::Reader reader1;
     rapidjson::StringStream ss1(json);
     reader1.Parse(ss1, handler1);
@@ -104,7 +144,7 @@ void parseBigJson() {
 
     std::strncpy(palestinian_movies_cut_json_begin, palestinian_movies_cut_json, FIRST_CHARS);
 
-    MyHandler handler2;
+    DemoParseHandler handler2;
     rapidjson::Reader reader2;
     rapidjson::StringStream ssBig(palestinian_movies_cut_json);
     reader2.Parse(ssBig, handler2);
