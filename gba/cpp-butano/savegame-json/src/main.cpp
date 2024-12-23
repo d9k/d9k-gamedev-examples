@@ -21,6 +21,7 @@
 #include "rapidjson/reader.h"
 #include "demo_parse_handler.h"
 #include "movie.h"
+#include "parsers_stack.h"
 
 BN_DATA_EWRAM char *palestinian_movies_cut_json;
 
@@ -74,8 +75,31 @@ void parseBigJson() {
     reader2.Parse(ssBig, handler2);
 
     BN_LOG("Long JSON first chars (", FIRST_CHARS, "):", palestinian_movies_cut_json_begin);
-    palestinian_movies_cut_json = (char *) "";
+    delete[] palestinian_movies_cut_json;
 }
+
+
+void parseBigJsonMovies() {
+    BN_LOG("\n\n# Parsing big JSON movies\n");
+
+    palestinian_movies_cut_json = (char*)
+        #include "palestinian_movies_cut_json.h"
+    ;
+
+    TAbstractStackableParserHandler<> root_handler;
+    rapidjson::Reader reader;
+    rapidjson::StringStream ssBig(palestinian_movies_cut_json);
+
+    ParsersStack *parsersStack = new ParsersStack(&root_handler, &reader, &ssBig);
+
+    while(parsersStack->parse_next_token()) {}
+
+    // reader2.Parse(ssBig, handler2);
+
+    delete parsersStack;
+    delete[] palestinian_movies_cut_json;
+}
+
 
 int main()
 {
@@ -88,10 +112,25 @@ int main()
     // BN_DATA_EWRAM int test;
     bn::core::init();
 
+
+    int *numbers;
+    int c = 10;
+
+    numbers = new int[c];
+
+    for (int i = 0; i < c; i++) {
+        numbers[i] = i*i;
+    }
+
+    BN_LOG("numbers[7]: ", numbers[7]);
+
+
+
     BN_LOG("BN_CFG_LOG_MAX_SIZE: ", BN_CFG_LOG_MAX_SIZE);
 
     parseSmallJson();
     parseBigJson();
+    parseBigJsonMovies();
 
     // int sram_size = bn::hw::sram::size();
     // BN_LOG("SRAM size:", sram_size);
