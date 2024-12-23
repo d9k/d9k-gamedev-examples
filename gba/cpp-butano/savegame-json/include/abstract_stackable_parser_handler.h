@@ -5,14 +5,15 @@
 #include "parser_event.h"
 #include "rapidjson/reader.h"
 
-template <typename T = std::any>
-struct TAbstractStackableParserHandler: public rapidjson::BaseReaderHandler<rapidjson::UTF8<>>
+template <typename T>
+struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>>
 {
+public:
     uint64_t tokens_count = 0;
     int object_level = 0;
     int array_level = 0;
 
-    const char *parser_name = "AbstractStackableParser";
+    // char *parser_name = "AbstractStackableParser";
     T result;
     ParserEvent last_parse_event = ParserEvent::WAIT_NEXT_TOKEN;
 
@@ -25,6 +26,8 @@ struct TAbstractStackableParserHandler: public rapidjson::BaseReaderHandler<rapi
     void result_init()
     {
     }
+
+    virtual char* parser_name();
 
     bool String(const char *str, rapidjson::SizeType length, bool copy)
     {
@@ -101,18 +104,25 @@ struct TAbstractStackableParserHandler: public rapidjson::BaseReaderHandler<rapi
     bool _logTokenString(const char *str, rapidjson::SizeType length, bool copy, const char *logPrefix = "string")
     {
         tokens_count++;
-        BN_LOG(parser_name, ": #", tokens_count, ": ", logPrefix, " \"", str, "\"; len: ", length, copy ? "" : "not copy");
+        BN_LOG(this->parser_name(), ": #", tokens_count, ": ", logPrefix, " \"", str, "\"; len: ", length, copy ? "" : "not copy");
         return true;
     }
 
-    template<typename R>
-    bool _logToken(const R value, const char * logPrefix = "") {
+    template <typename R>
+    bool _logToken(const R value, const char *logPrefix = "")
+    {
         tokens_count++;
-        BN_LOG(parser_name, ": #", tokens_count, ": ", logPrefix, strlen(logPrefix) > 0 ? " " : "", value);
+        BN_LOG(this->parser_name(), ": #", tokens_count, ": ", logPrefix, strlen(logPrefix) > 0 ? " " : "", value);
         return true;
     }
 };
 
-typedef TAbstractStackableParserHandler<> AbstractStackableParserHandler;
+template <typename T>
+char* TAbstractStackableParserHandler<T>::parser_name()
+{
+    return "AbstractStackableParser";
+}
+
+typedef TAbstractStackableParserHandler<std::any> AbstractStackableParserHandler;
 
 #endif // ABSTRACT_STACKABLE_PARSER_HANDLER_H

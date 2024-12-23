@@ -22,6 +22,7 @@
 #include "demo_parse_handler.h"
 #include "movie.h"
 #include "parsers_stack.h"
+#include "savegame_parser_handler.h"
 
 BN_DATA_EWRAM char *palestinian_movies_cut_json;
 
@@ -78,7 +79,6 @@ void parseBigJson() {
     delete[] palestinian_movies_cut_json;
 }
 
-
 void parseBigJsonMovies() {
     BN_LOG("\n\n# Parsing big JSON movies\n");
 
@@ -86,17 +86,20 @@ void parseBigJsonMovies() {
         #include "palestinian_movies_cut_json.h"
     ;
 
-    TAbstractStackableParserHandler<> root_handler;
+    AbstractStackableParserHandler *root_handler;
+    // root_handler = (AbstractStackableParserHandler *)new AbstractStackableParserHandler();
+    root_handler = (AbstractStackableParserHandler *)new SaveGameParserHandler();
     rapidjson::Reader reader;
     rapidjson::StringStream ssBig(palestinian_movies_cut_json);
 
-    ParsersStack *parsersStack = new ParsersStack(&root_handler, &reader, &ssBig);
+    ParsersStack *parsersStack = new ParsersStack(root_handler, &reader, &ssBig);
 
     while(parsersStack->parse_next_token()) {}
 
     // reader2.Parse(ssBig, handler2);
 
     delete parsersStack;
+    delete root_handler;
     delete[] palestinian_movies_cut_json;
 }
 
