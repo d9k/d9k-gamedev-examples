@@ -2,8 +2,12 @@
 #define ABSTRACT_STACKABLE_PARSER_HANDLER_H
 
 #include <any>
+#include <string>
 #include "parser_event.h"
+#include "bn_string.h"
 #include "rapidjson/reader.h"
+
+constexpr int KEY_SIZE = 64;
 
 template <typename T>
 struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>>
@@ -12,15 +16,14 @@ public:
     uint64_t tokens_count = 0;
     int object_level = 0;
     int array_level = 0;
+    char current_key[KEY_SIZE];
 
-    // char *parser_name = "AbstractStackableParser";
     T result;
     ParserEvent last_parse_event = ParserEvent::WAIT_NEXT_TOKEN;
 
     TAbstractStackableParserHandler()
     {
         result_init();
-        //     // parser_handler
     };
 
     void result_init()
@@ -31,42 +34,49 @@ public:
 
     bool String(const char *str, rapidjson::SizeType length, bool copy)
     {
+        process_token_begin();
         return _logTokenString(str, length, copy);
     }
 
     bool Null()
     {
+        process_token_begin();
         return _logToken("null");
     }
 
     bool Bool(bool b)
     {
-        // cout << "Bool(" << std::boolalpha << b << ")" << endl; return true;
+        process_token_begin();
         return _logToken(b, "bool");
     }
 
     bool Int(int i)
     {
+        process_token_begin();
         return _logToken(i, "int");
     }
 
     bool Uint(unsigned u)
     {
+        process_token_begin();
         return _logToken(u, "uint");
     }
 
     bool Int64(int64_t i)
     {
+        process_token_begin();
         return _logToken(i, "int64");
     }
 
     bool Uint64(uint64_t u)
     {
+        process_token_begin();
         return _logToken(u, "uint64");
     }
 
     bool Double(double d)
     {
+        process_token_begin();
         char doubleText[32];
         sprintf(doubleText, "%.6f", d);
         return _logToken(doubleText, "double");
@@ -74,11 +84,13 @@ public:
 
     bool StartObject()
     {
+        process_token_begin();
         return _logToken("start object {");
     }
 
     bool EndObject(rapidjson::SizeType memberCount)
     {
+        process_token_begin();
         char objectText[32];
         sprintf(objectText, "} end object with %d members", memberCount);
         return _logToken(objectText);
@@ -86,7 +98,18 @@ public:
 
     bool Key(const char *str, rapidjson::SizeType length, bool copy)
     {
-        return _logTokenString(str, length, copy, "key");
+        process_token_begin();
+        // current_key = string_from_chars(str);
+        // if (current_key) {
+            // delete[] current_key;
+        // }
+        // current_key = chars_from_const_chars(str, length);
+        // current_key = (char *)str;
+
+        std::strncpy(current_key, str, length);
+        current_key[length] = 0;
+        // current_key = bn::string<KEY_SIZE>(str, length);
+        return process_key(str, length, copy);
     }
 
     bool StartArray()
@@ -103,7 +126,6 @@ public:
 
     bool _logTokenString(const char *str, rapidjson::SizeType length, bool copy, const char *logPrefix = "string")
     {
-        tokens_count++;
         BN_LOG(this->parser_name(), ": #", tokens_count, ": ", logPrefix, " \"", str, "\"; len: ", length, copy ? "" : "not copy");
         return true;
     }
@@ -111,9 +133,17 @@ public:
     template <typename R>
     bool _logToken(const R value, const char *logPrefix = "")
     {
-        tokens_count++;
         BN_LOG(this->parser_name(), ": #", tokens_count, ": ", logPrefix, strlen(logPrefix) > 0 ? " " : "", value);
         return true;
+    }
+
+    inline void process_token_begin() {
+        tokens_count++;
+        last_parse_event = ParserEvent::WAIT_NEXT_TOKEN;
+    }
+
+    virtual bool process_key(const char *str, rapidjson::SizeType length, bool copy) {
+        return _logTokenString(str, length, copy, "key");
     }
 };
 
