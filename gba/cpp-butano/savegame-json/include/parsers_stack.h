@@ -43,10 +43,14 @@ public:
     bool pop()
     {
         if (_parsers_handlers.size() <= 1) {
+            BN_LOG("ParsersStack: can't pop, size:", _parsers_handlers.size());
             return false;
         }
+        // BN_LOG("ParsersStack: pop: 100");
         _parsers_handlers.pop_back();
-        _current_parser_handler = (AbstractStackableParserHandler*)&(_parsers_handlers.back());
+        // BN_LOG("ParsersStack: pop: 200");
+        _current_parser_handler = (AbstractStackableParserHandler*)(_parsers_handlers.back());
+        // BN_LOG("ParsersStack: pop: 300");
         return true;
     }
 
@@ -54,13 +58,18 @@ public:
     {
         if (this->_reader->IterativeParseComplete())
         {
+            BN_LOG("Parsers stack: IterativeParseComplete");
             return false;
         }
+
+        // BN_LOG("ParsersStack: parse next token: 100");
 
         this->_reader->IterativeParseNext<rapidjson::kParseDefaultFlags>(
             *(this->_input_stream),
             *(this->_current_parser_handler)
         );
+
+        // BN_LOG("ParsersStack: parse next token: 200");
 
         switch (this->_current_parser_handler->last_parse_event )
         {
@@ -72,13 +81,14 @@ public:
             break;
         }
         case ParserEvent::EVENT_PARSE_FINISHED: {
-            this->pop();
+            BN_LOG("Parsers stack: subparser finished");
             this->_current_parser_handler->subparser_finished();
+            this->pop();
             break;
         }
-        // default:
-        //     break;
         }
+
+        // BN_LOG("ParsersStack: parse next token: 300");
 
         return true;
     }

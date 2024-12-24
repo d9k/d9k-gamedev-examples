@@ -28,6 +28,8 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
         result_init();
     };
 
+    // TODO destructor for subparser!
+
     void result_init()
     {
     }
@@ -129,9 +131,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
 
     bool EndArray(rapidjson::SizeType elementCount)
     {
-        char objectText[32];
-        sprintf(objectText, "] end array with %d elements", elementCount);
-        return _logToken(objectText);
+        return this->process_end_array(elementCount);
     }
 
     bool _logTokenString(const char *str, rapidjson::SizeType length, bool copy, const char *logPrefix = "string")
@@ -160,6 +160,12 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
         if (subparser != NULL) {
            this->last_parse_event = ParserEvent::IMMERSE_TO_SUBPARSER;
         }
+    }
+
+    virtual bool process_end_array(rapidjson::SizeType elementCount) {
+        char objectText[32];
+        sprintf(objectText, "] end array with %d elements", elementCount);
+        return _logToken(objectText);
     }
 
     virtual bool process_key(const char *str, rapidjson::SizeType length, bool copy) {
