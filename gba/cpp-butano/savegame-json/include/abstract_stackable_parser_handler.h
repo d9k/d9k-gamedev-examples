@@ -12,7 +12,9 @@ constexpr int KEY_SIZE = 64;
 template <typename T>
 struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>>
 {
-public:
+// public:
+    TAbstractStackableParserHandler<std::any>* subparser;
+    // std::any subparser;
     uint64_t tokens_count = 0;
     int object_level = 0;
     int array_level = 0;
@@ -30,7 +32,13 @@ public:
     {
     }
 
-    virtual char* parser_name();
+    virtual char* parser_name() {
+        return (char*)"AbstractStackableParser";
+    }
+
+    virtual void subparser_finished() {
+
+    }
 
     bool String(const char *str, rapidjson::SizeType length, bool copy)
     {
@@ -109,7 +117,9 @@ public:
         std::strncpy(current_key, str, length);
         current_key[length] = 0;
         // current_key = bn::string<KEY_SIZE>(str, length);
-        return process_key(str, length, copy);
+        bool result = process_key(str, length, copy);
+        process_token_end();
+        return result;
     }
 
     bool StartArray()
@@ -137,9 +147,19 @@ public:
         return true;
     }
 
-    inline void process_token_begin() {
-        tokens_count++;
-        last_parse_event = ParserEvent::WAIT_NEXT_TOKEN;
+    void process_token_begin() {
+        this->tokens_count++;
+        this->last_parse_event = ParserEvent::WAIT_NEXT_TOKEN;
+        if (subparser != NULL) {
+            delete subparser;
+        }
+        subparser = NULL;
+    }
+
+    void process_token_end() {
+        if (subparser != NULL) {
+           this->last_parse_event = ParserEvent::IMMERSE_TO_SUBPARSER;
+        }
     }
 
     virtual bool process_key(const char *str, rapidjson::SizeType length, bool copy) {
@@ -147,11 +167,11 @@ public:
     }
 };
 
-template <typename T>
-char* TAbstractStackableParserHandler<T>::parser_name()
-{
-    return "AbstractStackableParser";
-}
+// template <typename T>
+// char* TAbstractStackableParserHandler<T>::parser_name()
+// {
+//     return "AbstractStackableParser";
+// }
 
 typedef TAbstractStackableParserHandler<std::any> AbstractStackableParserHandler;
 

@@ -6,6 +6,8 @@
 #include <any>
 #include "abstract_stackable_parser_handler.h"
 #include "rapidjson/reader.h"
+#include "parser_event.h"
+#include "fake_std_throw_length_error.h"
 
 /**
  * For iterative reading
@@ -23,13 +25,13 @@ public:
     ParsersStack(AbstractStackableParserHandler *root_parser_handler, rapidjson::Reader *reader, rapidjson::StringStream *input_stream)
     {
         _parsers_handlers = {};
-        add(root_parser_handler);
+        this->add(root_parser_handler);
         _reader = reader;
         _reader->IterativeParseInit();
         _input_stream = input_stream;
     }
 
-    void add(AbstractStackableParserHandler *new_parser_handler)
+    void add(AbstractStackableParserHandler* new_parser_handler)
     {
         _parsers_handlers.push_back(new_parser_handler);
         _current_parser_handler = new_parser_handler;
@@ -50,11 +52,34 @@ public:
 
     bool parse_next_token()
     {
-        if (_reader->IterativeParseComplete())
+        if (this->_reader->IterativeParseComplete())
         {
             return false;
         }
-        _reader->IterativeParseNext<rapidjson::kParseDefaultFlags>(*_input_stream, *_current_parser_handler);
+
+        this->_reader->IterativeParseNext<rapidjson::kParseDefaultFlags>(
+            *(this->_input_stream),
+            *(this->_current_parser_handler)
+        );
+
+        switch (this->_current_parser_handler->last_parse_event )
+        {
+        case ParserEvent::IMMERSE_TO_SUBPARSER: {
+            BN_LOG("Parsers stack: immerse to subparser");
+            AbstractStackableParserHandler* subparser = (AbstractStackableParserHandler*)(this->_current_parser_handler->subparser);
+            this->add(subparser);
+        //     this->add((AbstractStackableParserHandler*)this->_current_parser_handler->subparser);
+            break;
+        }
+        case ParserEvent::EVENT_PARSE_FINISHED: {
+            this->pop();
+            this->_current_parser_handler->subparser_finished();
+            break;
+        }
+        // default:
+        //     break;
+        }
+
         return true;
     }
 };
