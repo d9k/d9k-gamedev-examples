@@ -2,10 +2,10 @@
 #define SAVEGAME_H
 
 #include <vector>
-#include "movie.h"
+#include "movies.h"
 
 class SaveGame {
-    std::vector<Movie> movies = {};
+    Movies movies = {};
 };
 
 #endif // SAVEGAME_H

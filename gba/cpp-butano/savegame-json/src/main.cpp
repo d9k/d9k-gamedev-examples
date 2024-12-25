@@ -48,6 +48,18 @@ namespace
 //     return res;
 // }
 
+void testStdString() {
+    // concatenation fail with error undefined reference to `std::__throw_length_error(char const*)'
+    // std::string testStdString = "std::string"s + " test "s + "string"s + " concat"s;
+    std::string testStdString = "std::string";
+    // char *testConcat = "test " + "string" + " concat";
+    BN_LOG("testStdString: ", testStdString.c_str());
+
+    // TODO: linker error
+    // testStdString.assign("another std::string");
+    // BN_LOG("testStdString (2): ", testStdString.c_str());
+}
+
 void parseSmallJson() {
     BN_LOG("\n\n# Parsing small JSON\n");
 
@@ -63,7 +75,7 @@ void parseBigJson() {
     BN_LOG("\n\n# Parsing big JSON\n");
 
     palestinian_movies_cut_json = (char*)
-        #include "palestinian_movies_cut_json.h"
+        #include "data_palestinian_movies_cut_json.h"
     ;
 
     int FIRST_CHARS = 200;
@@ -83,7 +95,7 @@ void parseBigJsonMovies() {
     BN_LOG("\n\n# Parsing big JSON movies\n");
 
     palestinian_movies_cut_json = (char*)
-        #include "palestinian_movies_cut_json.h"
+        #include "data_palestinian_movies_cut_json.h"
     ;
 
     AbstractStackableParserHandler *root_handler;
@@ -106,15 +118,13 @@ void parseBigJsonMovies() {
 
 int main()
 {
-    // concatenation fail with error undefined reference to `std::__throw_length_error(char const*)'
-    // std::string testStdString = "std::string"s + " test "s + "string"s + " concat"s;
-    // char *testConcat = "test " + "string" + " concat";
     // BN_LOG(testConcat);
     // BN_LOG(testStdString.c_str());
 
     // BN_DATA_EWRAM int test;
     bn::core::init();
 
+    testStdString();
 
     int *numbers;
     int c = 10;

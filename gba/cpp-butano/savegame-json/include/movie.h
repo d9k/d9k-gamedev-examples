@@ -1,5 +1,7 @@
 #ifndef MOVIE_H
 #define MOVIE_H
+
+#include <string>
 #include "bn_core.h"
 #include "bn_string.h"
 
@@ -8,8 +10,18 @@ class MovieReleaseDate {
 };
 
 class Movie {
-    char *id;
-    char *title;
+public:
+    // int test;
+    // char *id = (char*)"";
+    // char *title = (char*)"";
+    std::string title;
+    std::string id;
+
+    ~Movie() {
+        // delete[] title;
+        // delete title;
+        // delete id;
+    }
 // public:
 //     Movie()
 //     {

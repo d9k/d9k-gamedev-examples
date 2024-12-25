@@ -6,13 +6,11 @@
 #include "bn_log.h"
 #include "rapidjson/reader.h"
 #include "movies.h"
-#include "parser_event.h"
+#include "movie_parser_handler.h"
 
 struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies>
 {
-    static constexpr const char *KEY_DEPRECATED_TITLE_TEXT = "titleText";
-    static constexpr const char *KEY_TITLE = "title";
-    static constexpr const char *KEY_ID = "id";
+    static constexpr const int SUBPARSER_TYPE_MOVIE = 1;
 
     MoviesParserHandler() {
         BN_LOG("Creating MoviesParserHandler, parser name: ", this->parser_name());
@@ -23,29 +21,25 @@ struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies>
         return "MoviesParserHandler";
     }
 
-    bool process_key(const char *str, rapidjson::SizeType length, bool copy) override
+    TAbstractStackableParserHandler<std::any> *get_subparser_if_needed() override
     {
-        // bool match = false;
-        if (strcmp(KEY_DEPRECATED_TITLE_TEXT, current_key) == 0)
-        {
-            // match = true;
-            // this->last_parse_event = ParserEvent::IMMERSE_TO_SUBPARSER;
-            // this->subparser = new
+        switch (this->subparser_type) {
+            case SUBPARSER_TYPE_MOVIE: {
+                return (AbstractStackableParserHandler*) new MovieParserHandler();
+                break;
+            }
+            default:
+                return NULL;
         }
-        // return _logTokenString(str, length, copy, "key");
-        // if (this->current_key) {
-        // BN_LOG(this->parser_name(), ": custom process key: ", this->current_key);
-        BN_LOG(
-            parser_name(),
-            ": custom process key: ",
-            current_key//,
-            // this->last_parse_event == ParserEvent::IMMERSE_TO_SUBPARSER ? " MATCH! " : ""
-        );
-        return true;
+    }
+
+    bool process_start_object() override {
+        subparser_type = SUBPARSER_TYPE_MOVIE;
+        return _logToken("start object {");
     }
 
     bool process_end_array(rapidjson::SizeType elementCount) override {
-        this->last_parse_event = ParserEvent::EVENT_PARSE_FINISHED;
+        this->finished = true;
         char objectText[32];
         sprintf(objectText, "] end array with %d elements", elementCount);
         return _logToken(objectText);

@@ -6,13 +6,15 @@
 #include "bn_log.h"
 #include "movies_parser_handler.h"
 #include "rapidjson/reader.h"
+#include "savegame_parser_keys.h"
 
 typedef TAbstractStackableParserHandler<SaveGame> AbstractSaveGameParserHandler;
 
+using namespace savegame_parser_keys;
+
 struct SaveGameParserHandler : public AbstractSaveGameParserHandler
 {
-    static constexpr const char * KEY_MOVIES = "movies";
-    // char *parser_name = "SaveGameParserHandler";
+    static constexpr const int SUBPARSER_TYPE_MOVIES = 1;
 
     SaveGameParserHandler() {
         BN_LOG("Creating SaveGameParserHandler, parser name: ", this->parser_name());
@@ -22,23 +24,29 @@ struct SaveGameParserHandler : public AbstractSaveGameParserHandler
         return "SaveGameParserHandler";
     }
 
-    bool process_key(const char *str, rapidjson::SizeType length, bool copy) override {
-        // BN_LOG("SaveGameParserHandler key parse begin");
-
-        if (strcmp(KEY_MOVIES, current_key) == 0) {
-            // this->last_parse_event = ParserEvent::IMMERSE_TO_SUBPARSER;
-            subparser = (AbstractStackableParserHandler*)(new MoviesParserHandler());
+    TAbstractStackableParserHandler<std::any> *get_subparser_if_needed() override
+    {
+        switch (this->subparser_type) {
+            case SUBPARSER_TYPE_MOVIES: {
+                return (AbstractStackableParserHandler*) new MoviesParserHandler();
+                break;
+            }
+            default:
+                return NULL;
         }
+    }
 
-        // return _logTokenString(str, length, copy, "key");
-        // if (this->current_key) {
-        // BN_LOG(this->parser_name(), ": custom process key: ", this->current_key);
+    bool process_key(const char *str, rapidjson::SizeType length, bool copy) override {
+        if (strcmp(KEY_MOVIES, current_key) == 0) {
+            subparser_type = SUBPARSER_TYPE_MOVIES;
+        }
 
         BN_LOG(
             parser_name(),
             ": custom process key: ",
             current_key,
-            subparser == NULL ? "" : " DIVING! "
+            "subparser_type:",
+            subparser_type
         );
         return true;
     }

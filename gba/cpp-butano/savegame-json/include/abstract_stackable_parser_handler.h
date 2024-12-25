@@ -3,7 +3,6 @@
 
 #include <any>
 #include <string>
-#include "parser_event.h"
 #include "bn_string.h"
 #include "rapidjson/reader.h"
 
@@ -12,21 +11,34 @@ constexpr int KEY_SIZE = 64;
 template <typename T>
 struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>>
 {
-// public:
-    TAbstractStackableParserHandler<std::any>* subparser;
+    // public:
+    // TAbstractStackableParserHandler<std::any>* subparser;
     // std::any subparser;
     uint64_t tokens_count = 0;
-    int object_level = 0;
-    int array_level = 0;
+    uint32_t subparser_type = 0;
+    bool finished = false;
+    // int object_level = 0;
+    // int array_level = 0;
     char current_key[KEY_SIZE];
 
-    T result;
-    ParserEvent last_parse_event = ParserEvent::WAIT_NEXT_TOKEN;
+    // T result;
+    // std::any result;
 
     TAbstractStackableParserHandler()
     {
         result_init();
     };
+
+    ~TAbstractStackableParserHandler() {
+        // if (subparser != NULL) {
+        //     delete subparser;
+        // }
+    };
+
+    virtual TAbstractStackableParserHandler<std::any> *get_subparser_if_needed()
+    {
+        return NULL;
+    }
 
     // TODO destructor for subparser!
 
@@ -34,12 +46,13 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     {
     }
 
-    virtual char* parser_name() {
-        return (char*)"AbstractStackableParser";
+    virtual char *parser_name()
+    {
+        return (char *)"AbstractStackableParser";
     }
 
-    virtual void subparser_finished() {
-
+    virtual void subparser_finished(TAbstractStackableParserHandler<std::any> *subparser)
+    {
     }
 
     bool String(const char *str, rapidjson::SizeType length, bool copy)
@@ -95,15 +108,15 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     bool StartObject()
     {
         process_token_begin();
-        return _logToken("start object {");
+        bool result = process_start_object();
+        process_token_end();
+        return result;
     }
 
     bool EndObject(rapidjson::SizeType memberCount)
     {
         process_token_begin();
-        char objectText[32];
-        sprintf(objectText, "} end object with %d members", memberCount);
-        return _logToken(objectText);
+        return process_end_object(memberCount);
     }
 
     bool Key(const char *str, rapidjson::SizeType length, bool copy)
@@ -111,7 +124,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
         process_token_begin();
         // current_key = string_from_chars(str);
         // if (current_key) {
-            // delete[] current_key;
+        // delete[] current_key;
         // }
         // current_key = chars_from_const_chars(str, length);
         // current_key = (char *)str;
@@ -147,28 +160,37 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
         return true;
     }
 
-    void process_token_begin() {
+    void process_token_begin()
+    {
+        this->subparser_type = 0;
         this->tokens_count++;
-        this->last_parse_event = ParserEvent::WAIT_NEXT_TOKEN;
-        if (subparser != NULL) {
-            delete subparser;
-        }
-        subparser = NULL;
     }
 
-    void process_token_end() {
-        if (subparser != NULL) {
-           this->last_parse_event = ParserEvent::IMMERSE_TO_SUBPARSER;
-        }
+    void process_token_end()
+    {
     }
 
-    virtual bool process_end_array(rapidjson::SizeType elementCount) {
+    virtual bool process_end_array(rapidjson::SizeType elementCount)
+    {
         char objectText[32];
         sprintf(objectText, "] end array with %d elements", elementCount);
         return _logToken(objectText);
     }
 
-    virtual bool process_key(const char *str, rapidjson::SizeType length, bool copy) {
+    virtual bool process_start_object()
+    {
+        return _logToken("start object {");
+    }
+
+    virtual bool process_end_object(rapidjson::SizeType memberCount)
+    {
+        char objectText[32];
+        sprintf(objectText, "} end object with %d members", memberCount);
+        return _logToken(objectText);
+    }
+
+    virtual bool process_key(const char *str, rapidjson::SizeType length, bool copy)
+    {
         return _logTokenString(str, length, copy, "key");
     }
 };

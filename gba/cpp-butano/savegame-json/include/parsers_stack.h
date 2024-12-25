@@ -2,11 +2,11 @@
 #define PARSERS_STACK_H
 
 // #include <list>
-#include <vector>
+// #include <vector>
 #include <any>
+#include "bn_vector.h"
 #include "abstract_stackable_parser_handler.h"
 #include "rapidjson/reader.h"
-#include "parser_event.h"
 #include "fake_std_throw_length_error.h"
 
 /**
@@ -17,22 +17,25 @@
 class ParsersStack
 {
 public:
-    std::vector<AbstractStackableParserHandler*> _parsers_handlers;
+    // std::vector<AbstractStackableParserHandler *> _parsers_handlers;
+    bn::vector<AbstractStackableParserHandler *, 32> _parsers_handlers;
     AbstractStackableParserHandler *_current_parser_handler;
     rapidjson::Reader *_reader;
     rapidjson::StringStream *_input_stream;
 
     ParsersStack(AbstractStackableParserHandler *root_parser_handler, rapidjson::Reader *reader, rapidjson::StringStream *input_stream)
     {
-        _parsers_handlers = {};
+        // _parsers_handlers = {};
         this->add(root_parser_handler);
         _reader = reader;
         _reader->IterativeParseInit();
         _input_stream = input_stream;
     }
 
-    void add(AbstractStackableParserHandler* new_parser_handler)
+    void add(AbstractStackableParserHandler *new_parser_handler)
     {
+        BN_ASSERT(new_parser_handler != NULL, "ParsersStack: add(): new_parser_handler NULL");
+
         _parsers_handlers.push_back(new_parser_handler);
         _current_parser_handler = new_parser_handler;
         // last_parser->last_parse_event;
@@ -42,15 +45,18 @@ public:
 
     bool pop()
     {
-        if (_parsers_handlers.size() <= 1) {
+        if (_parsers_handlers.size() <= 1)
+        {
             BN_LOG("ParsersStack: can't pop, size:", _parsers_handlers.size());
             return false;
         }
         // BN_LOG("ParsersStack: pop: 100");
         _parsers_handlers.pop_back();
         // BN_LOG("ParsersStack: pop: 200");
-        _current_parser_handler = (AbstractStackableParserHandler*)(_parsers_handlers.back());
+        _current_parser_handler = (AbstractStackableParserHandler *)(_parsers_handlers.back());
         // BN_LOG("ParsersStack: pop: 300");
+        // BN_LOG("Popped to ", _current_parser_handler->parser_name());
+
         return true;
     }
 
@@ -64,31 +70,42 @@ public:
 
         // BN_LOG("ParsersStack: parse next token: 100");
 
+        // BN_LOG("ParsersStack: parse next token: 150: ", this->_current_parser_handler->parser_name());
+
+        // this->_current_parser_handler->last_parse_event = 555;
+
+        // BN_LOG("ParsersStack: parse next token: 170: ", this->_current_parser_handler->last_parse_event);
+
         this->_reader->IterativeParseNext<rapidjson::kParseDefaultFlags>(
             *(this->_input_stream),
-            *(this->_current_parser_handler)
-        );
+            *(this->_current_parser_handler));
 
         // BN_LOG("ParsersStack: parse next token: 200");
+        // BN_LOG("ParsersStack: parse next token: 250: last parse event:", this->_current_parser_handler->last_parse_event);
 
-        switch (this->_current_parser_handler->last_parse_event )
-        {
-        case ParserEvent::IMMERSE_TO_SUBPARSER: {
-            BN_LOG("Parsers stack: immerse to subparser");
-            AbstractStackableParserHandler* subparser = (AbstractStackableParserHandler*)(this->_current_parser_handler->subparser);
+        if (this->_current_parser_handler->finished) {
+            AbstractStackableParserHandler *subparser = this->_current_parser_handler;
+            // BN_LOG("ParsersStack: parse_next_token(): finished: 300");
+            bool pop_result = this->pop();
+            // BN_LOG("ParsersStack: parse_next_token(): finished: 400");
+            if (pop_result == false) {
+                // BN_LOG("ParsersStack: parse_next_token(): finished: 500");
+                return false;
+            }
+            // BN_LOG("ParsersStack: parse_next_token(): finished: 600");
+            this->_current_parser_handler->subparser_finished(subparser);
+            // BN_LOG("ParsersStack: parse_next_token(): finished: 700");
+            delete subparser;
+            // BN_LOG("ParsersStack: parse_next_token(): finished: 800");
+            return true;
+        }
+
+        AbstractStackableParserHandler *subparser = (AbstractStackableParserHandler *)
+            (this->_current_parser_handler->get_subparser_if_needed());
+
+        if (subparser != NULL) {
             this->add(subparser);
-        //     this->add((AbstractStackableParserHandler*)this->_current_parser_handler->subparser);
-            break;
         }
-        case ParserEvent::EVENT_PARSE_FINISHED: {
-            BN_LOG("Parsers stack: subparser finished");
-            this->_current_parser_handler->subparser_finished();
-            this->pop();
-            break;
-        }
-        }
-
-        // BN_LOG("ParsersStack: parse next token: 300");
 
         return true;
     }
