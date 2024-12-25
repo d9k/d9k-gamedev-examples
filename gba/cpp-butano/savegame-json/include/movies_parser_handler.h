@@ -38,12 +38,12 @@ struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies>
         return _logToken("start object {");
     }
 
-    bool process_end_array(rapidjson::SizeType elementCount) override {
-        this->finished = true;
-        char objectText[32];
-        sprintf(objectText, "] end array with %d elements", elementCount);
-        return _logToken(objectText);
-    }
+    // bool process_end_array(rapidjson::SizeType elementCount) override {
+    //     // this->finished = true;
+    //     char objectText[32];
+    //     sprintf(objectText, "] end array with %d elements", elementCount);
+    //     return _logToken(objectText);
+    // }
 };
 
 #endif // MOVIES_PARSER_HANDLER_H

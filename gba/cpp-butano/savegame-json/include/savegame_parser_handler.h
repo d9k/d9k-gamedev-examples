@@ -45,7 +45,7 @@ struct SaveGameParserHandler : public AbstractSaveGameParserHandler
             parser_name(),
             ": custom process key: ",
             current_key,
-            "subparser_type:",
+            ", subparser_type:",
             subparser_type
         );
         return true;

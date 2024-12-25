@@ -23,6 +23,8 @@ public:
     rapidjson::Reader *_reader;
     rapidjson::StringStream *_input_stream;
 
+    JsonInsideStack shared_json_inside_stack;
+
     ParsersStack(AbstractStackableParserHandler *root_parser_handler, rapidjson::Reader *reader, rapidjson::StringStream *input_stream)
     {
         // _parsers_handlers = {};
@@ -38,6 +40,7 @@ public:
 
         _parsers_handlers.push_back(new_parser_handler);
         _current_parser_handler = new_parser_handler;
+        new_parser_handler->set_json_inside_stack(&this->shared_json_inside_stack);
         // last_parser->last_parse_event;
         // last_parser->parser_name;
         // last_parser->result;
