@@ -8,6 +8,10 @@ namespace std {
   void __throw_length_error(char const*) {
     BN_LOG("std custom length error");
   }
+
+  void __throw_bad_array_new_length() {
+    BN_LOG("std custom __throw_bad_array_new_length");
+  }
 }
 
 #endif // FAKE_STD_THROW_LENGTH_ERROR_H

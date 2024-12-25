@@ -60,6 +60,14 @@ void testStdString() {
     // BN_LOG("testStdString (2): ", testStdString.c_str());
 }
 
+void testBnStringView() {
+    bn::string_view *v = new bn::string_view("bn::string_view test");
+
+    BN_LOG("string view test:", v, "size:", v->size());
+
+    delete v;
+}
+
 void parseSmallJson() {
     BN_LOG("\n\n# Parsing small JSON\n");
 
@@ -125,6 +133,7 @@ int main()
     bn::core::init();
 
     testStdString();
+    testBnStringView();
 
     int *numbers;
     int c = 10;

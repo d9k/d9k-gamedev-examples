@@ -14,13 +14,26 @@ public:
     // int test;
     // char *id = (char*)"";
     // char *title = (char*)"";
-    std::string title;
-    std::string id;
+    bn::string_view *id;
+    bn::string_view *title;
+
+    Movie() {
+        id = new bn::string_view("[no id]");
+        title = new bn::string_view("[no title]");
+        BN_LOG("### MOVIE INIT ###", id, ",", title, ", ", *id, ", ", *title);
+    }
 
     ~Movie() {
+        delete title;
+        delete id;
         // delete[] title;
         // delete title;
         // delete id;
+    }
+
+    void set_id(const char* v) {
+        delete id;
+        id = new bn::string_view(v);
     }
 // public:
 //     Movie()

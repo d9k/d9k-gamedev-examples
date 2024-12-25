@@ -3,8 +3,9 @@
 
 #include <any>
 #include <string>
-#include "bn_string.h"
+#include "bn_any.h"
 #include "bn_log.h"
+#include "bn_string.h"
 #include "rapidjson/reader.h"
 #include "json_inside_stack.h"
 
@@ -13,6 +14,7 @@ constexpr int KEY_SIZE = 64;
 template <typename T>
 struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>>
 {
+    std::any result;
     // public:
     // TAbstractStackableParserHandler<std::any>* subparser;
     // std::any subparser;
@@ -31,10 +33,11 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
 
     TAbstractStackableParserHandler()
     {
-        result_init();
+        // result_init();
     };
 
     ~TAbstractStackableParserHandler() {
+        // result_destroy();
         // if (subparser != NULL) {
         //     delete subparser;
         // }
@@ -45,11 +48,19 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
         return NULL;
     }
 
-    // TODO destructor for subparser!
+    // virtual void result_init()
+    // {
+    //     BN_LOG("AbstractStackableParserHandler: result_init()");
+    // }
 
-    void result_init()
-    {
-    }
+    // virtual T get_result()
+    // {
+    //     return std::any_cast<T>(result);
+    // }
+
+    // virtual void result_destroy()
+    // {
+    // }
 
     virtual char *parser_name()
     {
@@ -63,7 +74,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     bool String(const char *str, rapidjson::SizeType length, bool copy)
     {
         process_token_begin();
-        return _logTokenString(str, length, copy);
+        return process_string(str, length, copy);
     }
 
     bool Null()
@@ -213,6 +224,11 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     virtual bool process_key(const char *str, rapidjson::SizeType length, bool copy)
     {
         return _logTokenString(str, length, copy, "key");
+    }
+
+    virtual bool process_string(const char *str, rapidjson::SizeType length, bool copy)
+    {
+      return _logTokenString(str, length, copy);
     }
 
     void set_json_inside_stack(JsonInsideStack *json_inside_stack)
