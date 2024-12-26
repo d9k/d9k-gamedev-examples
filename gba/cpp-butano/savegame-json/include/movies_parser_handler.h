@@ -7,6 +7,7 @@
 #include "rapidjson/reader.h"
 #include "movies.h"
 #include "movie_parser_handler.h"
+#include "parsers_ids.h"
 
 struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies>
 {
@@ -21,20 +22,8 @@ struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies>
         return "MoviesParserHandler";
     }
 
-    TAbstractStackableParserHandler<std::any> *get_subparser_if_needed() override
-    {
-        switch (this->subparser_type) {
-            case SUBPARSER_TYPE_MOVIE: {
-                return (AbstractStackableParserHandler*) new MovieParserHandler();
-                break;
-            }
-            default:
-                return NULL;
-        }
-    }
-
     bool process_start_object() override {
-        subparser_type = SUBPARSER_TYPE_MOVIE;
+        subparser_type = parsers_ids::MOVIE;
         return _logToken("start object {");
     }
 };

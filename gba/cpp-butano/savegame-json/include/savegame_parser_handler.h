@@ -7,6 +7,7 @@
 #include "movies_parser_handler.h"
 #include "rapidjson/reader.h"
 #include "savegame_parser_keys.h"
+#include "parsers_ids.h"
 
 typedef TAbstractStackableParserHandler<SaveGame> AbstractSaveGameParserHandler;
 
@@ -24,21 +25,9 @@ struct SaveGameParserHandler : public AbstractSaveGameParserHandler
         return "SaveGameParserHandler";
     }
 
-    TAbstractStackableParserHandler<std::any> *get_subparser_if_needed() override
-    {
-        switch (this->subparser_type) {
-            case SUBPARSER_TYPE_MOVIES: {
-                return (AbstractStackableParserHandler*) new MoviesParserHandler();
-                break;
-            }
-            default:
-                return NULL;
-        }
-    }
-
     bool process_key(const char *str, rapidjson::SizeType length, bool copy) override {
         if (strcmp(KEY_MOVIES, current_key) == 0) {
-            subparser_type = SUBPARSER_TYPE_MOVIES;
+            subparser_type = parsers_ids::MOVIES;
         }
 
         BN_LOG(

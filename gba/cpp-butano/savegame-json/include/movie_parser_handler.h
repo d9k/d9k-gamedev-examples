@@ -9,7 +9,6 @@
 #include "movie.h"
 
 struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
-// struct MovieParserHandler : public TAbstractStackableParserHandler<std::any>
 {
     static constexpr const char *KEY_TITLE_TEXT_DEPRECATED = "titleText";
     static constexpr const char *KEY_TITLE = "title";

@@ -1,5 +1,5 @@
-#ifndef MOVIES_PARSER_KEYS_H
-#define MOVIES_PARSER_KEYS_H
+#ifndef MOVIE_PARSER_KEYS_H
+#define MOVIE_PARSER_KEYS_H
 
 namespace movie_parser_keys
 {
@@ -8,4 +8,4 @@ namespace movie_parser_keys
     static constexpr const char* KEY_ID = "id";
 }
 
-#endif // MOVIES_PARSER_KEYS_H
+#endif // MOVIE_PARSER_KEYS_H

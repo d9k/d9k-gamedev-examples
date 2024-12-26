@@ -8,6 +8,7 @@
 #include "abstract_stackable_parser_handler.h"
 #include "rapidjson/reader.h"
 #include "fake_std_throw_length_error.h"
+#include "parsers_factory.h"
 
 /**
  * For iterative reading
@@ -103,10 +104,10 @@ public:
             return true;
         }
 
-        AbstractStackableParserHandler *subparser = (AbstractStackableParserHandler *)
-            (this->_current_parser_handler->get_subparser_if_needed());
+        int subparser_id = this->_current_parser_handler->subparser_type;
 
-        if (subparser != NULL) {
+        if (subparser_id) {
+            AbstractStackableParserHandler *subparser = create_parser_handler_from_id(subparser_id);
             this->add(subparser);
         }
 
