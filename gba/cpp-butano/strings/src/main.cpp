@@ -6,6 +6,7 @@
  */
 
 #include <cstring>
+#include "bn_assert.h"
 #include "bn_core.h"
 #include "bn_math.h"
 #include "bn_keypad.h"
@@ -35,8 +36,8 @@ namespace
         BN_LOG("testStdString() test1 : ", testStdString.c_str());
 
         // TODO: linker error: undefined reference to `std::__cxx11::basic_string <char, std::char_traits<char>, std::allocator<char> >::_M_replace_cold`...
-        // testStdString.assign("another std::string");
-        // BN_LOG("testStdString() test2: ", testStdString.c_str());
+        testStdString.assign("another std::string");
+        BN_LOG("testStdString() test2: ", testStdString.c_str());
 
         // Fixed with "fake_std_throw_length_error.h": concatenation fail with error undefined reference to `std::__throw_length_error(char const*)'
         // TODO: linker error: undefined reference to `std::__cxx11::basic_string <char, std::char_traits<char>, std::allocator<char> >::_M_replace_cold`...
@@ -52,6 +53,7 @@ namespace
         char targetChars[100] = "some long string hello world";
         char targetChars2[100] = "some long string hello world";
         char targetChars3[100] = "some long string hello world";
+        char targetChars4[100] = "some long string hello world";
 
         std::strcpy(targetChars, sourceChars);
         int sourceCharsLength = std::strlen(sourceChars);
@@ -61,9 +63,9 @@ namespace
 
         char* concatChars = "These " "are " "strings";
 
-        BN_LOG("testChars() test copy 1: ", targetChars);
-        BN_LOG("testChars() test copy 2: ", targetChars2, ", length:", sourceCharsLength);
-        BN_LOG("testChars() test copy 3: ", targetChars3, ", length:", sourceCharsLength);
+        BN_LOG("testChars() test copy 1: strcpy: ", targetChars);
+        BN_LOG("testChars() test copy 2: strncpy: ", targetChars2, ", length:", sourceCharsLength);
+        BN_LOG("testChars() test copy 3: strncpy with manual 0 end: ", targetChars3, ", length:", sourceCharsLength);
 
         BN_LOG("testChars() test concat: ", concatChars);
 
@@ -111,6 +113,14 @@ namespace
             bn::core::update();
         }
     }
+
+    void testAssertWillBreakRun() {
+        BN_LOG("\n\n# Test assert. This test will break run, comment it out!\n");
+        int num = 123456;
+        bn::string<64> errorMsg = "Test error message with number ";
+        errorMsg += bn::to_string<16>(num);
+        BN_ASSERT(false, errorMsg);
+    }
 }
 
 int main()
@@ -123,6 +133,7 @@ int main()
     testChars();
     testBnString();
     testBnStringView();
+    // testAssertWillBreakRun();
 
     bn::bg_palettes::set_transparent_color(bn::color(16, 16, 16));
 
