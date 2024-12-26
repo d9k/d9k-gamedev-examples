@@ -1,12 +1,11 @@
-#ifndef MOVIES_PARSER_HANDLER_H
-#define MOVIES_PARSER_HANDLER_H
+#ifndef MOVIES_PARSER_H
+#define MOVIES_PARSER_H
 
 #include "abstract_stackable_parser_handler.h"
 #include "savegame.h"
 #include "bn_log.h"
 #include "rapidjson/reader.h"
 #include "movies.h"
-#include "movie_parser_handler.h"
 #include "parsers_ids.h"
 
 struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies>
@@ -26,6 +25,20 @@ struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies>
         subparser_type = parsers_ids::MOVIE;
         return _logToken("start object {");
     }
+
+    bool process_start_array() override
+    {
+        this->set_start_level_from_current();
+        return _logToken("start array [");
+    }
+
+    // bool process_end_array(rapidjson::SizeType elementCount) override
+    // {
+    //     this->finished = true;
+    //     char objectText[32];
+    //     sprintf(objectText, "] end array with %d elements", elementCount);
+    //     return _logToken(objectText);
+    // }
 };
 
-#endif // MOVIES_PARSER_HANDLER_H
+#endif // MOVIES_PARSER_H

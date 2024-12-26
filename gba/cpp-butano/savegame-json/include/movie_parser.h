@@ -1,5 +1,5 @@
-#ifndef MOVIE_PARSER_HANDLER_H
-#define MOVIE_PARSER_HANDLER_H
+#ifndef MOVIE_PARSER_H
+#define MOVIE_PARSER_H
 
 #include <any>
 #include "abstract_stackable_parser_handler.h"
@@ -7,13 +7,12 @@
 #include "bn_log.h"
 #include "rapidjson/reader.h"
 #include "movie.h"
+#include "movie_parser_keys.h"
+
+using namespace movie_parser_keys;
 
 struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
 {
-    static constexpr const char *KEY_TITLE_TEXT_DEPRECATED = "titleText";
-    static constexpr const char *KEY_TITLE = "title";
-    static constexpr const char *KEY_ID = "id";
-
     MovieParserHandler() : TAbstractStackableParserHandler<Movie *>()
     {
         BN_LOG("Creating ", this->parser_name());
@@ -34,7 +33,7 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
     bool process_string(const char *str, rapidjson::SizeType length, bool copy) override
     {
         Movie *r = get_result();
-        if (strcmp(KEY_ID, current_key) == 0)
+        if (key_is(KEY_ID) == 0)
         {
             r->set_id(str);
             BN_LOG(this->parser_name(), ": check result id: ", *r->id);
@@ -45,7 +44,7 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
 
     bool process_key(const char *str, rapidjson::SizeType length, bool copy) override
     {
-        if (strcmp(KEY_TITLE_TEXT_DEPRECATED, current_key) == 0)
+        if (key_is(KEY_TITLE_TEXT_DEPRECATED))
         {
         }
 
@@ -57,4 +56,4 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
     }
 };
 
-#endif // MOVIE_PARSER_HANDLER_H
+#endif // MOVIE_PARSER_H

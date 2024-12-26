@@ -5,9 +5,9 @@
 #include "parsers_ids.h"
 #include "bn_assert.h"
 #include "bn_string.h"
-#include "savegame_parser_handler.h"
-#include "movie_parser_handler.h"
-#include "movies_parser_handler.h"
+#include "savegame_parser.h"
+#include "movie_parser.h"
+#include "movies_parser.h"
 
 using namespace parsers_ids;
 

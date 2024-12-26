@@ -22,7 +22,7 @@
 #include "demo_parse_handler.h"
 #include "movie.h"
 #include "parsers_stack.h"
-#include "savegame_parser_handler.h"
+#include "savegame_parser.h"
 
 BN_DATA_EWRAM char *palestinian_movies_cut_json;
 

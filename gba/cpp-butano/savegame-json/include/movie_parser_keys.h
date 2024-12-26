@@ -3,7 +3,7 @@
 
 namespace movie_parser_keys
 {
-    static constexpr const char* KEY_DEPRECATED_TITLE_TEXT = "titleText";
+    static constexpr const char* KEY_TITLE_TEXT_DEPRECATED = "titleText";
     static constexpr const char* KEY_TITLE = "title";
     static constexpr const char* KEY_ID = "id";
 }

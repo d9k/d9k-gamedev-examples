@@ -11,6 +11,8 @@
 
 constexpr int KEY_SIZE = 64;
 
+// typedef bn::string<KEY_SIZE> KeyString;
+
 template <typename T>
 struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>>
 {
@@ -18,6 +20,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     uint64_t tokens_count = 0;
     uint32_t subparser_type = 0;
     bool finished = false;
+    // KeyString current_key;
     char current_key[KEY_SIZE];
     int start_level = 0;
 
@@ -39,7 +42,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
         return (char *)"AbstractStackableParser";
     }
 
-    virtual void subparser_finished(TAbstractStackableParserHandler<std::any> *subparser)
+    virtual void subparser_finished(std::any subparser_result)
     {
     }
 
@@ -125,6 +128,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
         std::strncpy(current_key, str, length);
         current_key[length] = 0;
         // current_key = bn::string<KEY_SIZE>(str, length);
+        // current_key = str;
         bool result = process_key(str, length, copy);
         process_token_end();
         return result;
@@ -207,7 +211,15 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     void set_json_inside_stack(JsonInsideStack *json_inside_stack)
     {
         this->shared_json_inside_stack = json_inside_stack;
-        this->start_level = json_inside_stack->level();
+        this->set_start_level_from_current();
+    }
+
+    void set_start_level_from_current() {
+        this->start_level = this->shared_json_inside_stack->level();
+    }
+
+    inline bool key_is(const char * value) {
+        return strcmp(value, current_key) == 0;
     }
 
     void auto_finish_after_close_bracket()

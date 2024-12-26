@@ -1,22 +1,17 @@
-#ifndef SAVEGAME_PARSER_HANDLER_H
-#define SAVEGAME_PARSER_HANDLER_H
+#ifndef SAVEGAME_PARSER_H
+#define SAVEGAME_PARSER_H
 
 #include "abstract_stackable_parser_handler.h"
 #include "savegame.h"
 #include "bn_log.h"
-#include "movies_parser_handler.h"
 #include "rapidjson/reader.h"
 #include "savegame_parser_keys.h"
 #include "parsers_ids.h"
 
-typedef TAbstractStackableParserHandler<SaveGame> AbstractSaveGameParserHandler;
-
 using namespace savegame_parser_keys;
 
-struct SaveGameParserHandler : public AbstractSaveGameParserHandler
+struct SaveGameParserHandler : public TAbstractStackableParserHandler<SaveGame>
 {
-    static constexpr const int SUBPARSER_TYPE_MOVIES = 1;
-
     SaveGameParserHandler() {
         BN_LOG("Creating SaveGameParserHandler, parser name: ", this->parser_name());
     }
@@ -26,7 +21,8 @@ struct SaveGameParserHandler : public AbstractSaveGameParserHandler
     }
 
     bool process_key(const char *str, rapidjson::SizeType length, bool copy) override {
-        if (strcmp(KEY_MOVIES, current_key) == 0) {
+        // if (current_key == KEY_MOVIES) {
+        if (key_is(KEY_MOVIES)) {
             subparser_type = parsers_ids::MOVIES;
         }
 
@@ -39,7 +35,13 @@ struct SaveGameParserHandler : public AbstractSaveGameParserHandler
         );
         return true;
     }
+
+    virtual bool process_start_object()
+    {
+        this->set_start_level_from_current();
+        return _logToken("start object {");
+    }
 };
 
 
-#endif // SAVEGAME_PARSER_HANDLER_H
+#endif // SAVEGAME_PARSER_H
