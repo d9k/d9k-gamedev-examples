@@ -15,52 +15,29 @@ template <typename T>
 struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>>
 {
     std::any result;
-    // public:
-    // TAbstractStackableParserHandler<std::any>* subparser;
-    // std::any subparser;
     uint64_t tokens_count = 0;
     uint32_t subparser_type = 0;
     bool finished = false;
-    // int object_level = 0;
-    // int array_level = 0;
     char current_key[KEY_SIZE];
     int start_level = 0;
 
     JsonInsideStack *shared_json_inside_stack;
 
-    // T result;
-    // std::any result;
-
-    TAbstractStackableParserHandler()
-    {
-        // result_init();
+    TAbstractStackableParserHandler() {
     };
 
     ~TAbstractStackableParserHandler() {
-        // result_destroy();
-        // if (subparser != NULL) {
-        //     delete subparser;
-        // }
     };
+
+    virtual T get_result()
+    {
+        return std::any_cast<T>(result);
+    }
 
     virtual TAbstractStackableParserHandler<std::any> *get_subparser_if_needed()
     {
         return NULL;
     }
-
-    // virtual void result_init()
-    // {
-    //     BN_LOG("AbstractStackableParserHandler: result_init()");
-    // }
-
-    // virtual T get_result()
-    // {
-    //     return std::any_cast<T>(result);
-    // }
-
-    // virtual void result_destroy()
-    // {
-    // }
 
     virtual char *parser_name()
     {
@@ -228,7 +205,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
 
     virtual bool process_string(const char *str, rapidjson::SizeType length, bool copy)
     {
-      return _logTokenString(str, length, copy);
+        return _logTokenString(str, length, copy);
     }
 
     void set_json_inside_stack(JsonInsideStack *json_inside_stack)
