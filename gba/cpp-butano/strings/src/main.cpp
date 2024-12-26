@@ -5,6 +5,7 @@
  * zlib License, see LICENSE file.
  */
 
+#include <cstring>
 #include "bn_core.h"
 #include "bn_math.h"
 #include "bn_keypad.h"
@@ -13,6 +14,8 @@
 #include "bn_bg_palettes.h"
 #include "bn_sprite_text_generator.h"
 #include "bn_log.h"
+#include "bn_string.h"
+#include "fake_std_throw_length_error.h"
 
 #include "common_variable_8x16_sprite_font.h"
 
@@ -26,15 +29,60 @@ namespace
     void testStdString()
     {
         BN_LOG("\n\n# Test std::string\n");
-        // concatenation fail with error undefined reference to `std::__throw_length_error(char const*)'
-        // std::string testStdString = "std::string"s + " test "s + "string"s + " concat"s;
+
         std::string testStdString = "std::string";
         // char *testConcat = "test " + "string" + " concat";
-        BN_LOG("testStdString(): ", testStdString.c_str());
+        BN_LOG("testStdString() test1 : ", testStdString.c_str());
 
         // TODO: linker error: undefined reference to `std::__cxx11::basic_string <char, std::char_traits<char>, std::allocator<char> >::_M_replace_cold`...
-        testStdString.assign("another std::string");
-        BN_LOG("testStdString (2): ", testStdString.c_str());
+        // testStdString.assign("another std::string");
+        // BN_LOG("testStdString() test2: ", testStdString.c_str());
+
+        // Fixed with "fake_std_throw_length_error.h": concatenation fail with error undefined reference to `std::__throw_length_error(char const*)'
+        // TODO: linker error: undefined reference to `std::__cxx11::basic_string <char, std::char_traits<char>, std::allocator<char> >::_M_replace_cold`...
+        // std::string testStdString3 = "std::string"s + " test "s + "string"s + " concat"s;
+        // BN_LOG("testStdString() test 3: ", testStdString3.c_str());
+    }
+
+    void testChars() {
+        BN_LOG("\n\n# Test chars\n");
+
+        const char* sourceChars = "const char*";
+
+        char targetChars[100] = "some long string hello world";
+        char targetChars2[100] = "some long string hello world";
+        char targetChars3[100] = "some long string hello world";
+
+        std::strcpy(targetChars, sourceChars);
+        int sourceCharsLength = std::strlen(sourceChars);
+        std::strncpy(targetChars2, sourceChars, sourceCharsLength);
+        std::strncpy(targetChars3, sourceChars, sourceCharsLength);
+        targetChars3[sourceCharsLength] = 0;
+
+        char* concatChars = "These " "are " "strings";
+
+        BN_LOG("testChars() test copy 1: ", targetChars);
+        BN_LOG("testChars() test copy 2: ", targetChars2, ", length:", sourceCharsLength);
+        BN_LOG("testChars() test copy 3: ", targetChars3, ", length:", sourceCharsLength);
+
+        BN_LOG("testChars() test concat: ", concatChars);
+
+        delete[] sourceChars;
+    }
+
+
+    void testBnString()
+    {
+        BN_LOG("\n\n# Test bn::string\n");
+        char* sourceChars = "char*";
+
+        bn::string<100> bnStringConstruct = sourceChars;
+
+        bn::string<100> bnStringAssign = "some long string hello world";
+        bnStringAssign.assign(sourceChars);
+
+        BN_LOG("testBnString() test construct: ", bnStringConstruct);
+        BN_LOG("testBnString() test assign: ", bnStringAssign);
     }
 
     void testBnStringView()
@@ -72,6 +120,8 @@ int main()
     BN_LOG("BN_CFG_LOG_MAX_SIZE: ", BN_CFG_LOG_MAX_SIZE);
 
     testStdString();
+    testChars();
+    testBnString();
     testBnStringView();
 
     bn::bg_palettes::set_transparent_color(bn::color(16, 16, 16));
