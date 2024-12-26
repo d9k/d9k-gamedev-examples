@@ -21,8 +21,10 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
 
     ~MovieParserHandler()
     {
-        Movie *r = get_result();
-        delete r;
+        if (destruct_result) {
+            Movie *r = get_result();
+            delete r;
+        }
     }
 
     char *parser_name() override
@@ -33,10 +35,12 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
     bool process_string(const char *str, rapidjson::SizeType length, bool copy) override
     {
         Movie *r = get_result();
-        if (key_is(KEY_ID) == 0)
-        {
-            r->set_id(str);
-            BN_LOG(this->parser_name(), ": check result id: ", *r->id);
+        if (this->get_inside_stack_level() == this->start_level) {
+            if (key_is(KEY_ID))
+            {
+                r->set_id(str);
+                BN_LOG(this->parser_name(), ": check result id: ", r->id);
+            }
         }
 
         return _logTokenString(str, length, copy);

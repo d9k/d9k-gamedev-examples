@@ -6,14 +6,22 @@
 #include "bn_log.h"
 #include "rapidjson/reader.h"
 #include "movies.h"
-#include "parsers_ids.h"
+#include "parsers_types.h"
 
-struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies>
+struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies *>
 {
-    static constexpr const int SUBPARSER_TYPE_MOVIE = 1;
+    MoviesParserHandler() : TAbstractStackableParserHandler<Movies *>()
+    {
+        BN_LOG("Creating ", this->parser_name());
+        this->result = new Movies();
+    }
 
-    MoviesParserHandler() {
-        BN_LOG("Creating MoviesParserHandler, parser name: ", this->parser_name());
+    ~MoviesParserHandler()
+    {
+        if (destruct_result) {
+            Movies *r = get_result();
+            delete r;
+        }
     }
 
     char *parser_name() override
@@ -21,8 +29,9 @@ struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies>
         return "MoviesParserHandler";
     }
 
-    bool process_start_object() override {
-        subparser_type = parsers_ids::MOVIE;
+    bool process_start_object() override
+    {
+        subparser_type_id = parsers_types::MOVIE;
         return _logToken("start object {");
     }
 
@@ -30,6 +39,26 @@ struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies>
     {
         this->set_start_level_from_current();
         return _logToken("start array [");
+    }
+
+    bool subparser_finished(std::any subparser_result) override
+    {
+        Movies *r = get_result();
+
+        switch (subparser_type_id)
+        {
+            case parsers_types::MOVIE: {
+                Movie *m = std::any_cast<Movie *>(subparser_result);
+                BN_LOG("Adding movie with id ", (*m).id, " to movies");
+                r->push_back(m);
+                return false;
+                break;
+        }
+        default:
+            this->error_no_subparser_found();
+            break;
+        }
+        return true;
     }
 
     // bool process_end_array(rapidjson::SizeType elementCount) override

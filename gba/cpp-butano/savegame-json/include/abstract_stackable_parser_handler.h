@@ -3,7 +3,7 @@
 
 #include <any>
 #include <string>
-#include "bn_any.h"
+// #include "bn_any.h"
 #include "bn_log.h"
 #include "bn_string.h"
 #include "rapidjson/reader.h"
@@ -18,11 +18,12 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
 {
     std::any result;
     uint64_t tokens_count = 0;
-    uint32_t subparser_type = 0;
+    int subparser_type_id = 0;
     bool finished = false;
     // KeyString current_key;
     char current_key[KEY_SIZE];
     int start_level = 0;
+    bool destruct_result = true;
 
     JsonInsideStack *shared_json_inside_stack;
 
@@ -42,8 +43,10 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
         return (char *)"AbstractStackableParser";
     }
 
-    virtual void subparser_finished(std::any subparser_result)
+    /** return whether destruct result */
+    virtual bool subparser_finished(std::any subparser_result)
     {
+        return true;
     }
 
     bool String(const char *str, rapidjson::SizeType length, bool copy)
@@ -166,7 +169,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
 
     void process_token_begin()
     {
-        this->subparser_type = 0;
+        this->subparser_type_id = 0;
         this->tokens_count++;
     }
 
@@ -214,17 +217,22 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
         this->set_start_level_from_current();
     }
 
-    void set_start_level_from_current() {
-        this->start_level = this->shared_json_inside_stack->level();
+    inline void set_start_level_from_current() {
+        this->start_level = this->get_inside_stack_level();
+    }
+
+    inline int get_inside_stack_level() {
+        return this->shared_json_inside_stack->level();
     }
 
     inline bool key_is(const char * value) {
+        // BN_LOG(this->parser_name(), ": key_is: ", value, " ", current_key, " ", strcmp(value, current_key) == 0);
         return strcmp(value, current_key) == 0;
     }
 
     void auto_finish_after_close_bracket()
     {
-        if (this->shared_json_inside_stack->level() < this->start_level)
+        if (this->get_inside_stack_level() < this->start_level)
         {
             finished = true;
         }
@@ -238,6 +246,14 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
             "): ",
             this->shared_json_inside_stack->debug_string()
         );
+    }
+
+    inline void error_no_subparser_found() {
+        bn::string<64> errorMsg = "No subparser found for type id ";
+        errorMsg += this->parser_name();
+        errorMsg += ": ";
+        errorMsg += bn::to_string<16>(subparser_type_id);
+        BN_ASSERT(false, errorMsg);
     }
 };
 

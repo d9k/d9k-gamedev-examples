@@ -5,6 +5,7 @@
 #include "movies.h"
 
 class SaveGame {
+public:
     Movies movies = {};
 };
 

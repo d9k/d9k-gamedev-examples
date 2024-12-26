@@ -97,17 +97,17 @@ public:
                 return false;
             }
             // BN_LOG("ParsersStack: parse_next_token(): finished: 600");
-            this->_current_parser_handler->subparser_finished(subparser->result);
+            subparser->destruct_result = this->_current_parser_handler->subparser_finished(subparser->result);
             // BN_LOG("ParsersStack: parse_next_token(): finished: 700");
             delete subparser;
             // BN_LOG("ParsersStack: parse_next_token(): finished: 800");
             return true;
         }
 
-        int subparser_id = this->_current_parser_handler->subparser_type;
+        int subparser_id = this->_current_parser_handler->subparser_type_id;
 
         if (subparser_id) {
-            AbstractStackableParserHandler *subparser = create_parser_handler_from_id(subparser_id);
+            AbstractStackableParserHandler *subparser = create_parser_handler_from_type_id(subparser_id);
             this->add(subparser);
         }
 

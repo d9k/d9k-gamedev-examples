@@ -106,17 +106,24 @@ void parseBigJsonMovies() {
         #include "data_palestinian_movies_cut_json.h"
     ;
 
-    AbstractStackableParserHandler *root_handler;
+    SaveGameParserHandler *root_handler;
     // root_handler = (AbstractStackableParserHandler *)new AbstractStackableParserHandler();
-    root_handler = (AbstractStackableParserHandler *)new SaveGameParserHandler();
+    root_handler = new SaveGameParserHandler();
     rapidjson::Reader reader;
     rapidjson::StringStream ssBig(palestinian_movies_cut_json);
 
-    ParsersStack *parsersStack = new ParsersStack(root_handler, &reader, &ssBig);
+    ParsersStack *parsersStack = new ParsersStack((AbstractStackableParserHandler *)root_handler, &reader, &ssBig);
 
     while(parsersStack->parse_next_token()) {}
 
     // reader2.Parse(ssBig, handler2);
+
+    SaveGame * saveGame = root_handler->get_result();
+
+    for (int i=0; i < saveGame->movies.size(); i++){
+        Movie* movie = saveGame->movies[i];
+        BN_LOG("film ", i, ". ", movie->id);
+    }
 
     delete parsersStack;
     delete root_handler;
