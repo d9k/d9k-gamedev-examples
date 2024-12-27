@@ -19,14 +19,14 @@
 #include "common_info.h"
 #include "common_variable_8x16_sprite_font.h"
 #include "rapidjson/reader.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
 #include "demo_parse_handler.h"
+#include "log_long_chars.h"
 #include "movie.h"
 #include "parsers_stack.h"
 #include "savegame_parser.h"
-
-BN_DATA_EWRAM char *palestinian_movies_cut_json;
-
-BN_DATA_EWRAM char palestinian_movies_cut_json_begin[255];
+#include "savegame_serializer.h"
 
 using namespace std::string_literals;
 
@@ -38,6 +38,12 @@ namespace
         int reads_count = 0;
     };
 }
+
+BN_DATA_EWRAM SaveGame saveGame;
+
+BN_DATA_EWRAM char *palestinian_movies_cut_json;
+
+BN_DATA_EWRAM char palestinian_movies_cut_json_begin[255];
 
 // char* substr(char* arr, int begin, int len)
 // {
@@ -125,11 +131,33 @@ void parseBigJsonMovies()
 
     // reader2.Parse(ssBig, handler2);
 
-    SaveGame *saveGame = root_handler->get_result();
+    // SaveGame *saveGame = root_handler->get_result();
+    saveGame = *root_handler->get_result();
 
-    for (int i = 0; i < saveGame->movies.size(); i++)
+    delete parsersStack;
+    delete root_handler;
+    delete[] palestinian_movies_cut_json;
+}
+
+void debugLogSaveGame() {
+    BN_LOG("\n\n# Debug log savegame\n");
+
+    rapidjson::StringBuffer sbuf;
+    rapidjson::Writer<rapidjson::StringBuffer> jsonWriter(sbuf);
+
+    serialize_savegame(&jsonWriter, &saveGame);
+
+    // const char* json = chars_copy(sbuf.GetString());
+
+    log_long_chars(sbuf.GetString(), 200);
+
+    // delete json;
+
+    BN_LOG();
+
+    for (int i = 0; i < saveGame.movies.size(); i++)
     {
-        Movie *movie = saveGame->movies[i];
+        Movie *movie = saveGame.movies[i];
         char log_string[256];
         std::sprintf(
             log_string,
@@ -141,9 +169,11 @@ void parseBigJsonMovies()
         // BN_LOG("movie ", i, ". ", movie->id);
     }
 
-    for (int i = 0; i < saveGame->movies.size(); i++)
+    BN_LOG();
+
+    for (int i = 0; i < saveGame.movies.size(); i++)
     {
-        Movie *movie = saveGame->movies[i];
+        Movie *movie = saveGame.movies[i];
         char log_string[256];
         std::sprintf(
             log_string,
@@ -156,10 +186,6 @@ void parseBigJsonMovies()
         BN_LOG(log_string);
         // BN_LOG("movie ", i, ". ", movie->id);
     }
-
-    delete parsersStack;
-    delete root_handler;
-    delete[] palestinian_movies_cut_json;
 }
 
 int main()
@@ -190,6 +216,7 @@ int main()
     parseSmallJson();
     parseBigJson();
     parseBigJsonMovies();
+    debugLogSaveGame();
 
     // int sram_size = bn::hw::sram::size();
     // BN_LOG("SRAM size:", sram_size);
