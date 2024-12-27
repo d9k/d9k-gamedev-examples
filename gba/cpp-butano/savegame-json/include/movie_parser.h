@@ -34,16 +34,21 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
         return "MovieParserHandler";
     }
 
-    void process_start_object() override
+    inline bool is_object() override
     {
-        if (tokens_count == 1)
-        {
-            set_start_level_from_current();
-            _logToken("start object {, update start level");
-            return;
-        }
-        _logToken("start object {");
+        return true;
     }
+
+    // void process_start_object() override
+    // {
+    //     if (tokens_count == 1)
+    //     {
+    //         set_start_level_from_current();
+    //         _logToken("start object {, update start level");
+    //         return;
+    //     }
+    //     _logToken("start object {");
+    // }
 
     void process_uint(int u) override
     {

@@ -37,6 +37,11 @@ struct SaveGameParserHandler : public TAbstractStackableParserHandler<SaveGame *
         return "SaveGameParserHandler";
     }
 
+    inline bool is_object() override
+    {
+        return true;
+    }
+
     void process_key(const char *str, rapidjson::SizeType length, bool copy) override
     {
         // if (current_key == KEY_MOVIES) {
@@ -51,17 +56,6 @@ struct SaveGameParserHandler : public TAbstractStackableParserHandler<SaveGame *
             current_key,
             ", subparser_type:",
             subparser_type_id);
-    }
-
-    virtual void process_start_object()
-    {
-        if (tokens_count == 1)
-        {
-            set_start_level_from_current();
-            _logToken("start object {, update start level");
-            return;
-        }
-        _logToken("start object {");
     }
 
     bool subparser_finished_returns_if_destruct_result(std::any subparser_result) override

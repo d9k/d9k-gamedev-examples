@@ -29,21 +29,27 @@ struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies *>
         return "MoviesParserHandler";
     }
 
+    inline bool is_array() override
+    {
+        return true;
+    }
+
     void process_start_object() override
     {
         subparser_type_id = parsers_types::MOVIE;
         _logToken("start object {");
     }
 
-    void process_start_array() override
-    {
-        if (tokens_count == 1)
-        {
-            set_start_level_from_current();
-            _logToken("start array [, update start level");
-        }
-        _logToken("start array [");
-    }
+    // void process_start_array() override
+    // {
+    //     if (tokens_count == 1)
+    //     {
+    //         set_start_level_from_current();
+    //         _logToken("start array [, update start level");
+    //         return;
+    //     }
+    //     _logToken("start array [");
+    // }
 
     bool subparser_finished_returns_if_destruct_result(std::any subparser_result) override
     {

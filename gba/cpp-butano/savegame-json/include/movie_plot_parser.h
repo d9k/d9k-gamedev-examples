@@ -16,6 +16,15 @@ struct MoviePlotParser : public TAbstractStackableParserHandler<char *>
         BN_LOG(this->parser_name(), ": ", 200);
     }
 
+    ~MoviePlotParser()
+    {
+        if (destruct_result)
+        {
+            char *t = get_result();
+            delete t;
+        }
+    }
+
     inline char *parser_name() override
     {
         return "MoviePlotParser";
@@ -40,13 +49,9 @@ struct MoviePlotParser : public TAbstractStackableParserHandler<char *>
         return _logTokenString(str, length, copy);
     }
 
-    ~MoviePlotParser()
+    inline bool is_object() override
     {
-        if (destruct_result)
-        {
-            char *t = get_result();
-            delete t;
-        }
+        return true;
     }
 };
 
