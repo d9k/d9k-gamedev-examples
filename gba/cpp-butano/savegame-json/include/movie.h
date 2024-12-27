@@ -19,11 +19,13 @@ public:
     // bn::string_view *title;
     char* id;
     char* title;
+    char* plotText;
     int year = 0;
 
     Movie() {
         id = chars_copy("[no id]");
         title = chars_copy("[no title]");
+        plotText = chars_copy("[no plot text]");
         // id = new bn::string_view("[no id]");
         // title = new bn::string_view("[no title]");
         BN_LOG("### MOVIE INIT ###", id, ",", title, ", ", *id, ", ", *title);
@@ -48,6 +50,13 @@ public:
         // id = new bn::string_view(v);
         title = chars_copy(v);
     }
+
+    void set_plot_text(const char* v) {
+        delete plotText;
+        // id = new bn::string_view(v);
+        plotText = chars_copy(v);
+    }
+
 // public:
 //     Movie()
 //     {

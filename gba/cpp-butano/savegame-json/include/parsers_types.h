@@ -7,6 +7,7 @@ namespace parsers_types
     constexpr const int MOVIES = 200;
     constexpr const int MOVIE = 300;
     constexpr const int MOVIE_TITLETEXT_DEPRECATED = 400;
+    constexpr const int MOVIE_PLOT = 500;
 }
 
 #endif // PARSERS_TYPES_H

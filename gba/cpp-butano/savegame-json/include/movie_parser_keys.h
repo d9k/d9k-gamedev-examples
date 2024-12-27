@@ -8,6 +8,7 @@ namespace movie_parser_keys
     static constexpr const char* KEY_TITLE_TEXT_DEPRECATED = "titleText";
     static constexpr const char* KEY_RELEASE_DATE_DEPRECATED = "releaseDate";
     static constexpr const char* KEY_YEAR = "year";
+    static constexpr const char* KEY_PLOT_TEXT = "plotText";
 }
 
 #endif // MOVIE_PARSER_KEYS_H

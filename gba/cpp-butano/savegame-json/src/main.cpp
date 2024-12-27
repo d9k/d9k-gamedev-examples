@@ -133,6 +133,20 @@ void parseBigJsonMovies()
         char log_string[256];
         std::sprintf(
             log_string,
+            "movies[%2d].plotText: %s",
+            i,
+            movie->plotText
+        );
+        BN_LOG(log_string);
+        // BN_LOG("movie ", i, ". ", movie->id);
+    }
+
+    for (int i = 0; i < saveGame->movies.size(); i++)
+    {
+        Movie *movie = saveGame->movies[i];
+        char log_string[256];
+        std::sprintf(
+            log_string,
             "(id: %10s) movies[%2d]: (%4d) %s",
             movie->id,
             i,

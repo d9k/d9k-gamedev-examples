@@ -46,7 +46,8 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
 
     bool process_uint(int u) override
     {
-        if (key_is(KEY_YEAR)) {
+        if (key_is(KEY_YEAR))
+        {
             Movie *r = get_result();
             r->year = u;
         }
@@ -75,10 +76,17 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
             this->subparser_type_id = parsers_types::MOVIE_TITLETEXT_DEPRECATED;
         }
 
+        if (key_is(KEY_PLOT_TEXT))
+        {
+            this->subparser_type_id = parsers_types::MOVIE_PLOT;
+        }
+
         BN_LOG(
             parser_name(),
             ": custom process key: ",
-            current_key);
+            current_key,
+            ", subparser type id:",
+            this->subparser_type_id);
         return true;
     }
 
@@ -88,12 +96,21 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
 
         switch (subparser_type_id)
         {
-            case parsers_types::MOVIE_TITLETEXT_DEPRECATED:  {
-                char *title = std::any_cast<char *>(subparser_result);
-                BN_LOG("Adding title ", title, " to movie object");
-                m->set_title(title);
-                return false;
-                break;
+        case parsers_types::MOVIE_TITLETEXT_DEPRECATED:
+        {
+            char *title = std::any_cast<char *>(subparser_result);
+            BN_LOG("Adding title ", title, " to movie object");
+            m->set_title(title);
+            return true;
+            break;
+        }
+        case parsers_types::MOVIE_PLOT:
+        {
+            char *plotText = std::any_cast<char *>(subparser_result);
+            BN_LOG("Adding plot text ", plotText, " to movie object");
+            m->set_plot_text(plotText);
+            return true;
+            break;
         }
         default:
             this->error_no_subparser_found();
