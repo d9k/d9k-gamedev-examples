@@ -41,6 +41,12 @@ public:
         // id = new bn::string_view(v);
         id = chars_copy(v);
     }
+
+    void set_title(const char* v) {
+        delete title;
+        // id = new bn::string_view(v);
+        title = chars_copy(v);
+    }
 // public:
 //     Movie()
 //     {

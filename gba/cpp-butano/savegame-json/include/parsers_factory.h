@@ -8,6 +8,7 @@
 #include "savegame_parser.h"
 #include "movie_parser.h"
 #include "movies_parser.h"
+#include "movie_title_text_parser_deprecated.h"
 
 using namespace parsers_types;
 
@@ -24,6 +25,10 @@ AbstractStackableParserHandler* create_parser_handler_from_type_id(int parserTyp
     }
     case MOVIES: {
         return (AbstractStackableParserHandler*) new MoviesParserHandler();
+        break;
+    }
+    case MOVIE_TITLETEXT_DEPRECATED: {
+        return (AbstractStackableParserHandler*) new MovieTitleTextParserDeprecated();
         break;
     }
     default:

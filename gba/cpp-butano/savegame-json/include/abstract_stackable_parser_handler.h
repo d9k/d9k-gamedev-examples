@@ -24,6 +24,9 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     char current_key[KEY_SIZE];
     int start_level = 0;
     bool destruct_result = true;
+    // bool repeat_token_to_subparser = false;
+    /** if this parser read before first token of subparser instead of subparser (begin of array or begin of object) */
+    bool subparser_inc_level = false;
 
     JsonInsideStack *shared_json_inside_stack;
 
@@ -38,9 +41,9 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
         return std::any_cast<T>(result);
     }
 
-    virtual char *parser_name()
+    virtual inline char *parser_name()
     {
-        return (char *)"AbstractStackableParser";
+        return "AbstractStackableParser";
     }
 
     /** return whether destruct result */
@@ -105,6 +108,10 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
         this->shared_json_inside_stack->add(JsonInsideStack::INSIDE_OBJECT);
         this->log_inside();
         bool result = process_start_object();
+        if (this->subparser_type_id) {
+            subparser_inc_level = true;
+        }
+        return result;
         process_token_end();
         return result;
     }
@@ -139,14 +146,20 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
 
     bool StartArray()
     {
+        process_token_begin();
         this->shared_json_inside_stack->add(JsonInsideStack::INSIDE_ARRAY);
         this->log_inside();
         BN_LOG("## inside: ", this->shared_json_inside_stack->debug_string());
-        return this->process_start_array();
+        bool result = this->process_start_array();
+        if (this->subparser_type_id) {
+            subparser_inc_level = true;
+        }
+        return result;
     }
 
     bool EndArray(rapidjson::SizeType elementCount)
     {
+        process_token_begin();
         this->shared_json_inside_stack->pop();
         this->log_inside();
         // BN_LOG(this->shared_json_inside_stack->debug_string());
@@ -171,6 +184,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     {
         this->subparser_type_id = 0;
         this->tokens_count++;
+        this->subparser_inc_level = false;
     }
 
     void process_token_end()
@@ -219,6 +233,9 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
 
     inline void set_start_level_from_current() {
         this->start_level = this->get_inside_stack_level();
+        // if (inc_level) {
+        //     this->start_level++;
+        // }
     }
 
     inline int get_inside_stack_level() {

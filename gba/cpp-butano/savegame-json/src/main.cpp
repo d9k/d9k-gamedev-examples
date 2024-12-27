@@ -122,7 +122,10 @@ void parseBigJsonMovies() {
 
     for (int i=0; i < saveGame->movies.size(); i++){
         Movie* movie = saveGame->movies[i];
-        BN_LOG("film ", i, ". ", movie->id);
+        char log_string[256];
+        std::sprintf(log_string, "(id: %10s) movies[%2d]: %s", movie->id, i, movie->title);
+        BN_LOG(log_string);
+        // BN_LOG("movie ", i, ". ", movie->id);
     }
 
     delete parsersStack;

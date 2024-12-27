@@ -7,8 +7,11 @@
 #include "bn_vector.h"
 #include "abstract_stackable_parser_handler.h"
 #include "rapidjson/reader.h"
+#include "rapidjson/encodings.h"
 #include "fake_std_throw_length_error.h"
 #include "parsers_factory.h"
+
+typedef typename rapidjson::UTF8<>::Ch Ch;
 
 /**
  * For iterative reading
@@ -35,7 +38,7 @@ public:
         _input_stream = input_stream;
     }
 
-    void add(AbstractStackableParserHandler *new_parser_handler)
+    void add(AbstractStackableParserHandler *new_parser_handler, bool subparser_inc_level = false)
     {
         BN_ASSERT(new_parser_handler != NULL, "ParsersStack: add(): new_parser_handler NULL");
 
@@ -80,6 +83,8 @@ public:
 
         // BN_LOG("ParsersStack: parse next token: 170: ", this->_current_parser_handler->last_parse_event);
 
+        const Ch *input_stream_current_pos = _input_stream->src_;
+
         this->_reader->IterativeParseNext<rapidjson::kParseDefaultFlags>(
             *(this->_input_stream),
             *(this->_current_parser_handler));
@@ -87,12 +92,14 @@ public:
         // BN_LOG("ParsersStack: parse next token: 200");
         // BN_LOG("ParsersStack: parse next token: 250: last parse event:", this->_current_parser_handler->last_parse_event);
 
-        if (this->_current_parser_handler->finished) {
+        if (this->_current_parser_handler->finished)
+        {
             AbstractStackableParserHandler *subparser = this->_current_parser_handler;
             // BN_LOG("ParsersStack: parse_next_token(): finished: 300");
             bool pop_result = this->pop();
             // BN_LOG("ParsersStack: parse_next_token(): finished: 400");
-            if (pop_result == false) {
+            if (pop_result == false)
+            {
                 // BN_LOG("ParsersStack: parse_next_token(): finished: 500");
                 return false;
             }
@@ -106,9 +113,11 @@ public:
 
         int subparser_id = this->_current_parser_handler->subparser_type_id;
 
-        if (subparser_id) {
+        if (subparser_id)
+        {
             AbstractStackableParserHandler *subparser = create_parser_handler_from_type_id(subparser_id);
-            this->add(subparser);
+            bool subparser_inc_level = this->_current_parser_handler->subparser_inc_level;
+            this->add(subparser, subparser_inc_level);
         }
 
         return true;

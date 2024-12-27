@@ -24,7 +24,7 @@ struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies *>
         }
     }
 
-    char *parser_name() override
+    inline char *parser_name() override
     {
         return "MoviesParserHandler";
     }
@@ -37,7 +37,11 @@ struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies *>
 
     bool process_start_array() override
     {
-        this->set_start_level_from_current();
+        if (tokens_count == 1)
+        {
+            set_start_level_from_current();
+            return _logToken("start array [, update start level");
+        }
         return _logToken("start array [");
     }
 
@@ -60,14 +64,6 @@ struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies *>
         }
         return true;
     }
-
-    // bool process_end_array(rapidjson::SizeType elementCount) override
-    // {
-    //     this->finished = true;
-    //     char objectText[32];
-    //     sprintf(objectText, "] end array with %d elements", elementCount);
-    //     return _logToken(objectText);
-    // }
 };
 
 #endif // MOVIES_PARSER_H

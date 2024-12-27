@@ -30,7 +30,7 @@ struct SaveGameParserHandler : public TAbstractStackableParserHandler<SaveGame*>
         }
     }
 
-    char* parser_name() override {
+    inline char* parser_name() override {
         return "SaveGameParserHandler";
     }
 
@@ -52,7 +52,11 @@ struct SaveGameParserHandler : public TAbstractStackableParserHandler<SaveGame*>
 
     virtual bool process_start_object()
     {
-        this->set_start_level_from_current();
+        if (tokens_count == 1)
+        {
+            set_start_level_from_current();
+            return _logToken("start object {, update start level");
+        }
         return _logToken("start object {");
     }
 
