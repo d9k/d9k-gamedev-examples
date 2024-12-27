@@ -1,4 +1,6 @@
 #define BN_CFG_LOG_MAX_SIZE 1024
+// #define _USE_MATH_DEFINES
+#define M_PI		3.14159265358979323846
 
 /*
  * Copyright (c) 2020-2024 Gustavo Valiente gustavo.valiente@protonmail.com
@@ -17,6 +19,7 @@
 #include "bn_log.h"
 #include "bn_string.h"
 #include "fake_std_throw_length_error.h"
+// #include <math.h>
 
 #include "common_variable_8x16_sprite_font.h"
 
@@ -27,25 +30,25 @@ namespace
     constexpr bn::fixed text_y_inc = 14;
     constexpr bn::fixed text_y_limit = (bn::display::height() / 2) - text_y_inc;
 
-    void testStdString()
+    void test_std_string()
     {
         BN_LOG("\n\n# Test std::string\n");
 
-        std::string testStdString = "std::string";
+        std::string test_std_string = "std::string";
         // char *testConcat = "test " + "string" + " concat";
-        BN_LOG("testStdString() test1 : ", testStdString.c_str());
+        BN_LOG("test_std_string() test1 : ", test_std_string.c_str());
 
         // TODO: linker error: undefined reference to `std::__cxx11::basic_string <char, std::char_traits<char>, std::allocator<char> >::_M_replace_cold`...
-        testStdString.assign("another std::string");
-        BN_LOG("testStdString() test2: ", testStdString.c_str());
+        // test_std_string.assign("another std::string");
+        // BN_LOG("test_std_string() test2: ", test_std_string.c_str());
 
         // Fixed with "fake_std_throw_length_error.h": concatenation fail with error undefined reference to `std::__throw_length_error(char const*)'
         // TODO: linker error: undefined reference to `std::__cxx11::basic_string <char, std::char_traits<char>, std::allocator<char> >::_M_replace_cold`...
         // std::string testStdString3 = "std::string"s + " test "s + "string"s + " concat"s;
-        // BN_LOG("testStdString() test 3: ", testStdString3.c_str());
+        // BN_LOG("test_std_string() test 3: ", testStdString3.c_str());
     }
 
-    void testChars() {
+    void test_chars() {
         BN_LOG("\n\n# Test chars\n");
 
         const char* sourceChars = "const char*";
@@ -63,17 +66,17 @@ namespace
 
         char* concatChars = "These " "are " "strings";
 
-        BN_LOG("testChars() test copy 1: strcpy: ", targetChars);
-        BN_LOG("testChars() test copy 2: strncpy: ", targetChars2, ", length:", sourceCharsLength);
-        BN_LOG("testChars() test copy 3: strncpy with manual 0 end: ", targetChars3, ", length:", sourceCharsLength);
+        BN_LOG("test_chars() test copy 1: strcpy: ", targetChars);
+        BN_LOG("test_chars() test copy 2: strncpy: ", targetChars2, ", length:", sourceCharsLength);
+        BN_LOG("test_chars() test copy 3: strncpy with manual 0 end: ", targetChars3, ", length:", sourceCharsLength);
 
-        BN_LOG("testChars() test concat: ", concatChars);
+        BN_LOG("test_chars() test concat: ", concatChars);
 
         delete[] sourceChars;
     }
 
 
-    void testBnString()
+    void test_bn_string()
     {
         BN_LOG("\n\n# Test bn::string\n");
         char* sourceChars = "char*";
@@ -83,20 +86,29 @@ namespace
         bn::string<100> bnStringAssign = "some long string hello world";
         bnStringAssign.assign(sourceChars);
 
-        BN_LOG("testBnString() test construct: ", bnStringConstruct);
-        BN_LOG("testBnString() test assign: ", bnStringAssign);
+        BN_LOG("test_bn_string() test construct: ", bnStringConstruct);
+        BN_LOG("test_bn_string() test assign: ", bnStringAssign);
     }
 
-    void testBnStringView()
+    void test_bn_string_view()
     {
         BN_LOG("\n\n# Test bn::string_view\n");
         bn::string_view *v = new bn::string_view("bn::string_view test");
-        BN_LOG("testBnStringView() 1: ", *v, ", size:", v->size());
+        BN_LOG("test_bn_string_view() 1: ", *v, ", size:", v->size());
         delete v;
 
         v = new bn::string_view("another bn::string_view test");
-        BN_LOG("testBnStringView() 2: ", *v, ", size:", v->size());
+        BN_LOG("test_bn_string_view() 2: ", *v, ", size:", v->size());
         delete v;
+    }
+
+    void test_sprintf()
+    {
+        BN_LOG("\n\n# Test sprintf\n");
+
+        char buf[256];
+        sprintf(buf, "Hello, %s! %d %.5f", "world", 123456, M_PI);
+        BN_LOG("test_sprintf(): ", buf);
     }
 
     void text_scene()
@@ -114,7 +126,7 @@ namespace
         }
     }
 
-    void testAssertWillBreakRun() {
+    void test_assert_will_break_run() {
         BN_LOG("\n\n# Test assert. This test will break run, comment it out!\n");
         int num = 123456;
         bn::string<64> errorMsg = "Test error message with number ";
@@ -129,11 +141,12 @@ int main()
 
     BN_LOG("BN_CFG_LOG_MAX_SIZE: ", BN_CFG_LOG_MAX_SIZE);
 
-    testStdString();
-    testChars();
-    testBnString();
-    testBnStringView();
-    // testAssertWillBreakRun();
+    test_std_string();
+    test_chars();
+    test_bn_string();
+    test_bn_string_view();
+    test_sprintf();
+    // test_assert_will_break_run();
 
     bn::bg_palettes::set_transparent_color(bn::color(16, 16, 16));
 
