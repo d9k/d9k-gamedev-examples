@@ -44,13 +44,22 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
         return _logToken("start object {");
     }
 
+    bool process_uint(int u) override
+    {
+        if (key_is(KEY_YEAR)) {
+            Movie *r = get_result();
+            r->year = u;
+        }
+        return _logToken(u, "int");
+    }
+
     bool process_string(const char *str, rapidjson::SizeType length, bool copy) override
     {
-        Movie *r = get_result();
         if (this->get_inside_stack_level() == this->start_level)
         {
             if (key_is(KEY_ID))
             {
+                Movie *r = get_result();
                 r->set_id(str);
                 BN_LOG(this->parser_name(), ": check result id: ", r->id);
             }

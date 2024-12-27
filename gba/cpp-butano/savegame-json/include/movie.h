@@ -19,6 +19,7 @@ public:
     // bn::string_view *title;
     char* id;
     char* title;
+    int year = 0;
 
     Movie() {
         id = chars_copy("[no id]");

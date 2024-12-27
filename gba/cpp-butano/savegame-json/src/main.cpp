@@ -48,7 +48,8 @@ namespace
 //     return res;
 // }
 
-void testStdString() {
+void testStdString()
+{
     // concatenation fail with error undefined reference to `std::__throw_length_error(char const*)'
     // std::string testStdString = "std::string"s + " test "s + "string"s + " concat"s;
     std::string testStdString = "std::string";
@@ -60,7 +61,8 @@ void testStdString() {
     // BN_LOG("testStdString (2): ", testStdString.c_str());
 }
 
-void testBnStringView() {
+void testBnStringView()
+{
     bn::string_view *v = new bn::string_view("bn::string_view test");
 
     BN_LOG("string view test:", v, "size:", v->size());
@@ -68,7 +70,8 @@ void testBnStringView() {
     delete v;
 }
 
-void parseSmallJson() {
+void parseSmallJson()
+{
     BN_LOG("\n\n# Parsing small JSON\n");
 
     const char json[] = " { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, -3, 4] } ";
@@ -79,12 +82,13 @@ void parseSmallJson() {
     reader1.Parse(ss1, handler1);
 }
 
-void parseBigJson() {
+void parseBigJson()
+{
     BN_LOG("\n\n# Parsing big JSON\n");
 
-    palestinian_movies_cut_json = (char*)
-        #include "data_palestinian_movies_cut_json.h"
-    ;
+    palestinian_movies_cut_json = (char *)
+#include "data_palestinian_movies_cut_json.h"
+        ;
 
     int FIRST_CHARS = 200;
 
@@ -99,12 +103,13 @@ void parseBigJson() {
     delete[] palestinian_movies_cut_json;
 }
 
-void parseBigJsonMovies() {
+void parseBigJsonMovies()
+{
     BN_LOG("\n\n# Parsing big JSON movies\n");
 
-    palestinian_movies_cut_json = (char*)
-        #include "data_palestinian_movies_cut_json.h"
-    ;
+    palestinian_movies_cut_json = (char *)
+#include "data_palestinian_movies_cut_json.h"
+        ;
 
     SaveGameParserHandler *root_handler;
     // root_handler = (AbstractStackableParserHandler *)new AbstractStackableParserHandler();
@@ -114,16 +119,26 @@ void parseBigJsonMovies() {
 
     ParsersStack *parsersStack = new ParsersStack((AbstractStackableParserHandler *)root_handler, &reader, &ssBig);
 
-    while(parsersStack->parse_next_token()) {}
+    while (parsersStack->parse_next_token())
+    {
+    }
 
     // reader2.Parse(ssBig, handler2);
 
-    SaveGame * saveGame = root_handler->get_result();
+    SaveGame *saveGame = root_handler->get_result();
 
-    for (int i=0; i < saveGame->movies.size(); i++){
-        Movie* movie = saveGame->movies[i];
+    for (int i = 0; i < saveGame->movies.size(); i++)
+    {
+        Movie *movie = saveGame->movies[i];
         char log_string[256];
-        std::sprintf(log_string, "(id: %10s) movies[%2d]: %s", movie->id, i, movie->title);
+        std::sprintf(
+            log_string,
+            "(id: %10s) movies[%2d]: (%4d) %s",
+            movie->id,
+            i,
+            movie->year,
+            movie->title
+        );
         BN_LOG(log_string);
         // BN_LOG("movie ", i, ". ", movie->id);
     }
@@ -132,7 +147,6 @@ void parseBigJsonMovies() {
     delete root_handler;
     delete[] palestinian_movies_cut_json;
 }
-
 
 int main()
 {
@@ -150,13 +164,12 @@ int main()
 
     numbers = new int[c];
 
-    for (int i = 0; i < c; i++) {
-        numbers[i] = i*i;
+    for (int i = 0; i < c; i++)
+    {
+        numbers[i] = i * i;
     }
 
     BN_LOG("numbers[7]: ", numbers[7]);
-
-
 
     BN_LOG("BN_CFG_LOG_MAX_SIZE: ", BN_CFG_LOG_MAX_SIZE);
 
@@ -182,7 +195,7 @@ int main()
 
     bn::string<32> sram_reads_count;
 
-    if(cart_sram_data.format_tag == expected_format_tag)
+    if (cart_sram_data.format_tag == expected_format_tag)
     {
         ++cart_sram_data.reads_count;
 
@@ -213,7 +226,7 @@ int main()
     common::info info("SRAM", info_text_lines, text_generator);
     info.set_show_always(true);
 
-    while(true)
+    while (true)
     {
         info.update();
         bn::core::update();

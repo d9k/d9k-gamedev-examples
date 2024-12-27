@@ -73,13 +73,13 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     bool Int(int i)
     {
         process_token_begin();
-        return _logToken(i, "int");
+        return process_int(i);
     }
 
     bool Uint(unsigned u)
     {
         process_token_begin();
-        return _logToken(u, "uint");
+        return process_uint(u);
     }
 
     bool Int64(int64_t i)
@@ -112,7 +112,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
             subparser_inc_level = true;
         }
         return result;
-        process_token_end();
+        // process_token_end();
         return result;
     }
 
@@ -140,7 +140,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
         // current_key = bn::string<KEY_SIZE>(str, length);
         // current_key = str;
         bool result = process_key(str, length, copy);
-        process_token_end();
+        // process_token_end();
         return result;
     }
 
@@ -187,9 +187,19 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
         this->subparser_inc_level = false;
     }
 
-    void process_token_end()
+    virtual bool process_int(int i)
     {
+        return _logToken(i, "int");
     }
+
+
+    virtual bool process_uint(int u)
+    {
+        return _logToken(u, "uint");
+    }
+    // void process_token_end()
+    // {
+    // }
 
     virtual bool process_start_array()
     {
