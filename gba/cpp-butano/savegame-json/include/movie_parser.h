@@ -17,7 +17,7 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
     MovieParserHandler() : TAbstractStackableParserHandler<Movie *>()
     {
         BN_LOG("Creating ", this->parser_name());
-        this->result = new Movie();
+        this->parse_result = new Movie();
     }
 
     ~MovieParserHandler()
@@ -34,17 +34,18 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
         return "MovieParserHandler";
     }
 
-    virtual bool process_start_object()
+    void process_start_object() override
     {
         if (tokens_count == 1)
         {
             set_start_level_from_current();
-            return _logToken("start object {, update start level");
+            _logToken("start object {, update start level");
+            return;
         }
-        return _logToken("start object {");
+        _logToken("start object {");
     }
 
-    bool process_uint(int u) override
+    void process_uint(int u) override
     {
         if (key_is(KEY_YEAR))
         {
@@ -54,9 +55,9 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
         return _logToken(u, "int");
     }
 
-    bool process_string(const char *str, rapidjson::SizeType length, bool copy) override
+    void process_string(const char *str, rapidjson::SizeType length, bool copy) override
     {
-        if (this->get_inside_stack_level() == this->start_level)
+        if (this->get_inside_json_stack_level() == this->start_level)
         {
             if (key_is(KEY_ID))
             {
@@ -66,10 +67,11 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
             }
         }
 
-        return _logTokenString(str, length, copy);
+        _logTokenString(str, length, copy);
+        return;
     }
 
-    bool process_key(const char *str, rapidjson::SizeType length, bool copy) override
+    void process_key(const char *str, rapidjson::SizeType length, bool copy) override
     {
         if (key_is(KEY_TITLE_TEXT_DEPRECATED))
         {
@@ -87,7 +89,6 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
             current_key,
             ", subparser type id:",
             this->subparser_type_id);
-        return true;
     }
 
     bool subparser_finished(std::any subparser_result) override

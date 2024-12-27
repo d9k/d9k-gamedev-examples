@@ -15,28 +15,33 @@
 
 using namespace savegame_parser_keys;
 
-struct SaveGameParserHandler : public TAbstractStackableParserHandler<SaveGame*>
+struct SaveGameParserHandler : public TAbstractStackableParserHandler<SaveGame *>
 {
-    SaveGameParserHandler() {
+    SaveGameParserHandler()
+    {
         BN_LOG("Creating SaveGameParserHandler, parser name: ", this->parser_name());
-        this->result = new SaveGame();
+        this->parse_result = new SaveGame();
     }
 
     ~SaveGameParserHandler()
     {
-        if (destruct_result) {
+        if (destruct_result)
+        {
             SaveGame *r = get_result();
             delete r;
         }
     }
 
-    inline char* parser_name() override {
+    inline char *parser_name() override
+    {
         return "SaveGameParserHandler";
     }
 
-    bool process_key(const char *str, rapidjson::SizeType length, bool copy) override {
+    void process_key(const char *str, rapidjson::SizeType length, bool copy) override
+    {
         // if (current_key == KEY_MOVIES) {
-        if (key_is(KEY_MOVIES)) {
+        if (key_is(KEY_MOVIES))
+        {
             subparser_type_id = parsers_types::MOVIES;
         }
 
@@ -45,19 +50,18 @@ struct SaveGameParserHandler : public TAbstractStackableParserHandler<SaveGame*>
             ": custom process key: ",
             current_key,
             ", subparser_type:",
-            subparser_type_id
-        );
-        return true;
+            subparser_type_id);
     }
 
-    virtual bool process_start_object()
+    virtual void process_start_object()
     {
         if (tokens_count == 1)
         {
             set_start_level_from_current();
-            return _logToken("start object {, update start level");
+            _logToken("start object {, update start level");
+            return;
         }
-        return _logToken("start object {");
+        _logToken("start object {");
     }
 
     bool subparser_finished(std::any subparser_result) override
@@ -66,12 +70,13 @@ struct SaveGameParserHandler : public TAbstractStackableParserHandler<SaveGame*>
 
         switch (subparser_type_id)
         {
-            case parsers_types::MOVIES: {
-                Movies *m = std::any_cast<Movies *>(subparser_result);
-                BN_LOG("Adding movies with size ", m->size(), " to save game object");
-                r->movies = *m;
-                return false;
-                break;
+        case parsers_types::MOVIES:
+        {
+            Movies *m = std::any_cast<Movies *>(subparser_result);
+            BN_LOG("Adding movies with size ", m->size(), " to save game object");
+            r->movies = *m;
+            return false;
+            break;
         }
         default:
             this->error_no_subparser_found();
@@ -80,6 +85,5 @@ struct SaveGameParserHandler : public TAbstractStackableParserHandler<SaveGame*>
         return true;
     }
 };
-
 
 #endif // SAVEGAME_PARSER_H

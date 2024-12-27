@@ -13,7 +13,7 @@ struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies *>
     MoviesParserHandler() : TAbstractStackableParserHandler<Movies *>()
     {
         BN_LOG("Creating ", this->parser_name());
-        this->result = new Movies();
+        this->parse_result = new Movies();
     }
 
     ~MoviesParserHandler()
@@ -29,20 +29,20 @@ struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies *>
         return "MoviesParserHandler";
     }
 
-    bool process_start_object() override
+    void process_start_object() override
     {
         subparser_type_id = parsers_types::MOVIE;
-        return _logToken("start object {");
+        _logToken("start object {");
     }
 
-    bool process_start_array() override
+    void process_start_array() override
     {
         if (tokens_count == 1)
         {
             set_start_level_from_current();
-            return _logToken("start array [, update start level");
+            _logToken("start array [, update start level");
         }
-        return _logToken("start array [");
+        _logToken("start array [");
     }
 
     bool subparser_finished(std::any subparser_result) override

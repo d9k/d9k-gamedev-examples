@@ -38,7 +38,8 @@ public:
         _input_stream = input_stream;
     }
 
-    void add(AbstractStackableParserHandler *new_parser_handler, bool subparser_inc_level = false)
+    // void add(AbstractStackableParserHandler *new_parser_handler, bool subparser_inc_level = false)
+    void add(AbstractStackableParserHandler *new_parser_handler)
     {
         BN_ASSERT(new_parser_handler != NULL, "ParsersStack: add(): new_parser_handler NULL");
 
@@ -104,7 +105,7 @@ public:
                 return false;
             }
             // BN_LOG("ParsersStack: parse_next_token(): finished: 600");
-            subparser->destruct_result = this->_current_parser_handler->subparser_finished(subparser->result);
+            subparser->destruct_result = this->_current_parser_handler->subparser_finished(subparser->parse_result);
             // BN_LOG("ParsersStack: parse_next_token(): finished: 700");
             delete subparser;
             // BN_LOG("ParsersStack: parse_next_token(): finished: 800");
@@ -116,8 +117,8 @@ public:
         if (subparser_id)
         {
             AbstractStackableParserHandler *subparser = create_parser_handler_from_type_id(subparser_id);
-            bool subparser_inc_level = this->_current_parser_handler->subparser_inc_level;
-            this->add(subparser, subparser_inc_level);
+            // bool subparser_inc_level = this->_current_parser_handler->subparser_inc_level;
+            this->add(subparser);
         }
 
         return true;

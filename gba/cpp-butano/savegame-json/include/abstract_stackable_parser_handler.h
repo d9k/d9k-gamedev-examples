@@ -16,19 +16,15 @@ constexpr int KEY_SIZE = 64;
 template <typename T>
 struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>>
 {
-    std::any result;
+    std::any parse_result;
     uint64_t tokens_count = 0;
     int subparser_type_id = 0;
     bool finished = false;
-    // KeyString current_key;
     char current_key[KEY_SIZE];
     int start_level = 0;
     bool destruct_result = true;
-    // bool repeat_token_to_subparser = false;
-    /** if this parser read before first token of subparser instead of subparser (begin of array or begin of object) */
-    bool subparser_inc_level = false;
 
-    JsonInsideStack *shared_json_inside_stack;
+    JsonInsideStack *shared_inside_json_stack;
 
     TAbstractStackableParserHandler() {
     };
@@ -38,7 +34,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
 
     virtual T get_result()
     {
-        return std::any_cast<T>(result);
+        return std::any_cast<T>(parse_result);
     }
 
     virtual inline char *parser_name()
@@ -46,7 +42,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
         return "AbstractStackableParser";
     }
 
-    /** return whether destruct result */
+    /** return whether destruct parse_result */
     virtual bool subparser_finished(std::any subparser_result)
     {
         return true;
@@ -55,43 +51,50 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     bool String(const char *str, rapidjson::SizeType length, bool copy)
     {
         process_token_begin();
-        return process_string(str, length, copy);
+        process_string(str, length, copy);
+        return true;
     }
 
     bool Null()
     {
         process_token_begin();
-        return _logToken("null");
+        _logToken("null");
+        return true;
     }
 
     bool Bool(bool b)
     {
         process_token_begin();
-        return _logToken(b, "bool");
+        _logToken(b, "bool");
+        return true;
     }
 
     bool Int(int i)
     {
         process_token_begin();
-        return process_int(i);
+        process_int(i);
+        return true;
     }
 
     bool Uint(unsigned u)
     {
         process_token_begin();
-        return process_uint(u);
+        process_uint(u);
+        return true;
     }
 
     bool Int64(int64_t i)
     {
         process_token_begin();
-        return _logToken(i, "int64");
+        _logToken(i, "int64");
+        return true;
     }
 
     bool Uint64(uint64_t u)
     {
         process_token_begin();
-        return _logToken(u, "uint64");
+        _logToken(u, "uint64");
+        return true;
     }
 
     bool Double(double d)
@@ -99,157 +102,131 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
         process_token_begin();
         char doubleText[32];
         sprintf(doubleText, "%.6f", d);
-        return _logToken(doubleText, "double");
+        _logToken(doubleText, "double");
+        return true;
     }
 
     bool StartObject()
     {
         process_token_begin();
-        this->shared_json_inside_stack->add(JsonInsideStack::INSIDE_OBJECT);
-        this->log_inside();
-        bool result = process_start_object();
-        if (this->subparser_type_id) {
-            subparser_inc_level = true;
-        }
-        return result;
-        // process_token_end();
-        return result;
+        this->shared_inside_json_stack->add(JsonInsideStack::INSIDE_OBJECT);
+        this->log_json_inside_stack();
+        process_start_object();
+        return true;
     }
 
     bool EndObject(rapidjson::SizeType memberCount)
     {
         process_token_begin();
-        this->shared_json_inside_stack->pop();
-        this->log_inside();
+        this->shared_inside_json_stack->pop();
+        this->log_json_inside_stack();
         this->auto_finish_after_close_bracket();
-        return process_end_object(memberCount);
+        process_end_object(memberCount);
+        return true;
     }
 
     bool Key(const char *str, rapidjson::SizeType length, bool copy)
     {
         process_token_begin();
-        // current_key = string_from_chars(str);
-        // if (current_key) {
-        // delete[] current_key;
-        // }
-        // current_key = chars_from_const_chars(str, length);
-        // current_key = (char *)str;
-
         std::strncpy(current_key, str, length);
         current_key[length] = 0;
-        // current_key = bn::string<KEY_SIZE>(str, length);
-        // current_key = str;
-        bool result = process_key(str, length, copy);
-        // process_token_end();
-        return result;
+        process_key(str, length, copy);
+        return true;
     }
 
     bool StartArray()
     {
         process_token_begin();
-        this->shared_json_inside_stack->add(JsonInsideStack::INSIDE_ARRAY);
-        this->log_inside();
-        BN_LOG("## inside: ", this->shared_json_inside_stack->debug_string());
-        bool result = this->process_start_array();
-        if (this->subparser_type_id) {
-            subparser_inc_level = true;
-        }
-        return result;
+        this->shared_inside_json_stack->add(JsonInsideStack::INSIDE_ARRAY);
+        this->log_json_inside_stack();
+        BN_LOG("## inside: ", this->shared_inside_json_stack->debug_string());
+        this->process_start_array();
+        return true;
     }
 
     bool EndArray(rapidjson::SizeType elementCount)
     {
         process_token_begin();
-        this->shared_json_inside_stack->pop();
-        this->log_inside();
-        // BN_LOG(this->shared_json_inside_stack->debug_string());
+        this->shared_inside_json_stack->pop();
+        this->log_json_inside_stack();
         this->auto_finish_after_close_bracket();
-        return this->process_end_array(elementCount);
+        this->process_end_array(elementCount);
+        return true;
     }
 
-    bool _logTokenString(const char *str, rapidjson::SizeType length, bool copy, const char *logPrefix = "string")
+    void _logTokenString(const char *str, rapidjson::SizeType length, bool copy, const char *logPrefix = "string")
     {
         BN_LOG(this->parser_name(), ": #", tokens_count, ": ", logPrefix, " \"", str, "\"; len: ", length, copy ? "" : "not copy");
-        return true;
     }
 
     template <typename R>
-    bool _logToken(const R value, const char *logPrefix = "")
+    void _logToken(const R value, const char *logPrefix = "")
     {
         BN_LOG(this->parser_name(), ": #", tokens_count, ": ", logPrefix, strlen(logPrefix) > 0 ? " " : "", value);
-        return true;
     }
 
     void process_token_begin()
     {
         this->subparser_type_id = 0;
         this->tokens_count++;
-        this->subparser_inc_level = false;
     }
 
-    virtual bool process_int(int i)
+    virtual void process_int(int i)
     {
-        return _logToken(i, "int");
+        _logToken(i, "int");
     }
 
-
-    virtual bool process_uint(int u)
+    virtual void process_uint(int u)
     {
-        return _logToken(u, "uint");
+        _logToken(u, "uint");
     }
-    // void process_token_end()
-    // {
-    // }
 
-    virtual bool process_start_array()
+    virtual void process_start_array()
     {
-        return _logToken("start array [");
+        _logToken("start array [");
     }
 
-    virtual bool process_end_array(rapidjson::SizeType elementCount)
+    virtual void process_end_array(rapidjson::SizeType elementCount)
     {
         char objectText[32];
         sprintf(objectText, "] end array with %d elements", elementCount);
-        return _logToken(objectText);
+        _logToken(objectText);
     }
 
-    virtual bool process_start_object()
+    virtual void process_start_object()
     {
-        return _logToken("start object {");
+        _logToken("start object {");
     }
 
-    virtual bool process_end_object(rapidjson::SizeType memberCount)
+    virtual void process_end_object(rapidjson::SizeType memberCount)
     {
         char objectText[32];
         sprintf(objectText, "} end object with %d members", memberCount);
         return _logToken(objectText);
     }
 
-    virtual bool process_key(const char *str, rapidjson::SizeType length, bool copy)
+    virtual void process_key(const char *str, rapidjson::SizeType length, bool copy)
     {
-        return _logTokenString(str, length, copy, "key");
+        _logTokenString(str, length, copy, "key");
     }
 
-    virtual bool process_string(const char *str, rapidjson::SizeType length, bool copy)
+    virtual void process_string(const char *str, rapidjson::SizeType length, bool copy)
     {
-        return _logTokenString(str, length, copy);
+        _logTokenString(str, length, copy);
     }
 
     void set_json_inside_stack(JsonInsideStack *json_inside_stack)
     {
-        this->shared_json_inside_stack = json_inside_stack;
+        this->shared_inside_json_stack = json_inside_stack;
         this->set_start_level_from_current();
     }
 
     inline void set_start_level_from_current() {
-        this->start_level = this->get_inside_stack_level();
-        // if (inc_level) {
-        //     this->start_level++;
-        // }
+        this->start_level = this->get_inside_json_stack_level();
     }
 
-    inline int get_inside_stack_level() {
-        return this->shared_json_inside_stack->level();
+    inline int get_inside_json_stack_level() {
+        return this->shared_inside_json_stack->level();
     }
 
     inline bool key_is(const char * value) {
@@ -259,19 +236,19 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
 
     void auto_finish_after_close_bracket()
     {
-        if (this->get_inside_stack_level() < this->start_level)
+        if (this->get_inside_json_stack_level() < this->start_level)
         {
             finished = true;
         }
     }
 
-    void log_inside()
+    void log_json_inside_stack()
     {
         BN_LOG(
             "## inside (start ",
             this->start_level,
             "): ",
-            this->shared_json_inside_stack->debug_string()
+            this->shared_inside_json_stack->debug_string()
         );
     }
 
