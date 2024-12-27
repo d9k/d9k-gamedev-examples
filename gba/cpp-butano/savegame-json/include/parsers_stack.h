@@ -105,7 +105,7 @@ public:
                 return false;
             }
             // BN_LOG("ParsersStack: parse_next_token(): finished: 600");
-            subparser->destruct_result = this->_current_parser_handler->subparser_finished(subparser->parse_result);
+            subparser->destruct_result = this->_current_parser_handler->subparser_finished_returns_if_destruct_result(subparser->parse_result);
             // BN_LOG("ParsersStack: parse_next_token(): finished: 700");
             delete subparser;
             // BN_LOG("ParsersStack: parse_next_token(): finished: 800");

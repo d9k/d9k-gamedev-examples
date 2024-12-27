@@ -45,7 +45,7 @@ struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies *>
         _logToken("start array [");
     }
 
-    bool subparser_finished(std::any subparser_result) override
+    bool subparser_finished_returns_if_destruct_result(std::any subparser_result) override
     {
         Movies *r = get_result();
 

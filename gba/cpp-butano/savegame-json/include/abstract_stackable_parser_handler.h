@@ -43,7 +43,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     }
 
     /** return whether destruct parse_result */
-    virtual bool subparser_finished(std::any subparser_result)
+    virtual bool subparser_finished_returns_if_destruct_result(std::any subparser_result)
     {
         return true;
     }
@@ -87,6 +87,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     {
         process_token_begin();
         _logToken(i, "int64");
+        // TODO process fn
         return true;
     }
 
@@ -94,6 +95,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     {
         process_token_begin();
         _logToken(u, "uint64");
+        // TODO process fn
         return true;
     }
 
@@ -102,6 +104,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
         process_token_begin();
         char doubleText[32];
         sprintf(doubleText, "%.6f", d);
+        // TODO process fn
         _logToken(doubleText, "double");
         return true;
     }
@@ -110,7 +113,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     {
         process_token_begin();
         this->shared_inside_json_stack->add(JsonInsideStack::INSIDE_OBJECT);
-        this->log_json_inside_stack();
+        log_json_inside_stack();
         process_start_object();
         return true;
     }
@@ -119,8 +122,8 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     {
         process_token_begin();
         this->shared_inside_json_stack->pop();
-        this->log_json_inside_stack();
-        this->auto_finish_after_close_bracket();
+        log_json_inside_stack();
+        auto_finish_after_close_bracket();
         process_end_object(memberCount);
         return true;
     }
@@ -138,9 +141,9 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     {
         process_token_begin();
         this->shared_inside_json_stack->add(JsonInsideStack::INSIDE_ARRAY);
-        this->log_json_inside_stack();
+        log_json_inside_stack();
         BN_LOG("## inside: ", this->shared_inside_json_stack->debug_string());
-        this->process_start_array();
+        process_start_array();
         return true;
     }
 
@@ -148,9 +151,9 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     {
         process_token_begin();
         this->shared_inside_json_stack->pop();
-        this->log_json_inside_stack();
-        this->auto_finish_after_close_bracket();
-        this->process_end_array(elementCount);
+        log_json_inside_stack();
+        auto_finish_after_close_bracket();
+        process_end_array(elementCount);
         return true;
     }
 
@@ -218,11 +221,11 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     void set_json_inside_stack(JsonInsideStack *json_inside_stack)
     {
         this->shared_inside_json_stack = json_inside_stack;
-        this->set_start_level_from_current();
+        set_start_level_from_current();
     }
 
     inline void set_start_level_from_current() {
-        this->start_level = this->get_inside_json_stack_level();
+        start_level = this->get_inside_json_stack_level();
     }
 
     inline int get_inside_json_stack_level() {

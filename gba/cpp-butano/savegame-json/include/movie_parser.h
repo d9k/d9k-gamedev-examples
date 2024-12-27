@@ -52,7 +52,7 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
             Movie *r = get_result();
             r->year = u;
         }
-        return _logToken(u, "int");
+        _logToken(u, "int");
     }
 
     void process_string(const char *str, rapidjson::SizeType length, bool copy) override
@@ -68,7 +68,6 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
         }
 
         _logTokenString(str, length, copy);
-        return;
     }
 
     void process_key(const char *str, rapidjson::SizeType length, bool copy) override
@@ -91,7 +90,7 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
             this->subparser_type_id);
     }
 
-    bool subparser_finished(std::any subparser_result) override
+    bool subparser_finished_returns_if_destruct_result(std::any subparser_result) override
     {
         Movie *m = get_result();
 
