@@ -32,27 +32,28 @@ public:
     }
 
     ~Movie() {
-        delete title;
-        delete id;
+        delete[] title;
+        delete[] id;
+        delete[] plotText;
         // delete[] title;
         // delete title;
         // delete id;
     }
 
     void set_id(const char* v) {
-        delete id;
+        delete[] id;
         // id = new bn::string_view(v);
         id = chars_copy(v);
     }
 
     void set_title(const char* v) {
-        delete title;
+        delete[] title;
         // id = new bn::string_view(v);
         title = chars_copy(v);
     }
 
     void set_plot_text(const char* v) {
-        delete plotText;
+        delete[] plotText;
         // id = new bn::string_view(v);
         plotText = chars_copy(v);
     }

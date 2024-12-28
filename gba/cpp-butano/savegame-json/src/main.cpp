@@ -28,6 +28,8 @@
 #include "parsers_stack.h"
 #include "savegame_parser.h"
 #include "savegame_serializer.h"
+// #include "semver_by_Neargye/semver.h"
+#include "semver_from_chars.h"
 
 using namespace std::string_literals;
 
@@ -67,27 +69,31 @@ namespace
         text_generator.generate(0, text_scene_title_y, sceneTitle, text_sprites);
     }
 
-    void test_std_string()
+    void test_semver_by_neargye()
     {
-        // concatenation fail with error undefined reference to `std::__throw_length_error(char const*)'
-        // std::string testStdString = "std::string"s + " test "s + "string"s + " concat"s;
-        std::string testStdString = "std::string";
-        // char *testConcat = "test " + "string" + " concat";
-        BN_LOG("testStdString: ", testStdString.c_str());
-        bn::vector<bn::sprite_ptr, 64> text_sprites;
+        BN_LOG("\n\n# Test semver by Neargye\n");
+        char *version_string = "1.2.3";
 
-        // TODO: linker error
-        // testStdString.assign("another std::string");
-        // BN_LOG("testStdString (2): ", testStdString.c_str());
-    }
+        semver::version *v = semver_from_chars(version_string);
+        semver::version *v_older = semver_from_chars("1.2.0");
+        semver::version *v_newer = semver_from_chars("1.3.3");
 
-    void test_bn_string_view()
-    {
-        bn::string_view *v = new bn::string_view("bn::string_view test");
+        BN_LOG("test_semver_by_neargye(): v: ", v->major, " ", v->minor, " ", v->patch);
+        BN_LOG("test_semver_by_neargye(): v_older: ", v_older->major, " ", v_older->minor, " ", v_older->patch);
+        BN_LOG("test_semver_by_neargye(): v_newer: ", v_newer->major, " ", v_newer->minor, " ", v_newer->patch);
 
-        BN_LOG("string view test:", v, "size:", v->size());
+        bool v_less_then_v_older = *v < *v_older;
 
+        BN_LOG("test_semver_by_neargye(): v < v_older: ", v_less_then_v_older);
+        BN_LOG("test_semver_by_neargye(): v > v_older: ", *v > *v_older);
+
+        BN_LOG("test_semver_by_neargye(): v < v_newer: ", *v < *v_newer);
+        BN_LOG("test_semver_by_neargye(): v > v_newer: ", *v > *v_newer);
+
+        delete v_newer;
+        delete v_older;
         delete v;
+        delete[] version_string;
     }
 
     void parse_small_json()
@@ -208,9 +214,7 @@ int main()
 
     BN_LOG("BN_CFG_LOG_MAX_SIZE: ", BN_CFG_LOG_MAX_SIZE);
 
-    test_std_string();
-    test_bn_string_view();
-
+    test_semver_by_neargye();
     parse_small_json();
     parse_big_json();
     parse_big_json_movies();
