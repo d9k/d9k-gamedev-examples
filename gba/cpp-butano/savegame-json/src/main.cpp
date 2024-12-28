@@ -15,6 +15,7 @@
 #include "bn_bg_palettes.h"
 #include "bn_sprite_text_generator.h"
 #include "bn_sstream.h"
+#include "bn_display.h"
 
 #include "common_info.h"
 #include "common_variable_8x16_sprite_font.h"
@@ -37,154 +38,163 @@ namespace
         bn::array<char, 32> format_tag;
         int reads_count = 0;
     };
-}
 
-BN_DATA_EWRAM SaveGame saveGame;
+    BN_DATA_EWRAM SaveGame saveGame;
 
-BN_DATA_EWRAM char *palestinian_movies_cut_json;
+    BN_DATA_EWRAM char *palestinian_movies_cut_json;
 
-BN_DATA_EWRAM char palestinian_movies_cut_json_begin[255];
+    BN_DATA_EWRAM char palestinian_movies_cut_json_begin[255];
 
-// char* substr(char* arr, int begin, int len)
-// {
-//     char* res = new char[len + 1];
-//     for (int i = 0; i < len; i++)
-//         res[i] = *(arr + begin + i);
-//     res[len] = 0;
-//     return res;
-// }
+    constexpr int text_y_inc = 14;
+    constexpr bn::fixed text_y_limit_f = (bn::display::height() / 2) - text_y_inc;
+    constexpr int text_y_limit = text_y_limit_f.integer();
+    constexpr int text_scene_title_y = -text_y_limit;
 
-void testStdString()
-{
-    // concatenation fail with error undefined reference to `std::__throw_length_error(char const*)'
-    // std::string testStdString = "std::string"s + " test "s + "string"s + " concat"s;
-    std::string testStdString = "std::string";
-    // char *testConcat = "test " + "string" + " concat";
-    BN_LOG("testStdString: ", testStdString.c_str());
+    bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
+    bn::vector<bn::sprite_ptr, 64> text_sprites;
 
-    // TODO: linker error
-    // testStdString.assign("another std::string");
-    // BN_LOG("testStdString (2): ", testStdString.c_str());
-}
-
-void testBnStringView()
-{
-    bn::string_view *v = new bn::string_view("bn::string_view test");
-
-    BN_LOG("string view test:", v, "size:", v->size());
-
-    delete v;
-}
-
-void parseSmallJson()
-{
-    BN_LOG("\n\n# Parsing small JSON\n");
-
-    const char json[] = " { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, -3, 4] } ";
-
-    DemoParseHandler handler1;
-    rapidjson::Reader reader1;
-    rapidjson::StringStream ss1(json);
-    reader1.Parse(ss1, handler1);
-}
-
-void parseBigJson()
-{
-    BN_LOG("\n\n# Parsing big JSON\n");
-
-    palestinian_movies_cut_json = (char *)
-#include "data_palestinian_movies_cut_json.h"
-        ;
-
-    int FIRST_CHARS = 200;
-
-    std::strncpy(palestinian_movies_cut_json_begin, palestinian_movies_cut_json, FIRST_CHARS);
-
-    DemoParseHandler handler2;
-    rapidjson::Reader reader2;
-    rapidjson::StringStream ssBig(palestinian_movies_cut_json);
-    reader2.Parse(ssBig, handler2);
-
-    BN_LOG("Long JSON first chars (", FIRST_CHARS, "):", palestinian_movies_cut_json_begin);
-    delete[] palestinian_movies_cut_json;
-}
-
-void parseBigJsonMovies()
-{
-    BN_LOG("\n\n# Parsing big JSON movies\n");
-
-    palestinian_movies_cut_json = (char *)
-#include "data_palestinian_movies_cut_json.h"
-        ;
-
-    SaveGameParserHandler *root_handler;
-    // root_handler = (AbstractStackableParserHandler *)new AbstractStackableParserHandler();
-    root_handler = new SaveGameParserHandler();
-    rapidjson::Reader reader;
-    rapidjson::StringStream ssBig(palestinian_movies_cut_json);
-
-    ParsersStack *parsersStack = new ParsersStack((AbstractStackableParserHandler *)root_handler, &reader, &ssBig);
-
-    while (parsersStack->parse_next_token())
+    void _clear_scene()
     {
+        text_sprites.clear();
     }
 
-    // reader2.Parse(ssBig, handler2);
-
-    // SaveGame *saveGame = root_handler->get_result();
-    saveGame = *root_handler->get_result();
-
-    delete parsersStack;
-    delete root_handler;
-    delete[] palestinian_movies_cut_json;
-}
-
-void debugLogSaveGame() {
-    BN_LOG("\n\n# Debug log savegame\n");
-
-    rapidjson::StringBuffer sbuf;
-    rapidjson::Writer<rapidjson::StringBuffer> jsonWriter(sbuf);
-
-    serialize_savegame(&jsonWriter, &saveGame);
-
-    // const char* json = chars_copy(sbuf.GetString());
-
-    log_long_chars(sbuf.GetString(), 200);
-
-    // delete json;
-
-    BN_LOG();
-
-    for (int i = 0; i < saveGame.movies.size(); i++)
+    void _init_scene(const bn::string_view &sceneTitle)
     {
-        Movie *movie = saveGame.movies[i];
-        char log_string[256];
-        std::sprintf(
-            log_string,
-            "movies[%2d].plotText: %s",
-            i,
-            movie->plotText
-        );
-        BN_LOG(log_string);
-        // BN_LOG("movie ", i, ". ", movie->id);
+        _clear_scene();
+        BN_LOG("\n\n# ", sceneTitle, "\n");
+
+        text_generator.set_center_alignment();
+        text_generator.generate(0, text_scene_title_y, sceneTitle, text_sprites);
     }
 
-    BN_LOG();
-
-    for (int i = 0; i < saveGame.movies.size(); i++)
+    void test_std_string()
     {
-        Movie *movie = saveGame.movies[i];
-        char log_string[256];
-        std::sprintf(
-            log_string,
-            "(id: %10s) movies[%2d]: (%4d) %s",
-            movie->id,
-            i,
-            movie->year,
-            movie->title
-        );
-        BN_LOG(log_string);
-        // BN_LOG("movie ", i, ". ", movie->id);
+        // concatenation fail with error undefined reference to `std::__throw_length_error(char const*)'
+        // std::string testStdString = "std::string"s + " test "s + "string"s + " concat"s;
+        std::string testStdString = "std::string";
+        // char *testConcat = "test " + "string" + " concat";
+        BN_LOG("testStdString: ", testStdString.c_str());
+        bn::vector<bn::sprite_ptr, 64> text_sprites;
+
+        // TODO: linker error
+        // testStdString.assign("another std::string");
+        // BN_LOG("testStdString (2): ", testStdString.c_str());
+    }
+
+    void test_bn_string_view()
+    {
+        bn::string_view *v = new bn::string_view("bn::string_view test");
+
+        BN_LOG("string view test:", v, "size:", v->size());
+
+        delete v;
+    }
+
+    void parse_small_json()
+    {
+        _init_scene("Parsing small JSON");
+        bn::core::update();
+
+        const char json[] = " { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, -3, 4] } ";
+
+        DemoParseHandler handler1;
+        rapidjson::Reader reader1;
+        rapidjson::StringStream ss1(json);
+        reader1.Parse(ss1, handler1);
+    }
+
+    void parse_big_json()
+    {
+        _init_scene("Parsing big JSON");
+        bn::core::update();
+
+        palestinian_movies_cut_json = (char *)
+#include "data_palestinian_movies_cut_json.h"
+            ;
+
+        int FIRST_CHARS = 200;
+
+        std::strncpy(palestinian_movies_cut_json_begin, palestinian_movies_cut_json, FIRST_CHARS);
+
+        DemoParseHandler handler2;
+        rapidjson::Reader reader2;
+        rapidjson::StringStream ssBig(palestinian_movies_cut_json);
+        reader2.Parse(ssBig, handler2);
+
+        BN_LOG("Long JSON first chars (", FIRST_CHARS, "):", palestinian_movies_cut_json_begin);
+        delete[] palestinian_movies_cut_json;
+    }
+
+    void parse_big_json_movies()
+    {
+        _init_scene("Parsing big JSON movies");
+        bn::core::update();
+
+        palestinian_movies_cut_json = (char *)
+#include "data_palestinian_movies_cut_json.h"
+            ;
+
+        SaveGameParserHandler *root_handler;
+        // root_handler = (AbstractStackableParserHandler *)new AbstractStackableParserHandler();
+        root_handler = new SaveGameParserHandler();
+        rapidjson::Reader reader;
+        rapidjson::StringStream ssBig(palestinian_movies_cut_json);
+
+        ParsersStack *parsersStack = new ParsersStack((AbstractStackableParserHandler *)root_handler, &reader, &ssBig);
+
+        while (parsersStack->parse_next_token())
+        {
+        }
+
+        // reader2.Parse(ssBig, handler2);
+
+        // SaveGame *saveGame = root_handler->get_result();
+        saveGame = *root_handler->get_result();
+
+        delete parsersStack;
+        delete root_handler;
+        delete[] palestinian_movies_cut_json;
+    }
+
+    void debug_log_save_game_object()
+    {
+        _init_scene("Debug log savegame object");
+        bn::core::update();
+
+        rapidjson::StringBuffer sbuf;
+        rapidjson::Writer<rapidjson::StringBuffer> jsonWriter(sbuf);
+        serialize_savegame(&jsonWriter, &saveGame);
+        log_long_chars(sbuf.GetString(), 200);
+
+        BN_LOG();
+
+        for (int i = 0; i < saveGame.movies.size(); i++)
+        {
+            Movie *movie = saveGame.movies[i];
+            char log_string[256];
+            std::sprintf(
+                log_string,
+                "movies[%2d].plotText: %s",
+                i,
+                movie->plotText);
+            BN_LOG(log_string);
+        }
+
+        BN_LOG();
+
+        for (int i = 0; i < saveGame.movies.size(); i++)
+        {
+            Movie *movie = saveGame.movies[i];
+            char log_string[256];
+            std::sprintf(
+                log_string,
+                "(id: %10s) movies[%2d]: (%4d) %s",
+                movie->id,
+                i,
+                movie->year,
+                movie->title);
+            BN_LOG(log_string);
+        }
     }
 }
 
@@ -196,32 +206,30 @@ int main()
     // BN_DATA_EWRAM int test;
     bn::core::init();
 
-    testStdString();
-    testBnStringView();
-
-    int *numbers;
-    int c = 10;
-
-    numbers = new int[c];
-
-    for (int i = 0; i < c; i++)
-    {
-        numbers[i] = i * i;
-    }
-
-    BN_LOG("numbers[7]: ", numbers[7]);
-
     BN_LOG("BN_CFG_LOG_MAX_SIZE: ", BN_CFG_LOG_MAX_SIZE);
 
-    parseSmallJson();
-    parseBigJson();
-    parseBigJsonMovies();
-    debugLogSaveGame();
+    test_std_string();
+    test_bn_string_view();
 
-    // int sram_size = bn::hw::sram::size();
-    // BN_LOG("SRAM size:", sram_size);
+    parse_small_json();
+    parse_big_json();
+    parse_big_json_movies();
+    debug_log_save_game_object();
 
-    bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
+    // exit;
+
+    _clear_scene();
+
+    // while (true)
+    // {
+    //     // info.update();
+    //     bn::core::update();
+    // }
+
+    int sram_size = bn::hw::sram::size();
+    BN_LOG("SRAM size:", sram_size);
+
+    // bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
     bn::bg_palettes::set_transparent_color(bn::color(16, 16, 16));
 
     bn::string_view info_text_lines[5];
