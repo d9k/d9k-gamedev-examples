@@ -100,6 +100,24 @@ namespace
         v = new bn::string_view("another bn::string_view test");
         BN_LOG("test_bn_string_view() 2: ", *v, ", size:", v->size());
         delete v;
+
+        char * string_beginning = "Hello";
+        int string_beginning_length = std::strlen(string_beginning);
+        char * string_a = "Hello, world!";
+        char * string_b = "Hi, everyone!";
+
+        bn::string_view string_beginning_view = bn::string_view(string_beginning);
+        bn::string_view string_a_beginning_view = bn::string_view(string_a, string_beginning_length);
+        bn::string_view string_b_beginning_view = bn::string_view(string_b, string_beginning_length);
+
+        BN_LOG("test_bn_string_view() string_a_beginning_view: ", string_a_beginning_view);
+        BN_LOG("test_bn_string_view() string_b_beginning_view: ", string_b_beginning_view);
+
+        BN_LOG("test_bn_string_view() string_a_beginning_view == string_beginning: ", string_a_beginning_view == string_beginning);
+        BN_LOG("test_bn_string_view() string_b_beginning_view == string_beginning: ", string_b_beginning_view == string_beginning);
+
+        bn::string_view string_a_end_view = bn::string_view(string_a + string_beginning_length);
+        BN_LOG("test_bn_string_view() string_a_end_view: ", string_a_end_view);
     }
 
     void test_sprintf()
