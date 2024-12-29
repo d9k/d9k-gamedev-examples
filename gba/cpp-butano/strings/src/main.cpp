@@ -1,6 +1,6 @@
 #define BN_CFG_LOG_MAX_SIZE 1024
 // #define _USE_MATH_DEFINES
-#define M_PI		3.14159265358979323846
+#define M_PI 3.14159265358979323846
 
 /*
  * Copyright (c) 2020-2024 Gustavo Valiente gustavo.valiente@protonmail.com
@@ -20,20 +20,21 @@
 #include "bn_log.h"
 #include "bn_string.h"
 #include "fake_std_throw_length_error.h"
-// #include <math.h>
-
+#include "chars_copy.h"
 #include "common_variable_8x16_sprite_font.h"
+#include "chars_pointer_wrapper.h"
 
 using namespace std::string_literals;
-
-// class ObjectWithChars {
-// public
-// }
 
 namespace
 {
     constexpr bn::fixed text_y_inc = 14;
     constexpr bn::fixed text_y_limit = (bn::display::height() / 2) - text_y_inc;
+
+    class Person {
+    public:
+        CharsPointerWrapper name = CharsPointerWrapper("John");
+    };
 
     void test_std_string()
     {
@@ -53,10 +54,11 @@ namespace
         // BN_LOG("test_std_string() test 3: ", testStdString3.c_str());
     }
 
-    void test_chars() {
+    void test_chars()
+    {
         BN_LOG("\n\n# Test chars\n");
 
-        const char* sourceChars = "const char*";
+        const char *sourceChars = "const char*";
 
         char targetChars[100] = "some long string hello world";
         char targetChars2[100] = "some long string hello world";
@@ -68,7 +70,9 @@ namespace
         std::strncpy(targetChars3, sourceChars, sourceCharsLength);
         targetChars3[sourceCharsLength] = 0;
 
-        const char* concatChars = "These are " "const " "strings";
+        const char *concatChars = "These are "
+                                  "const "
+                                  "strings";
 
         BN_LOG("test_chars() test copy 1: strcpy: ", targetChars);
         BN_LOG("test_chars() test copy 2: strncpy: ", targetChars2, ", length:", sourceCharsLength);
@@ -92,11 +96,10 @@ namespace
         // BN_LOG("test_chars() chars b search postion: ", chars_b_search_position);
     }
 
-
     void test_bn_string()
     {
         BN_LOG("\n\n# Test bn::string\n");
-        const char* sourceChars = "char*";
+        const char *sourceChars = "char*";
 
         bn::string<100> bnStringConstruct = sourceChars;
 
@@ -118,10 +121,10 @@ namespace
         BN_LOG("test_bn_string_view() 2: ", *v, ", size:", v->size());
         delete v;
 
-        const char * string_beginning = "Hello";
+        const char *string_beginning = "Hello";
         int string_beginning_length = std::strlen(string_beginning);
-        const char * string_a = "Hello, world!";
-        const char * string_b = "Hi, everyone!";
+        const char *string_a = "Hello, world!";
+        const char *string_b = "Hi, everyone!";
 
         bn::string_view string_a_beginning_view = bn::string_view(string_a, string_beginning_length);
         bn::string_view string_b_beginning_view = bn::string_view(string_b, string_beginning_length);
@@ -136,9 +139,9 @@ namespace
         bn::string_view string_a_end_view = bn::string_view(string_a + string_beginning_length);
         BN_LOG("test_bn_string_view() string_a_end_view: ", string_a_end_view);
 
-        const char* chars_a = "Mood: good";
-        const char* chars_b = "Mood when raining: bad";
-        const char* chars_to_search = ":";
+        const char *chars_a = "Mood: good";
+        const char *chars_b = "Mood when raining: bad";
+        const char *chars_to_search = ":";
         int search_in_only_these_first_chars = 6;
 
         bn::string_view chars_a_only_first_view = bn::string_view(chars_a, search_in_only_these_first_chars);
@@ -160,6 +163,20 @@ namespace
         BN_LOG("test_sprintf(): ", buf);
     }
 
+    void test_object_with_chars()
+    {
+        BN_LOG("\n\n# Test object with chars\n");
+
+        // ObjectWithChars obj_with_chars;
+        Person person;
+
+        BN_LOG("test_object_with_chars(): before rename: person.name.get_chars(): ", person.name.get_chars());
+
+        person.name.set_chars("Tom");
+
+        BN_LOG("test_object_with_chars(): after rename: person.name.get_chars(): ", person.name.get_chars());
+    }
+
     void text_scene()
     {
         bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
@@ -175,7 +192,8 @@ namespace
         }
     }
 
-    void test_assert_will_break_run() {
+    void test_assert_will_break_run()
+    {
         BN_LOG("\n\n# Test assert. This test will break run, comment it out!\n");
         int num = 123456;
         bn::string<64> errorMsg = "Test error message with number ";
@@ -195,6 +213,7 @@ int main()
     test_bn_string();
     test_bn_string_view();
     test_sprintf();
+    test_object_with_chars();
     // test_assert_will_break_run();
 
     bn::bg_palettes::set_transparent_color(bn::color(16, 16, 16));
