@@ -32,7 +32,7 @@ struct SaveGameParserHandler : public TAbstractStackableParserHandler<SaveGame *
         }
     }
 
-    inline char *parser_name() override
+    inline char const *parser_name() override
     {
         return "SaveGameParserHandler";
     }

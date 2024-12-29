@@ -29,7 +29,7 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
         }
     }
 
-    inline char *parser_name() override
+    inline const char *parser_name() override
     {
         return "MovieParserHandler";
     }
@@ -56,8 +56,8 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
             if (key_is(KEY_ID))
             {
                 Movie *r = get_result();
-                r->set_id(str);
-                BN_LOG(this->parser_name(), ": check result id: ", r->id);
+                r->id.set_chars(str);
+                // BN_LOG(this->parser_name(), ": check result id: ", r->id.get_chars());
             }
         }
 
@@ -94,7 +94,7 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
         {
             char *title = std::any_cast<char *>(subparser_result);
             BN_LOG("Adding title ", title, " to movie object");
-            m->set_title(title);
+            m->title.set_chars(title);
             return true;
             break;
         }
@@ -102,7 +102,7 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
         {
             char *plotText = std::any_cast<char *>(subparser_result);
             BN_LOG("Adding plot text ", plotText, " to movie object");
-            m->set_plot_text(plotText);
+            m->plot_text.set_chars(plotText);
             return true;
             break;
         }

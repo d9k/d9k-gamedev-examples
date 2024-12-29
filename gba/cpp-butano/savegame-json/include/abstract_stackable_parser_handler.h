@@ -37,7 +37,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
         return std::any_cast<T>(parse_result);
     }
 
-    virtual inline char *parser_name()
+    virtual inline const char *parser_name()
     {
         return "AbstractStackableParser";
     }

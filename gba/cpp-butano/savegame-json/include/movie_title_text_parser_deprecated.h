@@ -23,7 +23,7 @@ struct MovieTitleTextParserDeprecated : public TAbstractStackableParserHandler<c
         BN_LOG(this->parser_name(), ": ", 200);
     }
 
-    inline char *parser_name() override
+    inline char const *parser_name() override
     {
         return "MovieTitleTextParserDeprecated";
     }

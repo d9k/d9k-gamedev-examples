@@ -24,7 +24,7 @@ struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies *>
         }
     }
 
-    inline char *parser_name() override
+    inline char const *parser_name() override
     {
         return "MoviesParserHandler";
     }
@@ -59,7 +59,7 @@ struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies *>
         {
             case parsers_types::MOVIE: {
                 Movie *m = std::any_cast<Movie *>(subparser_result);
-                BN_LOG("Adding movie with id ", (*m).id, " to movies");
+                BN_LOG("Adding movie with id ", m->id.get_chars(), " to movies");
                 r->push_back(m);
                 return false;
                 break;

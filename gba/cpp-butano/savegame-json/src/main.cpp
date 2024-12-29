@@ -169,7 +169,7 @@ namespace
 
         BN_LOG();
 
-        for (int i = 0; i < saveGame.movies.size(); i++)
+        for (uint32_t i = 0; i < saveGame.movies.size(); i++)
         {
             Movie *movie = saveGame.movies[i];
             char log_string[256];
@@ -177,7 +177,7 @@ namespace
                 log_string,
                 "movies[%2d].plotText: %s",
                 i,
-                movie->plotText);
+                movie->plot_text.get_chars());
             BN_LOG(log_string);
         }
 
@@ -190,10 +190,10 @@ namespace
             std::sprintf(
                 log_string,
                 "(id: %10s) movies[%2d]: (%4d) %s",
-                movie->id,
+                movie->id.get_chars(),
                 i,
                 movie->year,
-                movie->title);
+                movie->title.get_chars());
             BN_LOG(log_string);
         }
     }

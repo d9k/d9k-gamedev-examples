@@ -25,7 +25,7 @@ struct MoviePlotParser : public TAbstractStackableParserHandler<char *>
         }
     }
 
-    inline char *parser_name() override
+    inline const char *parser_name() override
     {
         return "MoviePlotParser";
     }
