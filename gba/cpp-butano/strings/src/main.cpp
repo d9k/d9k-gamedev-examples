@@ -7,6 +7,7 @@
  * zlib License, see LICENSE file.
  */
 
+#include <algorithm>
 #include <cstring>
 #include "bn_assert.h"
 #include "bn_core.h"
@@ -72,6 +73,24 @@ namespace
 
         BN_LOG("test_chars() test concat: ", concatChars);
 
+        // char* chars_a = "Mood: good";
+        // char* chars_b = "Mood when raining: bad";
+        // // char* chars_to_search = ":";
+        // char char_to_search = ':';
+        // int search_in_only_these_first_chars = 6;
+
+        // char* chars_b_search_result = std::find(chars_b, chars_b + search_in_only_these_first_chars, char_to_search);
+
+        // int chars_a_search_position = chars_a_search_result - chars_a;
+        // int chars_b_search_position = chars_b_search_result - chars_b;
+
+        // BN_LOG("test_chars() chars a search postion: ", chars_a_search_position);
+        // (not found)
+        // BN_LOG("test_chars() chars b search postion: ", chars_b_search_position);
+
+        // delete[] chars_a;
+        // delete[] chars_b;
+        // delete[] chars_to_search;
         delete[] sourceChars;
     }
 
@@ -110,6 +129,7 @@ namespace
         bn::string_view string_a_beginning_view = bn::string_view(string_a, string_beginning_length);
         bn::string_view string_b_beginning_view = bn::string_view(string_b, string_beginning_length);
 
+        BN_LOG("test_bn_string_view() string_beginning: ", string_beginning);
         BN_LOG("test_bn_string_view() string_a_beginning_view: ", string_a_beginning_view);
         BN_LOG("test_bn_string_view() string_b_beginning_view: ", string_b_beginning_view);
 
@@ -118,6 +138,28 @@ namespace
 
         bn::string_view string_a_end_view = bn::string_view(string_a + string_beginning_length);
         BN_LOG("test_bn_string_view() string_a_end_view: ", string_a_end_view);
+
+        char* chars_a = "Mood: good";
+        char* chars_b = "Mood when raining: bad";
+        char* chars_to_search = ":";
+        int search_in_only_these_first_chars = 6;
+
+        bn::string_view chars_a_only_first_view = bn::string_view(chars_a, search_in_only_these_first_chars);
+        bn::string_view chars_b_only_first_view = bn::string_view(chars_b, search_in_only_these_first_chars);
+
+        int chars_a_only_first_search_result = chars_a_only_first_view.find(chars_to_search);
+        int chars_b_only_first_search_result = chars_b_only_first_view.find(chars_to_search);
+
+        BN_LOG("test_bn_string_view(): search \"", chars_to_search, "\" in only first ", search_in_only_these_first_chars, " chars of \"", chars_a, "\": ", chars_a_only_first_search_result);
+        BN_LOG("test_bn_string_view(): search \"", chars_to_search, "\" in only first ", search_in_only_these_first_chars, " chars of \"", chars_b, "\": ", chars_b_only_first_search_result);
+
+        delete[] chars_to_search;
+        delete[] chars_b;
+        delete[] chars_a;
+
+        delete[] string_beginning;
+        delete[] string_a;
+        delete[] string_b;
     }
 
     void test_sprintf()
