@@ -213,7 +213,7 @@ int main()
     parse_small_json();
     parse_big_json();
     parse_big_json_movies();
-    // debug_log_save_game_object();
+    debug_log_save_game_object();
 
     _clear_scene();
     bn::core::update();

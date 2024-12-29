@@ -20,7 +20,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     uint64_t tokens_count = 0;
     int subparser_type_id = 0;
     bool finished = false;
-    char current_key[KEY_SIZE];
+    bn::string<KEY_SIZE> current_key;
     int start_level = 0;
     bool destruct_result = true;
 
@@ -151,8 +151,9 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     bool Key(const char *str, rapidjson::SizeType length, bool copy)
     {
         process_token_begin();
-        std::strncpy(current_key, str, length);
-        current_key[length] = 0;
+        current_key = str;
+        // std::strncpy(current_key, str, length);
+        // current_key[length] = 0;
         process_key(str, length, copy);
         return true;
     }
@@ -261,7 +262,8 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     inline bool key_is(const char *value)
     {
         // BN_LOG(this->parser_name(), ": key_is: ", value, " ", current_key, " ", strcmp(value, current_key) == 0);
-        return strcmp(value, current_key) == 0;
+        // return strcmp(value, current_key) == 0;
+        return current_key == value;
     }
 
     void auto_finish_after_close_bracket()

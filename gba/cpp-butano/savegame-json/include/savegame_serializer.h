@@ -15,6 +15,14 @@ void serialize_savegame(
 ) {
     writer->StartObject();
 
+    writer->Key(KEY_SELECTED_MOVIE_ID);
+
+    writer->String(saveGame->selected_movie_id);
+
+    writer->Key(KEY_LOADS_COUNT);
+
+    writer->Int(saveGame->loads_count);
+
     writer->Key(KEY_MOVIES);
 
     writer->StartArray();
@@ -24,14 +32,6 @@ void serialize_savegame(
         Movie *movie = saveGame->movies[i];
         serialize_movie(writer, movie);
     }
-
-    writer->Key(KEY_SELECTED_MOVIE_ID);
-
-    writer->String(saveGame->selected_movie_id);
-
-    writer->Key(KEY_LOADS_COUNT);
-
-    writer->Int(saveGame->loads_count);
 
     writer->EndArray();
 

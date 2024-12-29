@@ -26,6 +26,10 @@
 
 using namespace std::string_literals;
 
+// class ObjectWithChars {
+// public
+// }
+
 namespace
 {
     constexpr bn::fixed text_y_inc = 14;
