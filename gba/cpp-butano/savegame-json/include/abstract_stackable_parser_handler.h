@@ -91,7 +91,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     bool Uint(unsigned u)
     {
         process_token_begin();
-        process_uint(u);
+        process_int(u);
         return true;
     }
 
@@ -204,11 +204,6 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     virtual void process_int(int i)
     {
         _logToken(i, "int");
-    }
-
-    virtual void process_uint(int u)
-    {
-        _logToken(u, "uint");
     }
 
     virtual void process_start_array()

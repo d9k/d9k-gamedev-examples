@@ -17,6 +17,7 @@
 #include "bn_sstream.h"
 #include "bn_display.h"
 
+// #include <algorithm>
 #include "common_info.h"
 #include "common_variable_8x16_sprite_font.h"
 #include "rapidjson/reader.h"
@@ -43,7 +44,9 @@ namespace
 
     BN_DATA_EWRAM SaveGame saveGame;
 
-    BN_DATA_EWRAM char *palestinian_movies_cut_json;
+    BN_DATA_EWRAM const char *palestinian_movies_cut_json =
+        #include "data_palestinian_movies_cut_json.h"
+    ;
 
     BN_DATA_EWRAM char palestinian_movies_cut_json_begin[255];
 
@@ -114,10 +117,6 @@ namespace
         _init_scene("Parsing big JSON");
         bn::core::update();
 
-        palestinian_movies_cut_json = (char *)
-#include "data_palestinian_movies_cut_json.h"
-            ;
-
         int FIRST_CHARS = 200;
 
         std::strncpy(palestinian_movies_cut_json_begin, palestinian_movies_cut_json, FIRST_CHARS);
@@ -136,10 +135,6 @@ namespace
         _init_scene("Parsing big JSON movies");
         bn::core::update();
 
-        palestinian_movies_cut_json = (char *)
-#include "data_palestinian_movies_cut_json.h"
-            ;
-
         SaveGameParserHandler *root_handler;
         // root_handler = (AbstractStackableParserHandler *)new AbstractStackableParserHandler();
         root_handler = new SaveGameParserHandler();
@@ -156,10 +151,10 @@ namespace
 
         // SaveGame *saveGame = root_handler->get_result();
         saveGame = *root_handler->get_result();
+        root_handler->destruct_result = false;
 
         delete parsersStack;
         delete root_handler;
-        delete[] palestinian_movies_cut_json;
     }
 
     void debug_log_save_game_object()
@@ -218,17 +213,10 @@ int main()
     parse_small_json();
     parse_big_json();
     parse_big_json_movies();
-    debug_log_save_game_object();
-
-    // exit;
+    // debug_log_save_game_object();
 
     _clear_scene();
-
-    // while (true)
-    // {
-    //     // info.update();
-    //     bn::core::update();
-    // }
+    bn::core::update();
 
     int sram_size = bn::hw::sram::size();
     BN_LOG("SRAM size:", sram_size);
@@ -240,6 +228,15 @@ int main()
 
     sram_data cart_sram_data;
     bn::sram::read(cart_sram_data);
+
+    // char *sram_chars = new char[sram_size];
+    // _bn::sram::unsafe_read(sram_chars, sram_size, 0);
+    // log_long_chars(sram_chars, 200);
+
+    // char* expected_sram_start = "savegame JSON demo, version ";
+    // int expected_sram_start_length = strlen(expected_sram_start);
+
+    // delete[] sram_chars;
 
     bn::array<char, 32> expected_format_tag;
     bn::istring_base expected_format_tag_istring(expected_format_tag._data);
@@ -278,6 +275,8 @@ int main()
 
     common::info info("SRAM", info_text_lines, text_generator);
     info.set_show_always(true);
+
+    BN_LOG(100);
 
     while (true)
     {

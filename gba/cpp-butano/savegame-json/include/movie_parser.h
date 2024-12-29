@@ -39,25 +39,14 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
         return true;
     }
 
-    // void process_start_object() override
-    // {
-    //     if (tokens_count == 1)
-    //     {
-    //         set_start_level_from_current();
-    //         _logToken("start object {, update start level");
-    //         return;
-    //     }
-    //     _logToken("start object {");
-    // }
-
-    void process_uint(int u) override
+    void process_int(int i) override
     {
         if (key_is(KEY_YEAR))
         {
             Movie *r = get_result();
-            r->year = u;
+            r->year = i;
         }
-        _logToken(u, "int");
+        _logToken(i, "int");
     }
 
     void process_string(const char *str, rapidjson::SizeType length, bool copy) override

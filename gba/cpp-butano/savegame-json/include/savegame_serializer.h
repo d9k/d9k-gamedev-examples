@@ -7,13 +7,15 @@
 #include "savegame_parser_keys.h"
 #include "movie_serializer.h"
 
+using namespace savegame_parser_keys;
+
 void serialize_savegame(
     rapidjson::Writer<rapidjson::StringBuffer> *writer,
     SaveGame *saveGame
 ) {
     writer->StartObject();
 
-    writer->Key(savegame_parser_keys::KEY_MOVIES);
+    writer->Key(KEY_MOVIES);
 
     writer->StartArray();
 
@@ -22,6 +24,14 @@ void serialize_savegame(
         Movie *movie = saveGame->movies[i];
         serialize_movie(writer, movie);
     }
+
+    writer->Key(KEY_SELECTED_MOVIE_ID);
+
+    writer->String(saveGame->selected_movie_id);
+
+    writer->Key(KEY_LOADS_COUNT);
+
+    writer->Int(saveGame->loads_count);
 
     writer->EndArray();
 

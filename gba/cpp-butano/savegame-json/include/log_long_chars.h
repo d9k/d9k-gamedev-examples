@@ -18,7 +18,7 @@ void log_long_chars(const char* longChars, int partMaxSize) {
         partEnd = partBegin + partLength - 1;
 
         char counter_text[64];
-        sprintf(counter_text, "%d - %d / %d", partBegin, partEnd, longCharsLen - 1);
+        sprintf(counter_text, "%d-%d/%d", partBegin, partEnd, longCharsLen - 1);
 
         std::strncpy(part, longChars + partBegin, partLength);
         // std::strncpy(part, longChars, partLength);

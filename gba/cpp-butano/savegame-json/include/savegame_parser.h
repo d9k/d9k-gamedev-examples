@@ -42,6 +42,25 @@ struct SaveGameParserHandler : public TAbstractStackableParserHandler<SaveGame *
         return true;
     }
 
+    virtual void process_string(const char *str, rapidjson::SizeType length, bool copy)
+    {
+        if (key_is(KEY_SELECTED_MOVIE_ID)) {
+            SaveGame *r = get_result();
+            r->set_selected_movie_id(chars_copy(str));
+        }
+        _logTokenString(str, length, copy);
+    }
+
+    void process_int(int i) override
+    {
+        if (key_is(KEY_LOADS_COUNT))
+        {
+            SaveGame *r = get_result();
+            r->loads_count = i;
+        }
+        _logToken(i, "int");
+    }
+
     void process_key(const char *str, rapidjson::SizeType length, bool copy) override
     {
         // if (current_key == KEY_MOVIES) {
