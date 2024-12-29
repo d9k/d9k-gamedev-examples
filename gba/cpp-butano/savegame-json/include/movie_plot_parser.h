@@ -21,7 +21,7 @@ struct MoviePlotParser : public TAbstractStackableParserHandler<char *>
         if (destruct_result)
         {
             char *t = get_result();
-            delete t;
+            delete[] t;
         }
     }
 
@@ -43,7 +43,7 @@ struct MoviePlotParser : public TAbstractStackableParserHandler<char *>
     void process_string(const char *str, rapidjson::SizeType length, bool copy) override
     {
         char *t = get_result();
-        delete t;
+        delete[] t;
         parse_result = chars_copy(str);
         BN_LOG("Copying plot text");
         return _logTokenString(str, length, copy);

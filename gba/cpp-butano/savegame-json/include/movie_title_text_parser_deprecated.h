@@ -33,7 +33,7 @@ struct MovieTitleTextParserDeprecated : public TAbstractStackableParserHandler<c
         if (destruct_result)
         {
             char *r = get_result();
-            delete r;
+            delete[] r;
         }
     }
 
@@ -64,7 +64,7 @@ struct MovieTitleTextParserDeprecated : public TAbstractStackableParserHandler<c
         // BN_LOG(this->parser_name(), ": set_result: ", 100);
         char *r = get_result();
         // BN_LOG(this->parser_name(), ": set_result: ", 200);
-        delete r;
+        delete[] r;
         // BN_LOG(this->parser_name(), ": set_result: ", 300);
         parse_result = chars_copy(value);
         // BN_LOG(this->parser_name(), ": set_result: ", 400);
