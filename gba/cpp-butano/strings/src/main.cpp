@@ -57,7 +57,6 @@ namespace
         char targetChars[100] = "some long string hello world";
         char targetChars2[100] = "some long string hello world";
         char targetChars3[100] = "some long string hello world";
-        char targetChars4[100] = "some long string hello world";
 
         std::strcpy(targetChars, sourceChars);
         int sourceCharsLength = std::strlen(sourceChars);
@@ -65,7 +64,7 @@ namespace
         std::strncpy(targetChars3, sourceChars, sourceCharsLength);
         targetChars3[sourceCharsLength] = 0;
 
-        char* concatChars = "These " "are " "strings";
+        const char* concatChars = "These are " "const " "strings";
 
         BN_LOG("test_chars() test copy 1: strcpy: ", targetChars);
         BN_LOG("test_chars() test copy 2: strncpy: ", targetChars2, ", length:", sourceCharsLength);
@@ -87,18 +86,13 @@ namespace
         // BN_LOG("test_chars() chars a search postion: ", chars_a_search_position);
         // (not found)
         // BN_LOG("test_chars() chars b search postion: ", chars_b_search_position);
-
-        // delete[] chars_a;
-        // delete[] chars_b;
-        // delete[] chars_to_search;
-        delete[] sourceChars;
     }
 
 
     void test_bn_string()
     {
         BN_LOG("\n\n# Test bn::string\n");
-        char* sourceChars = "char*";
+        const char* sourceChars = "char*";
 
         bn::string<100> bnStringConstruct = sourceChars;
 
@@ -120,12 +114,11 @@ namespace
         BN_LOG("test_bn_string_view() 2: ", *v, ", size:", v->size());
         delete v;
 
-        char * string_beginning = "Hello";
+        const char * string_beginning = "Hello";
         int string_beginning_length = std::strlen(string_beginning);
-        char * string_a = "Hello, world!";
-        char * string_b = "Hi, everyone!";
+        const char * string_a = "Hello, world!";
+        const char * string_b = "Hi, everyone!";
 
-        bn::string_view string_beginning_view = bn::string_view(string_beginning);
         bn::string_view string_a_beginning_view = bn::string_view(string_a, string_beginning_length);
         bn::string_view string_b_beginning_view = bn::string_view(string_b, string_beginning_length);
 
@@ -139,9 +132,9 @@ namespace
         bn::string_view string_a_end_view = bn::string_view(string_a + string_beginning_length);
         BN_LOG("test_bn_string_view() string_a_end_view: ", string_a_end_view);
 
-        char* chars_a = "Mood: good";
-        char* chars_b = "Mood when raining: bad";
-        char* chars_to_search = ":";
+        const char* chars_a = "Mood: good";
+        const char* chars_b = "Mood when raining: bad";
+        const char* chars_to_search = ":";
         int search_in_only_these_first_chars = 6;
 
         bn::string_view chars_a_only_first_view = bn::string_view(chars_a, search_in_only_these_first_chars);
@@ -152,14 +145,6 @@ namespace
 
         BN_LOG("test_bn_string_view(): search \"", chars_to_search, "\" in only first ", search_in_only_these_first_chars, " chars of \"", chars_a, "\": ", chars_a_only_first_search_result);
         BN_LOG("test_bn_string_view(): search \"", chars_to_search, "\" in only first ", search_in_only_these_first_chars, " chars of \"", chars_b, "\": ", chars_b_only_first_search_result);
-
-        delete[] chars_to_search;
-        delete[] chars_b;
-        delete[] chars_a;
-
-        delete[] string_beginning;
-        delete[] string_a;
-        delete[] string_b;
     }
 
     void test_sprintf()
