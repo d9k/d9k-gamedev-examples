@@ -17,7 +17,7 @@ void serialize_savegame(
 
     writer->Key(KEY_SELECTED_MOVIE_ID);
 
-    writer->String(saveGame->selected_movie_id);
+    writer->String(saveGame->selected_movie_id.get_chars());
 
     writer->Key(KEY_LOADS_COUNT);
 

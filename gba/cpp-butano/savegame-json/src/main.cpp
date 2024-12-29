@@ -167,7 +167,7 @@ namespace
         serialize_savegame(&jsonWriter, &saveGame);
         log_long_chars(sbuf.GetString(), 200);
 
-        BN_LOG();
+        BN_LOG("\n");
 
         for (uint32_t i = 0; i < saveGame.movies.size(); i++)
         {
@@ -181,7 +181,7 @@ namespace
             BN_LOG(log_string);
         }
 
-        BN_LOG();
+        BN_LOG("\n");
 
         for (int i = 0; i < saveGame.movies.size(); i++)
         {
@@ -275,8 +275,6 @@ int main()
 
     common::info info("SRAM", info_text_lines, text_generator);
     info.set_show_always(true);
-
-    BN_LOG(100);
 
     while (true)
     {
