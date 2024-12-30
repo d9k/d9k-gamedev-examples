@@ -1,8 +1,7 @@
 #ifndef SAVEGAME_SERIALIZER_H
 #define SAVEGAME_SERIALIZER_H
 
-#include "rapidjson/writer.h"
-#include "rapidjson/stringbuffer.h"
+#include "rapidjson_inc_no_warns.h"
 #include "savegame.h"
 #include "savegame_parser_keys.h"
 #include "movie_serializer.h"
@@ -27,7 +26,7 @@ void serialize_savegame(
 
     writer->StartArray();
 
-    for (int i = 0; i < saveGame->movies.size(); i++)
+    for (uint32_t i = 0; i < saveGame->movies.size(); i++)
     {
         Movie *movie = saveGame->movies[i];
         serialize_movie(writer, movie);

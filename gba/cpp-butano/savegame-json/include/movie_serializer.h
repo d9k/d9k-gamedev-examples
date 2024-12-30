@@ -1,8 +1,8 @@
 #ifndef MOVIE_SERIALIZER_H
 #define MOVIE_SERIALIZER_H
 
-#include "rapidjson/writer.h"
-#include "rapidjson/stringbuffer.h"
+#include "rapidjson_inc_no_warns.h"
+
 #include "movie.h"
 #include "movie_parser_keys.h"
 

@@ -4,7 +4,7 @@
 #include "abstract_stackable_parser_handler.h"
 #include "savegame.h"
 #include "bn_log.h"
-#include "rapidjson/reader.h"
+#include "rapidjson_inc_no_warns.h"
 #include "movies.h"
 #include "parsers_types.h"
 

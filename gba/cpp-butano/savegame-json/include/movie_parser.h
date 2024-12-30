@@ -5,7 +5,7 @@
 #include "abstract_stackable_parser_handler.h"
 #include "savegame.h"
 #include "bn_log.h"
-#include "rapidjson/reader.h"
+#include "rapidjson_inc_no_warns.h"
 #include "movie.h"
 #include "movie_parser_keys.h"
 #include "parsers_types.h"
@@ -64,7 +64,7 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
         _logTokenString(str, length, copy);
     }
 
-    void process_key(const char *str, rapidjson::SizeType length, bool copy) override
+    void process_key(const char* /* str */, rapidjson::SizeType /* length */, bool /* copy */) override
     {
         if (key_is(KEY_TITLE_TEXT_DEPRECATED))
         {

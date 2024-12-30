@@ -7,7 +7,7 @@
 #include "bn_assert.h"
 #include "bn_string.h"
 #include "bn_log.h"
-#include "rapidjson/reader.h"
+#include "rapidjson_inc_no_warns.h"
 #include "savegame_parser_keys.h"
 #include "parsers_types.h"
 #include "movies.h"
@@ -61,7 +61,7 @@ struct SaveGameParserHandler : public TAbstractStackableParserHandler<SaveGame *
         _logToken(i, "int");
     }
 
-    void process_key(const char *str, rapidjson::SizeType length, bool copy) override
+    void process_key(const char* /* str */, rapidjson::SizeType /* length */, bool /* copy */) override
     {
         // if (current_key == KEY_MOVIES) {
         if (key_is(KEY_MOVIES))

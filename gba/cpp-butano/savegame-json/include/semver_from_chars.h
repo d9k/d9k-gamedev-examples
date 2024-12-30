@@ -2,7 +2,7 @@
 #define SEMVER_FROM_CHARS_H
 
 #include "bn_assert.h"
-#include "semver_by_Neargye/semver.h"
+#include "semver_by_Neargye_no_warn.h"
 
 semver::version semver_from_chars(const char *version_chars)
 {

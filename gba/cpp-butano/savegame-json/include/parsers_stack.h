@@ -6,8 +6,7 @@
 #include <any>
 #include "bn_vector.h"
 #include "abstract_stackable_parser_handler.h"
-#include "rapidjson/reader.h"
-#include "rapidjson/encodings.h"
+#include "rapidjson_inc_no_warns.h"
 #include "parsers_factory.h"
 
 typedef typename rapidjson::UTF8<>::Ch Ch;
@@ -83,7 +82,7 @@ public:
 
         // BN_LOG("ParsersStack: parse next token: 170: ", this->_current_parser_handler->last_parse_event);
 
-        const Ch *input_stream_current_pos = _input_stream->src_;
+        // const Ch *input_stream_current_pos = _input_stream->src_;
 
         this->_reader->IterativeParseNext<rapidjson::kParseDefaultFlags>(
             *(this->_input_stream),

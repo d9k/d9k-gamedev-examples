@@ -6,8 +6,8 @@
 // #include "bn_any.h"
 #include "bn_log.h"
 #include "bn_string.h"
-#include "rapidjson/reader.h"
 #include "json_inside_stack.h"
+#include "rapidjson_inc_no_warns.h"
 
 constexpr int KEY_SIZE = 64;
 

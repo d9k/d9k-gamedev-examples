@@ -1,7 +1,7 @@
 #ifndef DEMO_PARSE_HANDLER_H
 #define DEMO_PARSE_HANDLER_H
 
-#include "rapidjson/reader.h"
+#include "rapidjson_inc_no_warns.h"
 
 /** [RapidJSON: SAX](https://rapidjson.org/md_doc_sax.html) */
 struct DemoParseHandler : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>, DemoParseHandler> {
