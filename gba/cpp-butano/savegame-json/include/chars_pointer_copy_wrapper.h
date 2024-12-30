@@ -7,9 +7,9 @@ class CharsPointerCopyWrapper
 {
 public:
     char *_chars = NULL;
-    char *_default_chars = NULL;
+    const char *_default_chars;
 
-    CharsPointerCopyWrapper(char *default_value = "")
+    CharsPointerCopyWrapper(const char *default_value = "")
     {
         _default_chars = default_value;
     }

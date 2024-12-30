@@ -26,10 +26,6 @@
 #include "internal/strtod.h"
 #include <limits>
 
-/* source hack BEGIN */
-// #include "fake_std_ostringstream.h"
-/* END source hack */
-
 #if defined(RAPIDJSON_SIMD) && defined(_MSC_VER)
 #include <intrin.h>
 #pragma intrinsic(_BitScanForward)

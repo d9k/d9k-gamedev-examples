@@ -48,7 +48,7 @@ namespace
         #include "data_palestinian_movies_cut_json.h"
     ;
 
-    BN_DATA_EWRAM char palestinian_movies_cut_json_begin[255];
+    const char* expected_sram_start = "Savegame JSON demo, version ";
 
     constexpr int text_y_inc = 14;
     constexpr bn::fixed text_y_limit_f = (bn::display::height() / 2) - text_y_inc;
@@ -75,28 +75,23 @@ namespace
     void test_semver_by_neargye()
     {
         BN_LOG("\n\n# Test semver by Neargye\n");
-        char *version_string = "1.2.3";
+        const char *version_string = "1.2.3";
 
-        semver::version *v = semver_from_chars(version_string);
-        semver::version *v_older = semver_from_chars("1.2.0");
-        semver::version *v_newer = semver_from_chars("1.3.3");
+        semver::version v = semver_from_chars(version_string);
+        semver::version v_older = semver_from_chars("1.2.0");
+        semver::version v_newer = semver_from_chars("1.3.3");
 
-        BN_LOG("test_semver_by_neargye(): v: ", v->major, " ", v->minor, " ", v->patch);
-        BN_LOG("test_semver_by_neargye(): v_older: ", v_older->major, " ", v_older->minor, " ", v_older->patch);
-        BN_LOG("test_semver_by_neargye(): v_newer: ", v_newer->major, " ", v_newer->minor, " ", v_newer->patch);
+        BN_LOG("test_semver_by_neargye(): v: ", v.major, " ", v.minor, " ", v.patch);
+        BN_LOG("test_semver_by_neargye(): v_older: ", v_older.major, " ", v_older.minor, " ", v_older.patch);
+        BN_LOG("test_semver_by_neargye(): v_newer: ", v_newer.major, " ", v_newer.minor, " ", v_newer.patch);
 
-        bool v_less_then_v_older = *v < *v_older;
+        bool v_less_then_v_older = v < v_older;
 
         BN_LOG("test_semver_by_neargye(): v < v_older: ", v_less_then_v_older);
-        BN_LOG("test_semver_by_neargye(): v > v_older: ", *v > *v_older);
+        BN_LOG("test_semver_by_neargye(): v > v_older: ", v > v_older);
 
-        BN_LOG("test_semver_by_neargye(): v < v_newer: ", *v < *v_newer);
-        BN_LOG("test_semver_by_neargye(): v > v_newer: ", *v > *v_newer);
-
-        delete v_newer;
-        delete v_older;
-        delete v;
-        delete[] version_string;
+        BN_LOG("test_semver_by_neargye(): v < v_newer: ", v < v_newer);
+        BN_LOG("test_semver_by_neargye(): v > v_newer: ", v > v_newer);
     }
 
     void parse_small_json()
@@ -119,6 +114,8 @@ namespace
 
         int FIRST_CHARS = 200;
 
+        char palestinian_movies_cut_json_begin[255];
+
         std::strncpy(palestinian_movies_cut_json_begin, palestinian_movies_cut_json, FIRST_CHARS);
 
         DemoParseHandler handler2;
@@ -127,7 +124,6 @@ namespace
         reader2.Parse(ssBig, handler2);
 
         BN_LOG("Long JSON first chars (", FIRST_CHARS, "):", palestinian_movies_cut_json_begin);
-        delete[] palestinian_movies_cut_json;
     }
 
     void parse_big_json_movies()
@@ -175,7 +171,7 @@ namespace
             char log_string[256];
             std::sprintf(
                 log_string,
-                "movies[%2d].plotText: %s",
+                "movies[%2lu].plotText: %s",
                 i,
                 movie->plot_text.get_chars());
             BN_LOG(log_string);
@@ -183,13 +179,13 @@ namespace
 
         BN_LOG("\n");
 
-        for (int i = 0; i < saveGame.movies.size(); i++)
+        for (uint32_t i = 0; i < saveGame.movies.size(); i++)
         {
             Movie *movie = saveGame.movies[i];
             char log_string[256];
             std::sprintf(
                 log_string,
-                "(id: %10s) movies[%2d]: (%4d) %s",
+                "(id: %10s) movies[%2lu]: (%4d) %s",
                 movie->id.get_chars(),
                 i,
                 movie->year,
@@ -215,7 +211,9 @@ int main()
     parse_big_json_movies();
     debug_log_save_game_object();
 
-    _clear_scene();
+    _init_scene("Reading SRAM");
+
+    // _clear_scene();
     bn::core::update();
 
     int sram_size = bn::hw::sram::size();
@@ -229,56 +227,56 @@ int main()
     sram_data cart_sram_data;
     bn::sram::read(cart_sram_data);
 
-    // char *sram_chars = new char[sram_size];
-    // _bn::sram::unsafe_read(sram_chars, sram_size, 0);
-    // log_long_chars(sram_chars, 200);
+    char *sram_chars = new char[sram_size];
+    _bn::sram::unsafe_read(sram_chars, sram_size, 0);
+    log_long_chars(sram_chars, 200);
 
-    // char* expected_sram_start = "savegame JSON demo, version ";
-    // int expected_sram_start_length = strlen(expected_sram_start);
+    int expected_sram_start_length = strlen(expected_sram_start);
+
 
     // delete[] sram_chars;
 
-    bn::array<char, 32> expected_format_tag;
-    bn::istring_base expected_format_tag_istring(expected_format_tag._data);
-    bn::ostringstream expected_format_tag_stream(expected_format_tag_istring);
-    expected_format_tag_stream.append("SRAM example");
+    // bn::array<char, 32> expected_format_tag;
+    // bn::istring_base expected_format_tag_istring(expected_format_tag._data);
+    // bn::ostringstream expected_format_tag_stream(expected_format_tag_istring);
+    // expected_format_tag_stream.append("SRAM example");
 
-    bn::string<32> sram_reads_count;
+    // bn::string<32> sram_reads_count;
 
-    if (cart_sram_data.format_tag == expected_format_tag)
-    {
-        ++cart_sram_data.reads_count;
+    // if (cart_sram_data.format_tag == expected_format_tag)
+    // {
+    //     ++cart_sram_data.reads_count;
 
-        sram_reads_count = bn::to_string<32>(cart_sram_data.reads_count);
+    //     sram_reads_count = bn::to_string<32>(cart_sram_data.reads_count);
 
-        info_text_lines[0] = "SRAM is formatted!";
-        info_text_lines[1] = "";
-        info_text_lines[2] = "SRAM reads count:";
-        info_text_lines[3] = sram_reads_count;
-        info_text_lines[4] = "";
-    }
-    else
-    {
-        cart_sram_data.format_tag = expected_format_tag;
-        cart_sram_data.reads_count = 1;
+    //     info_text_lines[0] = "SRAM is formatted!";
+    //     info_text_lines[1] = "";
+    //     info_text_lines[2] = "SRAM reads count:";
+    //     info_text_lines[3] = sram_reads_count;
+    //     info_text_lines[4] = "";
+    // }
+    // else
+    // {
+    //     cart_sram_data.format_tag = expected_format_tag;
+    //     cart_sram_data.reads_count = 1;
 
-        info_text_lines[0] = "Formatting SRAM";
-        info_text_lines[1] = "";
-        info_text_lines[2] = "If you see this message again,";
-        info_text_lines[3] = "SRAM is not working";
-        info_text_lines[4] = "Please restart ROM manually";
+    //     info_text_lines[0] = "Formatting SRAM";
+    //     info_text_lines[1] = "";
+    //     info_text_lines[2] = "If you see this message again,";
+    //     info_text_lines[3] = "SRAM is not working";
+    //     info_text_lines[4] = "Please restart ROM manually";
 
-        bn::sram::clear(bn::sram::size());
-    }
+    //     bn::sram::clear(bn::sram::size());
+    // }
 
-    bn::sram::write(cart_sram_data);
+    // bn::sram::write(cart_sram_data);
 
-    common::info info("SRAM", info_text_lines, text_generator);
-    info.set_show_always(true);
+    // common::info info("SRAM", info_text_lines, text_generator);
+    // info.set_show_always(true);
 
     while (true)
     {
-        info.update();
+        // info.update();
         bn::core::update();
     }
 }

@@ -29,7 +29,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     TAbstractStackableParserHandler() {
     };
 
-    ~TAbstractStackableParserHandler() {
+    virtual ~TAbstractStackableParserHandler() {
     };
 
     virtual T get_result()
@@ -55,7 +55,7 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     }
 
     /** return whether destruct parse_result */
-    virtual bool subparser_finished_returns_if_destruct_result(std::any subparser_result)
+    virtual bool subparser_finished_returns_if_destruct_result(std::any /*subparser_result*/)
     {
         return true;
     }

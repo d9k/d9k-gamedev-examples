@@ -8,7 +8,6 @@
 #include "abstract_stackable_parser_handler.h"
 #include "rapidjson/reader.h"
 #include "rapidjson/encodings.h"
-#include "fake_std_throw_length_error.h"
 #include "parsers_factory.h"
 
 typedef typename rapidjson::UTF8<>::Ch Ch;

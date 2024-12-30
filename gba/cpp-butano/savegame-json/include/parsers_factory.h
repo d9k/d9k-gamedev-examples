@@ -42,6 +42,7 @@ AbstractStackableParserHandler* create_parser_handler_from_type_id(int parserTyp
         BN_ASSERT(false, errorMsg);
         break;
     }
+    exit(1);
 }
 
 #endif // PARSERS_FACTORY_H
