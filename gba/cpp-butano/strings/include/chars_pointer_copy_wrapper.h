@@ -1,20 +1,20 @@
-#ifndef CHARS_POINTER_WRAPPER_H
-#define CHARS_POINTER_WRAPPER_H
+#ifndef CHARS_POINTER_COPY_WRAPPER_H
+#define CHARS_POINTER_COPY_WRAPPER_H
 
 #include "chars_copy.h"
 
-class CharsPointerWrapper
+class CharsPointerCopyWrapper
 {
 public:
     char *_chars = NULL;
-    char *_default_chars = NULL;
+    const char *_default_chars;
 
-    CharsPointerWrapper(char *default_value = "")
+    CharsPointerCopyWrapper(const char *default_value = "")
     {
         _default_chars = default_value;
     }
 
-    ~CharsPointerWrapper()
+    ~CharsPointerCopyWrapper()
     {
         if (_chars != NULL)
         {
@@ -24,11 +24,11 @@ public:
 
     const char *get_chars()
     {
-        if (_chars == NULL)
+        if (_chars != NULL)
         {
-            return _default_chars;
+            return _chars;
         }
-        return _chars;
+        return _default_chars;
     }
 
     void set_chars(const char *value)
@@ -41,4 +41,4 @@ public:
     }
 };
 
-#endif // CHARS_POINTER_WRAPPER_H
+#endif // CHARS_POINTER_COPY_WRAPPER_H

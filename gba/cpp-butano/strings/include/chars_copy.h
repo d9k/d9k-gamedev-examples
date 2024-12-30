@@ -6,7 +6,7 @@
 char* chars_copy(const char* sourceChars) {
     int sourceCharsLength = std::strlen(sourceChars);
     char* result = new char[sourceCharsLength + 1];
-    std::strncpy(result, sourceChars, sourceCharsLength);
+    std::strncpy(result, sourceChars, sourceCharsLength + 1);
     result[sourceCharsLength] = 0;
     return result;
 }

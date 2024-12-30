@@ -19,10 +19,9 @@
 #include "bn_sprite_text_generator.h"
 #include "bn_log.h"
 #include "bn_string.h"
-#include "fake_std_throw_length_error.h"
 #include "chars_copy.h"
 #include "common_variable_8x16_sprite_font.h"
-#include "chars_pointer_wrapper.h"
+#include "chars_pointer_copy_wrapper.h"
 
 using namespace std::string_literals;
 
@@ -33,7 +32,7 @@ namespace
 
     class Person {
     public:
-        CharsPointerWrapper name = CharsPointerWrapper("John");
+        CharsPointerCopyWrapper name = CharsPointerCopyWrapper("John");
     };
 
     void test_std_string()
@@ -41,17 +40,13 @@ namespace
         BN_LOG("\n\n# Test std::string\n");
 
         std::string test_std_string = "std::string";
-        // char *testConcat = "test " + "string" + " concat";
-        BN_LOG("test_std_string() test1 : ", test_std_string.c_str());
+        BN_LOG("test_std_string() : initial: ", test_std_string.c_str());
 
-        // TODO: linker error: undefined reference to `std::__cxx11::basic_string <char, std::char_traits<char>, std::allocator<char> >::_M_replace_cold`...
-        // test_std_string.assign("another std::string");
-        // BN_LOG("test_std_string() test2: ", test_std_string.c_str());
+        test_std_string.assign("another std::string");
+        BN_LOG("test_std_string() : after reassign: ", test_std_string.c_str());
 
-        // Fixed with "fake_std_throw_length_error.h": concatenation fail with error undefined reference to `std::__throw_length_error(char const*)'
-        // TODO: linker error: undefined reference to `std::__cxx11::basic_string <char, std::char_traits<char>, std::allocator<char> >::_M_replace_cold`...
-        // std::string testStdString3 = "std::string"s + " test "s + "string"s + " concat"s;
-        // BN_LOG("test_std_string() test 3: ", testStdString3.c_str());
+        std::string testStdString3 = "std::string"s + " test "s + "string"s + " concat"s;
+        BN_LOG("test_std_string() : concat: ", testStdString3.c_str());
     }
 
     void test_chars()
@@ -63,22 +58,31 @@ namespace
         char targetChars[100] = "some long string hello world";
         char targetChars2[100] = "some long string hello world";
         char targetChars3[100] = "some long string hello world";
+        char targetChars4[100] = "some long string hello world";
 
         std::strcpy(targetChars, sourceChars);
         int sourceCharsLength = std::strlen(sourceChars);
         std::strncpy(targetChars2, sourceChars, sourceCharsLength);
         std::strncpy(targetChars3, sourceChars, sourceCharsLength);
         targetChars3[sourceCharsLength] = 0;
+        std::strncpy(targetChars4, sourceChars, sourceCharsLength + 1);
+
+        char* charsCopyResult = chars_copy(sourceChars);
 
         const char *concatChars = "These are "
                                   "const "
                                   "strings";
 
+        BN_LOG("test_chars() sourceCharsLength: ", sourceCharsLength);
         BN_LOG("test_chars() test copy 1: strcpy: ", targetChars);
-        BN_LOG("test_chars() test copy 2: strncpy: ", targetChars2, ", length:", sourceCharsLength);
-        BN_LOG("test_chars() test copy 3: strncpy with manual 0 end: ", targetChars3, ", length:", sourceCharsLength);
+        BN_LOG("test_chars() test copy 2: strncpy: ", targetChars2);
+        BN_LOG("test_chars() test copy 3: strncpy with manual 0 end: ", targetChars3);
+        BN_LOG("test_chars() test copy 4: strncpy with length + 1: ", targetChars4);
+        BN_LOG("test_chars() test copy 5: chars_copy() result: ", charsCopyResult);
 
         BN_LOG("test_chars() test concat: ", concatChars);
+
+        delete[] charsCopyResult;
 
         // char* chars_a = "Mood: good";
         // char* chars_b = "Mood when raining: bad";
