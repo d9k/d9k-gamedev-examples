@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <sstream>
 #include "bn_assert.h"
 #include "bn_core.h"
 #include "bn_math.h"
@@ -181,6 +182,18 @@ namespace
         BN_LOG("test_object_with_chars(): after rename: person.name.get_chars(): ", person.name.get_chars());
     }
 
+    void test_std_string_stream() {
+        BN_LOG("\n\n# Test std string stream\n");
+        // std::string myString;
+        std::ostringstream stringStream; // = std::stringstream(myString);
+        const char* userName = "Admin";
+        int id = 400;
+        stringStream << "Hi, " << userName << " with id=" << id << "!";
+        const std::string &tmp = stringStream.str();
+        const char* chars = tmp.c_str();
+        BN_LOG(chars);
+    }
+
     void text_scene()
     {
         bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
@@ -218,6 +231,7 @@ int main()
     test_bn_string_view();
     test_sprintf();
     test_object_with_chars();
+    test_std_string_stream();
     // test_assert_will_break_run();
 
     bn::bg_palettes::set_transparent_color(bn::color(16, 16, 16));

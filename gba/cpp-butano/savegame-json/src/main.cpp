@@ -11,12 +11,14 @@
 #include "bn_core.h"
 #include "bn_log.h"
 #include "bn_sram.h"
+#include "../hw/include/bn_hw_sram.h"
 #include "bn_string.h"
 #include "bn_bg_palettes.h"
 #include "bn_sprite_text_generator.h"
 #include "bn_sstream.h"
 #include "bn_display.h"
 
+#include "const.h"
 #include "common_info.h"
 #include "common_variable_8x16_sprite_font.h"
 #include "rapidjson_inc_no_warns.h"
@@ -41,10 +43,9 @@ namespace
     BN_DATA_EWRAM SaveGame saveGame;
 
     BN_DATA_EWRAM const char *palestinian_movies_cut_json =
-        #include "data_palestinian_movies_cut_json.h"
-    ;
+#include "data_palestinian_movies_cut_json.h"
+        ;
 
-    const char* expected_sram_start = "Savegame JSON demo, version ";
 
     constexpr int text_y_inc = 14;
     constexpr bn::fixed text_y_limit_f = (bn::display::height() / 2) - text_y_inc;
@@ -212,8 +213,8 @@ int main()
     // _clear_scene();
     bn::core::update();
 
-    int sram_size = bn::hw::sram::size();
-    BN_LOG("SRAM size:", sram_size);
+    const int actual_sram_size = bn::hw::sram::size();
+    BN_LOG("actual SRAM size:", actual_sram_size);
 
     // bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
     bn::bg_palettes::set_transparent_color(bn::color(16, 16, 16));
@@ -223,14 +224,60 @@ int main()
     sram_data cart_sram_data;
     bn::sram::read(cart_sram_data);
 
-    char *sram_chars = new char[sram_size];
-    _bn::sram::unsafe_read(sram_chars, sram_size, 0);
+    char *sram_chars = new char[actual_sram_size];
+    _bn::sram::unsafe_read(sram_chars, actual_sram_size, 0);
     log_long_chars(sram_chars, 200);
 
-    int expected_sram_start_length = strlen(expected_sram_start);
+    int expected_sram_start_length = strlen(app_const::SRAM_BEGINNING_EXPECTED);
+
+    bn::string_view sram_beginning_string_view = bn::string_view(sram_chars, expected_sram_start_length);
+    delete[] sram_chars;
+
+    bool sram_has_savegame = sram_beginning_string_view == app_const::SRAM_BEGINNING_EXPECTED;
+    int sram_old_usage = 0;
+
+    if (sram_has_savegame)
+    {
+        BN_LOG("SRAM has savegame");
+    }
+    else
+    {
+        BN_LOG("Formatting SRAM");
+        bn::sram::clear(bn::sram::size());
+        // bn::sram::write("__TEST__");
+    }
+
+    rapidjson::StringBuffer sbuf;
+    rapidjson::Writer<rapidjson::StringBuffer> jsonWriter(sbuf);
+    serialize_savegame(&jsonWriter, &saveGame);
+    const char* json = sbuf.GetString();
+
+    bn::string<actual_sram_size> *data_to_save_in_sram_string = new bn::string<actual_sram_size>();
+    bn::ostringstream data_to_save_in_sram_stream(*data_to_save_in_sram_string);
+    data_to_save_in_sram_stream << "__TEST__" << app_const::SRAM_BEGINNING_EXPECTED << app_const::APP_VERSION << ":" << json;
+
+    int sram_new_usage = data_to_save_in_sram_string->length();
+
+    BN_LOG("old data in SRAM size: ", sram_old_usage);
+    BN_LOG("new data to save in SRAM size: ", sram_new_usage);
+
+    // new_size smaller, clear SRAM [old_size - new_size ... old_size] before write!
+    if (sram_new_usage < sram_old_usage) {
+        BN_LOG("new_size smaller, zeroing SRAM [old_size - new_size ... old_size] before write!", sram_old_usage);
+        bn::hw::sram::set_bytes(0, sram_old_usage - sram_new_usage + 1, sram_new_usage);
+    }
+
+    const char *data_to_save_in_sram_chars = data_to_save_in_sram_string->c_str();
+
+    log_long_chars(data_to_save_in_sram_chars, 200);
+
+    // bn::sram::write(data_to_save_in_sram_chars);
+    _bn::sram::unsafe_write(data_to_save_in_sram_chars, sram_new_usage, 0);
+
+    delete data_to_save_in_sram_string;
 
 
-    // delete[] sram_chars;
+    // const char
 
     // bn::array<char, 32> expected_format_tag;
     // bn::istring_base expected_format_tag_istring(expected_format_tag._data);
