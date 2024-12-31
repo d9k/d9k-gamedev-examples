@@ -69,6 +69,7 @@ namespace
         std::strncpy(targetChars4, sourceChars, sourceCharsLength + 1);
 
         char* charsCopyResult = chars_copy(sourceChars);
+        char* charsCopyPartialResult = chars_copy(sourceChars, 7);
 
         const char *concatChars = "These are "
                                   "const "
@@ -80,9 +81,11 @@ namespace
         BN_LOG("test_chars() test copy 3: strncpy with manual 0 end: ", targetChars3);
         BN_LOG("test_chars() test copy 4: strncpy with length + 1: ", targetChars4);
         BN_LOG("test_chars() test copy 5: chars_copy() result: ", charsCopyResult);
+        BN_LOG("test_chars() test copy 6: chars_copy(, 7) result: ", charsCopyPartialResult);
 
         BN_LOG("test_chars() test concat: ", concatChars);
 
+        delete[] charsCopyPartialResult;
         delete[] charsCopyResult;
 
         // char* chars_a = "Mood: good";
@@ -136,10 +139,20 @@ namespace
 
         BN_LOG("test_bn_string_view() string_beginning: ", string_beginning);
         BN_LOG("test_bn_string_view() string_a_beginning_view: ", string_a_beginning_view);
+
+        // Note that full data!
+        BN_LOG("test_bn_string_view() string_a_beginning_view: data: ", string_a_beginning_view.data());
+        BN_LOG("test_bn_string_view() string_a_beginning_view chars_copy(data): ", chars_copy(string_a_beginning_view));
         BN_LOG("test_bn_string_view() string_b_beginning_view: ", string_b_beginning_view);
 
         BN_LOG("test_bn_string_view() string_a_beginning_view == string_beginning: ", string_a_beginning_view == string_beginning);
         BN_LOG("test_bn_string_view() string_b_beginning_view == string_beginning: ", string_b_beginning_view == string_beginning);
+
+        bn::string_view string_a_view = bn::string_view(string_a);
+        bn::string_view string_b_view = bn::string_view(string_b);
+
+        BN_LOG("test_bn_string_view() string_a_view.starts_with(string_beginning): ", string_a_view.starts_with(string_beginning));
+        BN_LOG("test_bn_string_view() string_b_view.starts_with(string_beginning): ", string_b_view.starts_with(string_beginning));
 
         bn::string_view string_a_end_view = bn::string_view(string_a + string_beginning_length);
         BN_LOG("test_bn_string_view() string_a_end_view: ", string_a_end_view);
