@@ -46,6 +46,7 @@ struct MoviePlotParser : public TAbstractStackableParserHandler<char *>
         delete[] t;
         parse_result = chars_copy(str);
         BN_LOG("Copying plot text");
+        this->finished = true;
         return _logTokenString(str, length, copy);
     }
 

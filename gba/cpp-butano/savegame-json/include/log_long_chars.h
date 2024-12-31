@@ -4,15 +4,17 @@
 #include <cstring>
 #include "bn_core.h"
 
-void log_long_chars(const char* longChars, int partMaxSize) {
+void log_long_chars(const char *longChars, int partMaxSize, const char *caption)
+{
     int longCharsLen = std::strlen(longChars);
     int longCharsEnd = longCharsLen - 1;
     int partBegin = 0;
     int partLength = 0;
     int partEnd = -1;
-    char* part = new char[partMaxSize + 1];
+    char *part = new char[partMaxSize + 1];
 
-    do {
+    do
+    {
         partBegin = partEnd + 1;
         partLength = bn::min(partMaxSize, longCharsLen - partBegin);
         partEnd = partBegin + partLength - 1;
@@ -24,7 +26,12 @@ void log_long_chars(const char* longChars, int partMaxSize) {
         // std::strncpy(part, longChars, partLength);
         part[partLength] = 0;
 
-        BN_LOG(counter_text, ":\n", part);
+        BN_LOG(
+            caption,
+            ": ",
+            counter_text,
+            ":\n",
+            part);
     } while (partEnd < longCharsEnd);
 }
 

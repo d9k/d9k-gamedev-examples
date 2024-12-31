@@ -14,6 +14,27 @@ public:
         _default_chars = default_value;
     }
 
+    // static CharsPointerCopyWrapper* copy_new(CharsPointerCopyWrapper other)
+    // {
+    //     CharsPointerCopyWrapper *result = new CharsPointerCopyWrapper(other._default_chars);
+    //     // _default_chars = other._default_chars;
+    //     result->set_chars(other.get_chars());
+    //     return result;
+    // }
+
+    static void set_fields_from(CharsPointerCopyWrapper *target, CharsPointerCopyWrapper *source)
+    {
+        // CharsPointerCopyWrapper result = CharsPointerCopyWrapper(other._default_chars);
+        // _default_chars = other._default_chars;
+        // result.set_chars(other.get_chars());
+        // return result;
+
+        // TODO test
+        target->_default_chars = source->_default_chars;
+
+        target->set_chars(source->get_chars());
+    }
+
     ~CharsPointerCopyWrapper()
     {
         if (_chars != NULL)
@@ -31,7 +52,8 @@ public:
         return _default_chars;
     }
 
-    void set_chars(const char *value)
+    template <typename T>
+    void set_chars(const T value)
     {
         if (_chars != NULL)
         {

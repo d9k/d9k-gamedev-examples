@@ -185,7 +185,6 @@ namespace
     {
         BN_LOG("\n\n# Test object with chars\n");
 
-        // ObjectWithChars obj_with_chars;
         Person person;
 
         BN_LOG("test_object_with_chars(): before rename: person.name.get_chars(): ", person.name.get_chars());
@@ -193,6 +192,9 @@ namespace
         person.name.set_chars("Tom");
 
         BN_LOG("test_object_with_chars(): after rename: person.name.get_chars(): ", person.name.get_chars());
+
+        CharsPointerCopyWrapper local_chars_pointer_copy_wrapper = person.name;
+        BN_LOG("local chars pointer copy wrapper: ", local_chars_pointer_copy_wrapper.get_chars());
     }
 
     void test_std_string_stream() {
