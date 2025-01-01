@@ -15,17 +15,17 @@ public:
     }
 
     CharsPointerCopyWrapper(const CharsPointerCopyWrapper &source) {
-        CharsPointerCopyWrapper::set_fields_to_from(this, &source);
+        this->copy_fields_from(&source);
     }
 
     CharsPointerCopyWrapper& operator=(const CharsPointerCopyWrapper& other) = default;
 
-    static void set_fields_to_from(CharsPointerCopyWrapper *target, const CharsPointerCopyWrapper *source)
+    void copy_fields_from(const CharsPointerCopyWrapper *source)
     {
         // TODO test
-        target->_default_chars = source->_default_chars;
+        this->_default_chars = source->_default_chars;
 
-        target->set_chars(source->_chars);
+        this->set_chars(source->_chars);
     }
 
     ~CharsPointerCopyWrapper()

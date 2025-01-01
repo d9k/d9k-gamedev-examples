@@ -59,6 +59,12 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
                 r->id.set_chars(str);
                 // BN_LOG(this->parser_name(), ": check result id: ", r->id.get_chars());
             }
+            if (key_is(KEY_TITLE))
+            {
+                Movie *r = get_result();
+                r->title.set_chars(str);
+                // BN_LOG(this->parser_name(), ": check result id: ", r->id.get_chars());
+            }
         }
 
         _logTokenString(str, length, copy);
