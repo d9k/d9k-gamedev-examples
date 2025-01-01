@@ -14,6 +14,11 @@ public:
         _default_chars = default_value;
     }
 
+    CharsPointerCopyWrapper(CharsPointerCopyWrapper &source) {
+        _default_chars = source._default_chars;
+        set_chars(source._chars);
+    }
+
     ~CharsPointerCopyWrapper()
     {
         if (_chars != NULL)

@@ -22,3 +22,14 @@ make
 mgba-qt strings.gba
 ```
 
+or just
+
+```bash
+make start
+```
+
+## List available make actions
+
+```
+make list
+```

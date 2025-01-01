@@ -195,6 +195,9 @@ namespace
 
         CharsPointerCopyWrapper local_chars_pointer_copy_wrapper = person.name;
         BN_LOG("local chars pointer copy wrapper: ", local_chars_pointer_copy_wrapper.get_chars());
+
+        CharsPointerCopyWrapper local_chars_pointer_copy_wrapper_copy = CharsPointerCopyWrapper(person.name);
+        BN_LOG("local chars pointer copy wrapper copy: ", local_chars_pointer_copy_wrapper.get_chars());
     }
 
     void test_std_string_stream() {
