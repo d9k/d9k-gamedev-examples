@@ -82,7 +82,7 @@ public:
         // result.old_save_game_version.set_chars(version_result.version.get_chars());
         // result.old_save_game_version = *CharsPointerCopyWrapper::copy_new(version_result.version);
         // result.old_save_game_version = CharsPointerCopyWrapper::copy(version_result.version);
-        CharsPointerCopyWrapper::set_fields_from(&result.old_save_game_version, &version_result.version);
+        CharsPointerCopyWrapper::set_fields_to_from(&result.old_save_game_version, &version_result.version);
         // result.old_save_game_version = CharsPointerCopyWrapper(version_result.version);
         // BN_LOG("__TEST__ 200: ", result.old_save_game_version.get_chars());
 

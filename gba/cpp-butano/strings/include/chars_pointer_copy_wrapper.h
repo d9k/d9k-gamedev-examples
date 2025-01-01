@@ -14,13 +14,26 @@ public:
         _default_chars = default_value;
     }
 
-    CharsPointerCopyWrapper(CharsPointerCopyWrapper &source) {
-        _default_chars = source._default_chars;
-        set_chars(source._chars);
+    CharsPointerCopyWrapper(const CharsPointerCopyWrapper &source) {
+        CharsPointerCopyWrapper::set_fields_to_from(this, &source);
+    }
+
+    CharsPointerCopyWrapper& operator=(const CharsPointerCopyWrapper& other) = default;
+
+    static void set_fields_to_from(CharsPointerCopyWrapper *target, const CharsPointerCopyWrapper *source)
+    {
+        // TODO test
+        target->_default_chars = source->_default_chars;
+
+        target->set_chars(source->_chars);
     }
 
     ~CharsPointerCopyWrapper()
     {
+        _destruct_chars();
+    }
+
+    inline void _destruct_chars() {
         if (_chars != NULL)
         {
             delete[] _chars;
@@ -36,12 +49,10 @@ public:
         return _default_chars;
     }
 
-    void set_chars(const char *value)
+    template <typename T>
+    void set_chars(const T value)
     {
-        if (_chars != NULL)
-        {
-            delete[] _chars;
-        }
+        _destruct_chars();
         _chars = chars_copy(value);
     }
 };
