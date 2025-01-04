@@ -6,6 +6,8 @@ Example data in [include/palestinian_movies_cut_json.h](./include/palestinian_mo
 
 Of course there is no need to store whole movies data in save game file. I implemented it for reason of training only (planning to store generated world in my future game).
 
+Used [SAX event-based parser of RapidJSON library](https://rapidjson.org/md_doc_sax.html) library because of small memory footprint (no intermediate structures).
+
 ## Build
 
 At first install [butano and required libraries to the system](https://gvaliente.github.io/butano/getting_started_wt.html).
