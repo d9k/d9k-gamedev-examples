@@ -4,6 +4,8 @@ Forked from [Butano 18.1.0](https://github.com/GValiente/butano/tree/18.1.0/exam
 
 Example data in [include/palestinian_movies_cut_json.h](./include/palestinian_movies_cut_json.h) is from the https://www.kaggle.com/datasets/sondosaabed/palestinian-movies-json-dataset (no political reasons. This dataset just had enough upvotes to appear at first page of my kaggle search).
 
+Of course there is no need to store whole movies data in save game file. I implemented it for reason of training only (planning to store generated world in my future game).
+
 ## Build
 
 At first install [butano and required libraries to the system](https://gvaliente.github.io/butano/getting_started_wt.html).
