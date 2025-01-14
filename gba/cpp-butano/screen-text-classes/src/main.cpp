@@ -12,6 +12,7 @@
 #include <sstream>
 #include "bn_assert.h"
 #include "bn_core.h"
+#include "bn_log.h"
 #include "bn_math.h"
 #include "bn_keypad.h"
 #include "bn_display.h"
@@ -23,6 +24,8 @@
 #include "chars_copy.h"
 #include "common_fixed_8x16_sprite_font.h"
 #include "chars_pointer_copy_wrapper.h"
+#include "screen_text/abstract_block.h"
+#include "screen_text/rows_composer.h"
 
 using namespace std::string_literals;
 
@@ -33,6 +36,10 @@ namespace
 
     void text_scene()
     {
+        screen_text::AbstractBlock ablock = screen_text::AbstractBlock(3);
+
+        BN_LOG("AbstractBlock: rows num: ", ablock.get_rows_count());
+
         bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
         text_generator.set_center_alignment();
 

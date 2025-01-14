@@ -1,6 +1,6 @@
 # Sprites example copy
 
-Copied from [Butano 18.1.0](https://github.com/GValiente/butano/tree/18.1.0/examples/sprites).
+Copied from [Butano 18.6.0](https://github.com/GValiente/butano/tree/18.6.0/examples/sprites).
 
 ## Build
 
