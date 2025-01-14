@@ -12,12 +12,12 @@ namespace screen_text
     class AbstractBlock
     {
     public:
-        bool _static_rendered;
+        bool _static_rendered = false;
         int rows_count = 1;
         int current_row_index = 0;
         int cx_shift = 0;
         int cy_shift = 0;
-        bn::sprite_text_generator *custom_text_generator;
+        bn::sprite_text_generator *custom_text_generator = nullptr;
 
         AbstractBlock(int rowsCount = 1)
         {
@@ -38,9 +38,13 @@ namespace screen_text
             SpritesVector *dynamicSprites,
             bn::sprite_text_generator *defaultTextGenerator)
         {
+            BN_LOG("screen_text::AbstractBlock: rerender(): cy_shift: ", cy_shift);
             if (!_static_rendered)
             {
+                BN_LOG("screen_text::AbstractBlock: rerender(): calling render_static_to_sprites");
                 render_static_to_sprites(staticSprites, defaultTextGenerator);
+            } else {
+                BN_LOG("screen_text::AbstractBlock: rerender(): NOT calling render_static_to_sprites");
             }
             render_dynamic_to_sprites(dynamicSprites, defaultTextGenerator);
         }
@@ -63,7 +67,7 @@ namespace screen_text
 
         bn::sprite_text_generator *get_current_text_generator(bn::sprite_text_generator *defaultTextGenerator)
         {
-            if (this->custom_text_generator != NULL)
+            if (this->custom_text_generator != nullptr)
             {
                 return this->custom_text_generator;
             }

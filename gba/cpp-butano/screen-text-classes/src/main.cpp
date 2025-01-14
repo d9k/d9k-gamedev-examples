@@ -2,11 +2,18 @@
 // #define _USE_MATH_DEFINES
 #define M_PI 3.14159265358979323846
 
+// #define BN_CFG_LOG_ENABLED 1
+// #define BN_CFG_LOG_BACKEND BN_LOG_BACKEND_NOCASHGBA
+// #define BN_LOG_BACKEND_NOCASHGBA   1
+// #define BN_CFG_LOG_BACKEND 1
+
 /*
  * Copyright (c) 2020-2024 Gustavo Valiente gustavo.valiente@protonmail.com
  * zlib License, see LICENSE file.
  */
 
+#include "../hw/include/bn_hw_log.h"
+// #include "../../hw/include/bn_hw_log.h"
 #include <algorithm>
 #include <cstring>
 #include <sstream>
@@ -28,7 +35,7 @@
 #include "screen_text/rows_composer.h"
 #include "screen_text/static_title.h"
 
-using namespace std::string_literals;
+// using namespace std::string_literals;
 
 namespace
 {
@@ -38,9 +45,9 @@ namespace
     void titles_text_generator_scene()
     {
         bn::core::update();
-        screen_text::AbstractBlock ablock = screen_text::AbstractBlock(3);
+        // screen_text::AbstractBlock ablock = screen_text::AbstractBlock(3);
 
-        BN_LOG("AbstractBlock: rows num: ", ablock.get_rows_count());
+        // BN_LOG("AbstractBlock: rows num: ", ablock.get_rows_count());
 
         bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
 

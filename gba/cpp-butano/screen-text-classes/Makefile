@@ -40,7 +40,9 @@ AUDIO       	:=  audio common/audio
 DMGAUDIO    	:=  dmg_audio common/dmg_audio
 ROMTITLE    	:=  BUTANO SCREEN TEXT CLASSES
 ROMCODE     	:=  SBTP
-USERFLAGS   	:=
+USERFLAGS   	:= -DBN_CFG_LOG_ENABLED=true
+# To debug on No$GBA emulator:
+# USERFLAGS   	:= -DBN_CFG_LOG_ENABLED=true -DBN_CFG_LOG_BACKEND=1
 USERCXXFLAGS	:=
 USERASFLAGS 	:=
 USERLDFLAGS 	:=

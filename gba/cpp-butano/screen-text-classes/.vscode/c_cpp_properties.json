@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/home/d9k/repos/_gba/butano/butano/**",
-                "/opt/wonderful/toolchain/gcc-arm-none-eabi/**"
+                // "/opt/wonderful/toolchain/gcc-arm-none-eabi/**",
+                "/opt/devkitpro/devkitARM/arm-none-eabi/**"
             ],
             "defines": [],
             "compilerPath": "",
