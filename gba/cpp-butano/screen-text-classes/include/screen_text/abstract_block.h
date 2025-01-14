@@ -1,8 +1,10 @@
 #ifndef SCREEN_TEXT_ABSTRACT_BLOCK_H
 #define SCREEN_TEXT_ABSTRACT_BLOCK_H
 
+#include "bn_log.h"
 #include "bn_vector.h"
 #include "bn_sprite_ptr.h"
+#include "bn_sprite_text_generator.h"
 #include "screen_text/sprites_vector.h"
 
 namespace screen_text
@@ -13,10 +15,17 @@ namespace screen_text
         bool _static_rendered;
         int rows_count = 1;
         int current_row_index = 0;
+        int cx_shift = 0;
+        int cy_shift = 0;
+        bn::sprite_text_generator *custom_text_generator;
 
-        AbstractBlock(int rowsCount)
+        AbstractBlock(int rowsCount = 1)
         {
             rows_count = rowsCount;
+        }
+
+        virtual ~AbstractBlock()
+        {
         }
 
         virtual int get_rows_count()
@@ -24,15 +33,27 @@ namespace screen_text
             return rows_count;
         }
 
-        void render_static_to_sprites(SpritesVector *staticSprites)
+        void rerender(
+            SpritesVector *staticSprites,
+            SpritesVector *dynamicSprites,
+            bn::sprite_text_generator *defaultTextGenerator)
         {
-            process_render_static_to_sprites(staticSprites);
+            if (!_static_rendered)
+            {
+                render_static_to_sprites(staticSprites, defaultTextGenerator);
+            }
+            render_dynamic_to_sprites(dynamicSprites, defaultTextGenerator);
+        }
+
+        void render_static_to_sprites(SpritesVector *staticSprites, bn::sprite_text_generator *defaultTextGenerator)
+        {
+            process_render_static_to_sprites(staticSprites, defaultTextGenerator);
             _static_rendered = true;
         }
 
-        void render_dynamic_to_sprites(SpritesVector *dynamicSprites)
+        void render_dynamic_to_sprites(SpritesVector *dynamicSprites, bn::sprite_text_generator *defaultTextGenerator)
         {
-            process_render_dynamic_to_sprites(dynamicSprites);
+            process_render_dynamic_to_sprites(dynamicSprites, defaultTextGenerator);
         }
 
         void reset()
@@ -40,21 +61,31 @@ namespace screen_text
             _static_rendered = false;
         }
 
-        void rerender(SpritesVector *staticSprites, SpritesVector *dynamicSprites)
+        bn::sprite_text_generator *get_current_text_generator(bn::sprite_text_generator *defaultTextGenerator)
         {
-            if (!_static_rendered)
+            if (this->custom_text_generator != NULL)
             {
-                render_static_to_sprites(staticSprites);
+                return this->custom_text_generator;
             }
-            render_dynamic_to_sprites(dynamicSprites);
+            return defaultTextGenerator;
         }
 
-        virtual void process_render_static_to_sprites(SpritesVector *)
+        virtual void process_render_static_to_sprites(SpritesVector *, bn::sprite_text_generator *)
         {
         }
 
-        virtual void process_render_dynamic_to_sprites(SpritesVector *)
+        virtual void process_render_dynamic_to_sprites(SpritesVector *, bn::sprite_text_generator *)
         {
+        }
+
+        void set_cx_shift(int cxShift)
+        {
+            cx_shift = cxShift;
+        }
+
+        void set_cy_shift(int cyShift)
+        {
+            cy_shift = cyShift;
         }
     };
 

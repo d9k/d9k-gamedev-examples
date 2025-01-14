@@ -26,6 +26,7 @@
 #include "chars_pointer_copy_wrapper.h"
 #include "screen_text/abstract_block.h"
 #include "screen_text/rows_composer.h"
+#include "screen_text/static_title.h"
 
 using namespace std::string_literals;
 
@@ -34,11 +35,44 @@ namespace
     constexpr bn::fixed text_y_inc = 14;
     constexpr bn::fixed text_y_limit = (bn::display::height() / 2) - text_y_inc;
 
-    void text_scene()
+    void titles_text_generator_scene()
     {
+        bn::core::update();
         screen_text::AbstractBlock ablock = screen_text::AbstractBlock(3);
 
         BN_LOG("AbstractBlock: rows num: ", ablock.get_rows_count());
+
+        bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
+
+        screen_text::RowsComposer<64, 32> rows_composer(&text_generator, 18);
+        rows_composer.first_row_cy_shift = -bn::display::height() / 2 + 16 / 2;
+
+        screen_text::StaticTitle title("Titles text generator");
+
+        screen_text::StaticTitle left("Left alignment", bn::sprite_text_generator::alignment_type::LEFT);
+
+        screen_text::StaticTitle right("Right alignment", bn::sprite_text_generator::alignment_type::RIGHT);
+
+        screen_text::StaticTitle row4("Row 4");
+
+        rows_composer.add_block(&title);
+        rows_composer.add_block(&left);
+        rows_composer.add_block(&right);
+        rows_composer.add_block(&row4);
+
+        // rows_composer.rerender();
+
+        while (!bn::keypad::start_pressed())
+        {
+            bn::core::update();
+            rows_composer.rerender();
+        }
+        bn::core::update();
+    }
+
+    void default_text_scene()
+    {
+        bn::core::update();
 
         bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
         text_generator.set_center_alignment();
@@ -64,7 +98,7 @@ int main()
 
     while (true)
     {
-        text_scene();
-        bn::core::update();
+        titles_text_generator_scene();
+        default_text_scene();
     }
 }

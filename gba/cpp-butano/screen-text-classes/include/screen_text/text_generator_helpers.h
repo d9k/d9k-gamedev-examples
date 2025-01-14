@@ -1,0 +1,9 @@
+#ifndef SCREEN_TEXT_TEXT_GENERATOR_HELPERS_H
+#define SCREEN_TEXT_TEXT_GENERATOR_HELPERS_H
+
+namespace screen_text {
+    // const int TEXT_POSITION_CENTER = 0;
+
+}
+
+#endif // SCREEN_TEXT_TEXT_GENERATOR_HELPERS_H

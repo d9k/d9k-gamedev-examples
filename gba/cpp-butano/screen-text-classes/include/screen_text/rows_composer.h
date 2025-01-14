@@ -1,14 +1,16 @@
 #ifndef SCREEN_TEXT_ROWS_COMPOSER_H
 #define SCREEN_TEXT_ROWS_COMPOSER_H
 
-#include "screen_text/abstract_block.h"
+#include "bn_log.h"
 #include "bn_sprite_text_generator.h"
+#include "screen_text/abstract_block.h"
 
 namespace screen_text
 {
     template <int TemplateStaticSpritesMaxCount, int TemplateDynamicSpritesMaxCount>
     class RowsComposer
     {
+    public:
         static constexpr const int MAX_ROWS = 32;
         bn::vector<bn::sprite_ptr, TemplateStaticSpritesMaxCount> static_sprites;
         bn::vector<bn::sprite_ptr, TemplateDynamicSpritesMaxCount> dynamic_sprites;
@@ -17,10 +19,10 @@ namespace screen_text
         int cx_shift = 0;
         int row_height;
         int next_new_row_index = 0;
-        bn::sprite_text_generator text_generator;
+        bn::sprite_text_generator *text_generator;
         AbstractBlockPtr _row_num_to_block_object[MAX_ROWS];
 
-        RowsComposer(bn::sprite_text_generator textGenerator, int rowHeight)
+        RowsComposer(bn::sprite_text_generator *textGenerator, int rowHeight)
         {
             this->text_generator = textGenerator;
             this->row_height = rowHeight;
@@ -54,17 +56,27 @@ namespace screen_text
         }
 
         void rerender() {
+            dynamic_sprites.clear();
+            int cy_shift = first_row_cy_shift;
+
             for (int i = 0; i < MAX_ROWS; i++) {
-                if (_row_num_to_block_object[i] != NULL) {
-                    _row_num_to_block_object[i]->rerender(&static_sprites, &dynamic_sprites);
+                AbstractBlock *block = _row_num_to_block_object[i];
+                // TODO BUG! Last title not drawn! Fixed if uncomment:
+                // BN_LOG("screen_text::RowsComposer: rerender(): i:", i, ", block: ", block);
+                if (block != NULL) {
+                    block->set_cy_shift(cy_shift);
+                    block->rerender(&static_sprites, &dynamic_sprites, text_generator);
                 }
+                cy_shift += row_height;
             }
         }
 
         void reset() {
+            static_sprites.clear();
             for (int i = 0; i < MAX_ROWS; i++) {
-                if (_row_num_to_block_object[i] != NULL) {
-                    _row_num_to_block_object[i]->reset();
+                AbstractBlock *block = _row_num_to_block_object[i];
+                if (block != NULL) {
+                    block->reset();
                 }
             }
         }
