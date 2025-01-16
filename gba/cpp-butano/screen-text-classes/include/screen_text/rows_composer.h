@@ -62,7 +62,8 @@ namespace screen_text
             next_new_row_index = 0;
         }
 
-        void __attribute__((optimize("O0"))) rerender()
+        // void __attribute__((optimize("O0"))) rerender()
+        void rerender()
         {
             dynamic_sprites.clear();
             int cy_shift = first_row_cy_shift;

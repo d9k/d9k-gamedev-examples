@@ -35,6 +35,7 @@
 #include "screen_text/rows_composer.h"
 #include "screen_text/static_title.h"
 #include "screen_text/caption_value_pair.h"
+#include "screen_text/scrollable_block.h"
 
 // using namespace std::string_literals;
 
@@ -46,7 +47,39 @@ namespace
     constexpr int rows_composer_line_height = 18;
     constexpr int key_value_pair_cx_shift = 30;
 
-    void titles_text_generator_scene()
+    constexpr const char *long_text = "Hear the voice of the Bard! Who Present, Past, & Future sees Whose ears have heard The Holy Word, That walk'd among the ancient trees. Calling the lapsed Soul And weeping in the evening dew; That might control. The starry pole; And fallen fallen light renew! O Earth O Earth return! Arise from out the dewy grass; Night is worn, And the morn Rises from the slumbrous mass. Turn away no more: Why wilt thou turn away The starry floor The watery shore Is given thee till the break of day. / William Blake";
+
+    void scrollable_blocks_classes_scene()
+    {
+        bn::core::update();
+
+        bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
+
+        screen_text::RowsComposer<128, 32> rows_composer(&text_generator, rows_composer_line_height);
+        rows_composer.first_row_cy_shift = rows_composer_first_row_cy_shift;
+
+        screen_text::StaticTitle title("Scrollable blocks classes");
+        screen_text::CaptionValuePair position("position");
+        position.cx_shift = key_value_pair_cx_shift;
+
+        // screen_text::ScrollableBlock scrollable(long_text, 4, 8);
+        screen_text::ScrollableBlock scrollable(long_text, 6, 26);
+        scrollable.cx_shift = -8;
+
+        rows_composer.add_block(&title);
+        rows_composer.add_block(&position);
+        rows_composer.add_block(&scrollable);
+
+        while (!bn::keypad::start_pressed())
+        {
+            bn::core::update();
+            // position.dynamic_value = bn::to_string<16>(frame_number).c_str();
+            position.dynamic_value = "TODO";
+            rows_composer.rerender();
+        }
+    }
+
+    void caption_value_pairs_classes_scene()
     {
         bn::core::update();
 
@@ -55,8 +88,8 @@ namespace
         screen_text::RowsComposer<64, 32> rows_composer(&text_generator, rows_composer_line_height);
         rows_composer.first_row_cy_shift = rows_composer_first_row_cy_shift;
 
-        screen_text::StaticTitle title("Titles text generator");
-        screen_text::CaptionValuePair frames_counter("frame: ");
+        screen_text::StaticTitle title("Caption/value pairs classes");
+        screen_text::CaptionValuePair frames_counter("frame");
         frames_counter.cx_shift = key_value_pair_cx_shift;
 
         rows_composer.add_block(&title);
@@ -67,14 +100,13 @@ namespace
         while (!bn::keypad::start_pressed())
         {
             bn::core::update();
-            frames_counter.dynamic_text = bn::to_string<16>(frame_number).c_str();
+            frames_counter.dynamic_value = bn::to_string<16>(frame_number).c_str();
             rows_composer.rerender();
             frame_number++;
         }
-        bn::core::update();
     }
 
-    void caption_value_pair_text_generator_scene()
+    void titles_classes_scene()
     {
         bn::core::update();
         // screen_text::AbstractBlock ablock = screen_text::AbstractBlock(3);
@@ -86,7 +118,7 @@ namespace
         screen_text::RowsComposer<64, 32> rows_composer(&text_generator, rows_composer_line_height);
         rows_composer.first_row_cy_shift = rows_composer_first_row_cy_shift;
 
-        screen_text::StaticTitle title("Caption-value pair example");
+        screen_text::StaticTitle title("Titles classes example");
 
         screen_text::StaticTitle left("Left alignment", bn::sprite_text_generator::alignment_type::LEFT);
 
@@ -106,7 +138,6 @@ namespace
             bn::core::update();
             rows_composer.rerender();
         }
-        bn::core::update();
     }
 
     void default_text_scene()
@@ -137,8 +168,9 @@ int main()
 
     while (true)
     {
-        titles_text_generator_scene();
-        caption_value_pair_text_generator_scene();
+        scrollable_blocks_classes_scene();
+        caption_value_pairs_classes_scene();
+        titles_classes_scene();
         default_text_scene();
     }
 }

@@ -43,19 +43,21 @@ namespace screen_text
             {
                 BN_LOG("screen_text::AbstractBlock: rerender(): calling render_static_to_sprites");
                 render_static_to_sprites(staticSprites, defaultTextGenerator);
-            } else {
+            }
+            else
+            {
                 BN_LOG("screen_text::AbstractBlock: rerender(): NOT calling render_static_to_sprites");
             }
             render_dynamic_to_sprites(dynamicSprites, defaultTextGenerator);
         }
 
-        void render_static_to_sprites(SpritesVector *staticSprites, bn::sprite_text_generator *defaultTextGenerator)
+        virtual void render_static_to_sprites(SpritesVector *staticSprites, bn::sprite_text_generator *defaultTextGenerator)
         {
             process_render_static_to_sprites(staticSprites, defaultTextGenerator);
             _static_rendered = true;
         }
 
-        void render_dynamic_to_sprites(SpritesVector *dynamicSprites, bn::sprite_text_generator *defaultTextGenerator)
+        virtual void render_dynamic_to_sprites(SpritesVector *dynamicSprites, bn::sprite_text_generator *defaultTextGenerator)
         {
             process_render_dynamic_to_sprites(dynamicSprites, defaultTextGenerator);
         }

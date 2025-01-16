@@ -27,4 +27,4 @@ char *chars_copy(bn::string_view sourceStringView, int firstNCharsOnly = 0)
     return chars_copy(sourceStringView.data(), stringViewCharsLength);
 }
 
-#endif // CHARS_COPY_Hendif // CHARS_COPY_HH
+#endif // CHARS_COPY_H

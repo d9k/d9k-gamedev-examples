@@ -6,25 +6,30 @@
 
 char *chars_copy(const char *sourceChars, int firstNCharsOnly = 0)
 {
-    int sourceCharsLength = firstNCharsOnly;
-    if (!sourceCharsLength)
+    int length_to_copy = firstNCharsOnly;
+    int source_chars_length = std::strlen(sourceChars);
+
+    if (!length_to_copy || length_to_copy > source_chars_length)
     {
-        sourceCharsLength = std::strlen(sourceChars);
+        length_to_copy = source_chars_length;
     }
-    char *result = new char[sourceCharsLength + 1];
-    std::strncpy(result, sourceChars, sourceCharsLength + 1);
-    result[sourceCharsLength] = 0;
+
+    char *result = new char[length_to_copy + 1];
+    std::strncpy(result, sourceChars, length_to_copy + 1);
+    result[length_to_copy] = 0;
     return result;
 }
 
 char *chars_copy(bn::string_view sourceStringView, int firstNCharsOnly = 0)
 {
-    int stringViewCharsLength = firstNCharsOnly;
-    if (!stringViewCharsLength)
+    int length_to_copy = firstNCharsOnly;
+
+    int source_chars_length = sourceStringView.size();
+    if (!length_to_copy || length_to_copy > source_chars_length)
     {
-        stringViewCharsLength = sourceStringView.size();
+        length_to_copy = source_chars_length;
     }
-    return chars_copy(sourceStringView.data(), stringViewCharsLength);
+    return chars_copy(sourceStringView.data(), length_to_copy);
 }
 
-#endif // CHARS_COPY_Hendif // CHARS_COPY_HH
+#endif // CHARS_COPY_H
