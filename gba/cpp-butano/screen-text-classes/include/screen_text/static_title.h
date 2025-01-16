@@ -25,13 +25,11 @@ namespace screen_text
 
         void process_render_static_to_sprites(SpritesVector *staticSprites, bn::sprite_text_generator *defaultTextGenerator) override
         {
-            // BN_LOG("screen_text::StaticTitle: process_render_static_to_sprites(): ", static_text);
-            BN_LOG("screen_text::StaticTitle: process_render_static_to_sprites(): cy_shift: ", cy_shift, ", text: ", static_text);
+            // BN_LOG("screen_text::StaticTitle: process_render_static_to_sprites(): cy_shift: ", cy_shift, ", text: ", static_text);
 
             bn::sprite_text_generator *text_generator = get_current_text_generator(defaultTextGenerator);
             text_generator->set_alignment(alignment);
-            text_generator->generate(0, cy_shift, static_text, *staticSprites);
-            // text_generator->generate(0, cy_shift, "__TEST__", *staticSprites);
+            text_generator->generate(cx_shift, cy_shift, static_text, *staticSprites);
         }
     };
 }

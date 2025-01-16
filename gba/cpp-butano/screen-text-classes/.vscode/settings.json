@@ -11,4 +11,5 @@
     // "C_Cpp.default.compilerPath": "/opt/wonderful/toolchain/gcc-arm-none-eabi/bin/arm-none-eabi-g++",
     "C_Cpp.default.compilerPath": "/opt/devkitpro/devkitARM/bin/arm-none-eabi-g++",
     // "C_Cpp.errorSquiggles": "enabled"
+    "editor.formatOnSave": true,
 }

@@ -16,10 +16,10 @@ namespace screen_text
         bn::vector<bn::sprite_ptr, TemplateStaticSpritesMaxCount> static_sprites;
         bn::vector<bn::sprite_ptr, TemplateDynamicSpritesMaxCount> dynamic_sprites;
 
+        // int cx_shift = 0;
         int first_row_cy_shift = 0;
-        int cx_shift = 0;
-        int row_height;
         int next_new_row_index = 0;
+        int row_height;
         bn::sprite_text_generator *text_generator;
         AbstractBlockPtr _row_num_to_block_object[MAX_ROWS];
         // bn::array<AbstractBlock*, MAX_ROWS> _row_num_to_block_object;
@@ -37,8 +37,10 @@ namespace screen_text
         {
             int rows_count = block->get_rows_count();
 
-            for (int i = next_new_row_index; i < next_new_row_index + rows_count; i++) {
-                if (_row_num_to_block_object[i] != nullptr) {
+            for (int i = next_new_row_index; i < next_new_row_index + rows_count; i++)
+            {
+                if (_row_num_to_block_object[i] != nullptr)
+                {
                     bn::string<64> error_msg_no_place = "No place for new block with ";
                     error_msg_no_place += bn::to_string<16>(rows_count);
                     error_msg_no_place += ", next_ ";
@@ -60,7 +62,8 @@ namespace screen_text
             next_new_row_index = 0;
         }
 
-        void __attribute__((optimize("O0"))) rerender() {
+        void __attribute__((optimize("O0"))) rerender()
+        {
             dynamic_sprites.clear();
             int cy_shift = first_row_cy_shift;
 
@@ -76,28 +79,33 @@ namespace screen_text
             //     // cy_shift += row_height;
             // }
 
-
-            for (int i = 0; i < MAX_ROWS; i++) {
+            for (int i = 0; i < MAX_ROWS; i++)
+            {
                 AbstractBlock *block = _row_num_to_block_object[i];
                 // TODO BUG! Last title not drawn! Fixed if uncomment:
                 BN_LOG("screen_text::RowsComposer: rerender(): i:", i, ", block: ", block);
 
-                if (block != nullptr) {
-                // if (_row_num_to_block_object[i] != nullptr) {
+                if (block != nullptr)
+                {
+                    // if (_row_num_to_block_object[i] != nullptr) {
                     // AbstractBlock *block = _row_num_to_block_object[i];
                     BN_LOG("screen_text::RowsComposer: rerender(): rendering #", i, " block");
                     block->set_cy_shift(cy_shift);
+                    // block->set_cx_shift(cx_shift);
                     block->rerender(&static_sprites, &dynamic_sprites, text_generator);
                 }
                 cy_shift += row_height;
             }
         }
 
-        void reset() {
+        void reset()
+        {
             static_sprites.clear();
-            for (int i = 0; i < MAX_ROWS; i++) {
+            for (int i = 0; i < MAX_ROWS; i++)
+            {
                 AbstractBlock *block = _row_num_to_block_object[i];
-                if (block != nullptr) {
+                if (block != nullptr)
+                {
                     block->reset();
                 }
             }

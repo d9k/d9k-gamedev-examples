@@ -34,6 +34,7 @@
 #include "screen_text/abstract_block.h"
 #include "screen_text/rows_composer.h"
 #include "screen_text/static_title.h"
+#include "screen_text/caption_value_pair.h"
 
 // using namespace std::string_literals;
 
@@ -41,8 +42,39 @@ namespace
 {
     constexpr bn::fixed text_y_inc = 14;
     constexpr bn::fixed text_y_limit = (bn::display::height() / 2) - text_y_inc;
+    constexpr int rows_composer_first_row_cy_shift = -bn::display::height() / 2 + 16 / 2;
+    constexpr int rows_composer_line_height = 18;
+    constexpr int key_value_pair_cx_shift = 30;
 
     void titles_text_generator_scene()
+    {
+        bn::core::update();
+
+        bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
+
+        screen_text::RowsComposer<64, 32> rows_composer(&text_generator, rows_composer_line_height);
+        rows_composer.first_row_cy_shift = rows_composer_first_row_cy_shift;
+
+        screen_text::StaticTitle title("Titles text generator");
+        screen_text::CaptionValuePair frames_counter("frame: ");
+        frames_counter.cx_shift = key_value_pair_cx_shift;
+
+        rows_composer.add_block(&title);
+        rows_composer.add_block(&frames_counter);
+
+        uint64_t frame_number = 1;
+
+        while (!bn::keypad::start_pressed())
+        {
+            bn::core::update();
+            frames_counter.dynamic_text = bn::to_string<16>(frame_number).c_str();
+            rows_composer.rerender();
+            frame_number++;
+        }
+        bn::core::update();
+    }
+
+    void caption_value_pair_text_generator_scene()
     {
         bn::core::update();
         // screen_text::AbstractBlock ablock = screen_text::AbstractBlock(3);
@@ -51,10 +83,10 @@ namespace
 
         bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
 
-        screen_text::RowsComposer<64, 32> rows_composer(&text_generator, 18);
-        rows_composer.first_row_cy_shift = -bn::display::height() / 2 + 16 / 2;
+        screen_text::RowsComposer<64, 32> rows_composer(&text_generator, rows_composer_line_height);
+        rows_composer.first_row_cy_shift = rows_composer_first_row_cy_shift;
 
-        screen_text::StaticTitle title("Titles text generator");
+        screen_text::StaticTitle title("Caption-value pair example");
 
         screen_text::StaticTitle left("Left alignment", bn::sprite_text_generator::alignment_type::LEFT);
 
@@ -106,6 +138,7 @@ int main()
     while (true)
     {
         titles_text_generator_scene();
+        caption_value_pair_text_generator_scene();
         default_text_scene();
     }
 }
