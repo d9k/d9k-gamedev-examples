@@ -47,6 +47,16 @@ namespace screen_text
             return _scroll_vertical_current;
         }
 
+        bool can_scroll_up()
+        {
+            return _scroll_vertical_current > 0;
+        }
+
+        bool can_scroll_down()
+        {
+            return _scroll_vertical_current < _scroll_vertical_max;
+        }
+
         void set_scroll_vertical_current(int new_vertical_scroll)
         {
             if (new_vertical_scroll < 0)
@@ -79,7 +89,7 @@ namespace screen_text
             const char *static_text_in_window = chars_copy(static_text + window_begin_char_pos, _window_columns_count);
 
             text_generator->set_alignment(screen_text::ALIGN_LEFT);
-            text_generator->generate(cx_shift, cy_shift, static_text_in_window, *staticSprites);
+            text_generator->generate(row_cx_shift, row_cy_shift, static_text_in_window, *staticSprites);
 
             _window_row_current++;
 

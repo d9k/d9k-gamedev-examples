@@ -34,7 +34,7 @@ namespace screen_text
             static_caption_with_separator_stream << separator;
 
             text_generator->set_alignment(screen_text::ALIGN_RIGHT);
-            text_generator->generate(cx_shift, cy_shift, static_caption_with_separator, *staticSprites);
+            text_generator->generate(row_cx_shift, row_cy_shift, static_caption_with_separator, *staticSprites);
         }
 
         void process_render_dynamic_to_sprites(SpritesVector *dynamicSprites, bn::sprite_text_generator *defaultTextGenerator) override
@@ -42,7 +42,7 @@ namespace screen_text
             bn::sprite_text_generator *text_generator = get_current_text_generator(defaultTextGenerator);
 
             text_generator->set_alignment(screen_text::ALIGN_LEFT);
-            text_generator->generate(cx_shift, cy_shift, dynamic_value, *dynamicSprites);
+            text_generator->generate(row_cx_shift, row_cy_shift, dynamic_value, *dynamicSprites);
         }
     };
 }

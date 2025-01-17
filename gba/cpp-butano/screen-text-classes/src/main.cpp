@@ -47,14 +47,29 @@ namespace
 
     constexpr const char *long_text = "Hear the voice of the Bard! Who Present, Past, & Future sees Whose ears have heard The Holy Word, That walk'd among the ancient trees. Calling the lapsed Soul And weeping in the evening dew; That might control. The starry pole; And fallen fallen light renew! O Earth O Earth return! Arise from out the dewy grass; Night is worn, And the morn Rises from the slumbrous mass. Turn away no more: Why wilt thou turn away The starry floor The watery shore Is given thee till the break of day. / William Blake";
 
+    inline void arrow_sprites_update_visible(
+        bn::sprite_ptr *arrow_up,
+        bn::sprite_ptr *arrow_down,
+        screen_text::ScrollableBlock *scrollable_block)
+    {
+        arrow_up->set_visible(scrollable_block->can_scroll_up());
+        arrow_down->set_visible(scrollable_block->can_scroll_down());
+    }
+
     void scrollable_blocks_classes_scene()
     {
         bn::core::update();
 
-        bn::sprite_ptr arrow_down = bn::sprite_items::arrow_down.create_sprite();
+        bool first_render = true;
+
+        bn::sprite_ptr arrow_down = bn::sprite_items::arrow_down.create_sprite(
+            cx_position_at_right_border - 4,
+            0);
         arrow_down.set_visible(false);
 
-        bn::sprite_ptr arrow_up = bn::sprite_items::arrow_up.create_sprite();
+        bn::sprite_ptr arrow_up = bn::sprite_items::arrow_up.create_sprite(
+            cx_position_at_right_border - 4,
+            0);
         arrow_up.set_visible(false);
 
         bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
@@ -66,15 +81,13 @@ namespace
 
         screen_text::Title position("", screen_text::ALIGN_RIGHT, true);
         position.custom_margin_with_last_block = 8;
-        position.cx_shift = cx_position_at_right_border - 10;
+        position.row_cx_shift = cx_position_at_right_border - 10;
         bn::string<32> position_string;
         bn::ostringstream position_string_stream(position_string);
 
-        // position.cx_shift = x_position_at_right_border;
-
         screen_text::ScrollableBlock scrollable_block(long_text, scrollable_block_window_rows, scrollable_block_window_columns);
 
-        scrollable_block.cx_shift = cx_position_at_left_border;
+        scrollable_block.row_cx_shift = cx_position_at_left_border - 2;
 
         scrollable_block.scroll_vertical_delta = scrollable_block_scroll_vertical_delta;
         scrollable_block.custom_margin_with_last_block = 2;
@@ -95,11 +108,13 @@ namespace
             if (bn::keypad::left_pressed() || bn::keypad::up_pressed())
             {
                 scrollable_block.dec_scroll_vertical_current();
+                arrow_sprites_update_visible(&arrow_up, &arrow_down, &scrollable_block);
                 rows_composer.reset();
             }
             if (bn::keypad::right_pressed() || bn::keypad::down_pressed())
             {
                 scrollable_block.inc_scroll_vertical_current();
+                arrow_sprites_update_visible(&arrow_up, &arrow_down, &scrollable_block);
                 rows_composer.reset();
             }
 
@@ -109,6 +124,19 @@ namespace
             position_string_stream << scrollable_block.get_scroll_vertical_max();
             position.text = position_string.c_str();
             rows_composer.rerender();
+
+            if (first_render)
+            {
+                first_render = false;
+                arrow_up.set_y(scrollable_block.rendered_block_cy_shift);
+
+                arrow_down.set_y(scrollable_block.rendered_block_cy_shift + scrollable_block.rendered_block_height - 16);
+
+                arrow_sprites_update_visible(&arrow_up, &arrow_down, &scrollable_block);
+            }
+
+            // arrow_up.set_visible(true);
+            // arrow_down.set_visible(true);
         }
     }
 
@@ -125,7 +153,7 @@ namespace
 
         screen_text::Title title("Caption/value pairs classes");
         screen_text::CaptionValuePair frames_counter("frame");
-        frames_counter.cx_shift = key_value_pair_cx_shift;
+        frames_counter.row_cx_shift = key_value_pair_cx_shift;
 
         rows_composer.add_block(&title);
         rows_composer.add_block(&frames_counter);
@@ -156,18 +184,18 @@ namespace
         screen_text::Title left("Left alignment", screen_text::ALIGN_LEFT);
 
         screen_text::Title left_shifted("Left shifted", screen_text::ALIGN_LEFT);
-        left_shifted.cx_shift = cx_position_at_left_border;
+        left_shifted.row_cx_shift = cx_position_at_left_border;
 
         screen_text::Title left_shifted_longer("Left shifted longer", screen_text::ALIGN_LEFT);
-        left_shifted_longer.cx_shift = cx_position_at_left_border;
+        left_shifted_longer.row_cx_shift = cx_position_at_left_border;
 
         screen_text::Title right("Right alignment", screen_text::ALIGN_RIGHT);
 
         screen_text::Title right_shifted("Right shifted", screen_text::ALIGN_RIGHT);
-        right_shifted.cx_shift = cx_position_at_right_border;
+        right_shifted.row_cx_shift = cx_position_at_right_border;
 
         screen_text::Title right_shifted_longer("Right shifted longer", screen_text::ALIGN_RIGHT);
-        right_shifted_longer.cx_shift = cx_position_at_right_border;
+        right_shifted_longer.row_cx_shift = cx_position_at_right_border;
 
         rows_composer.add_block(&title);
         rows_composer.add_block(&left);

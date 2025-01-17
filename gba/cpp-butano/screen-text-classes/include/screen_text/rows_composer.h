@@ -66,20 +66,29 @@ namespace screen_text
             next_new_row_index = 0;
         }
 
-        bool current_row_in_the_same_block_with_previous_row(int i)
+        AbstractBlock *get_block_from_row_index(int row_index)
         {
-            AbstractBlock *current_block = _row_num_to_block_object[i];
-            int last_i = i - 1;
-            if (last_i < 0)
+            if (row_index < 0)
+            {
+                return nullptr;
+            }
+            if (row_index >= MAX_ROWS)
+            {
+                return nullptr;
+            }
+            return _row_num_to_block_object[row_index];
+        }
+
+        bool row_in_the_same_block_with_previous_row(
+            AbstractBlock *current_row_block,
+            AbstractBlock *previous_row_block)
+        {
+            if (current_row_block == nullptr || previous_row_block == nullptr)
             {
                 return false;
             }
-            AbstractBlock *last_block = _row_num_to_block_object[last_i];
-            if (last_block == nullptr)
-            {
-                return false;
-            }
-            return last_block == current_block;
+
+            return previous_row_block == current_row_block;
         }
 
         void rerender()
@@ -91,29 +100,40 @@ namespace screen_text
 
             for (int i = 0; i < MAX_ROWS; i++)
             {
-                AbstractBlock *block = _row_num_to_block_object[i];
+                AbstractBlock *current_row_block = _row_num_to_block_object[i];
+                AbstractBlock *previous_row_block = get_block_from_row_index(i - 1);
+                AbstractBlock *next_row_block = get_block_from_row_index(i + 1);
 
-                // BN_LOG("screen_text::RowsComposer: rerender(): i:", i, ", block: ", block);
                 current_row_height = row_height;
                 margin_with_last_block = 0;
 
-                if (block != nullptr)
+                bool same_block_with_previous_row = row_in_the_same_block_with_previous_row(current_row_block, previous_row_block);
+                bool same_block_with_next_row = row_in_the_same_block_with_previous_row(current_row_block, next_row_block);
+
+                if (current_row_block != nullptr)
                 {
                     // BN_LOG("screen_text::RowsComposer: rerender(): rendering #", i, " block");
-                    if (!current_row_in_the_same_block_with_previous_row(i))
+                    if (!same_block_with_previous_row)
                     {
-                        margin_with_last_block = block->custom_margin_with_last_block;
+                        margin_with_last_block = current_row_block->custom_margin_with_last_block;
+                        current_row_block->rendered_block_cy_shift = cy_shift + margin_with_last_block;
                     }
 
-                    block->set_cy_shift(cy_shift + margin_with_last_block);
-                    block->rerender(&static_sprites, &dynamic_sprites, text_generator);
+                    current_row_block->set_row_cy_shift(cy_shift + margin_with_last_block);
+                    current_row_block->rerender(&static_sprites, &dynamic_sprites, text_generator);
 
-                    if (block->custom_row_height)
+                    if (current_row_block->custom_row_height)
                     {
-                        current_row_height = block->custom_row_height;
+                        current_row_height = current_row_block->custom_row_height;
                     }
                 }
+
                 cy_shift += current_row_height + margin_with_last_block;
+
+                if (current_row_block != nullptr && !same_block_with_next_row)
+                {
+                    current_row_block->rendered_block_height = cy_shift - current_row_block->rendered_block_cy_shift;
+                }
             }
         }
 

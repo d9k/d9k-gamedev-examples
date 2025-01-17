@@ -32,7 +32,7 @@ namespace screen_text
         {
             bn::sprite_text_generator *text_generator = get_current_text_generator(defaultTextGenerator);
             text_generator->set_alignment(alignment);
-            text_generator->generate(cx_shift, cy_shift, text, *sprites);
+            text_generator->generate(row_cx_shift, row_cy_shift, text, *sprites);
         }
 
         void process_render_static_to_sprites(SpritesVector *staticSprites, bn::sprite_text_generator *defaultTextGenerator) override

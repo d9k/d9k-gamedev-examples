@@ -12,15 +12,17 @@ namespace screen_text
     class AbstractBlock
     {
     public:
-        bool _static_rendered = false;
-        int rows_count = 1;
         int current_row_index = 0;
-        int cx_shift = 0;
-        int cy_shift = 0;
+        bn::sprite_text_generator *custom_text_generator = nullptr;
         int custom_margin_with_last_block = 0;
         int custom_row_height = 0;
+        int rendered_block_cy_shift = 0;
+        int rendered_block_height = 0;
+        int rows_count = 1;
+        int row_cx_shift = 0;
+        int row_cy_shift = 0;
 
-        bn::sprite_text_generator *custom_text_generator = nullptr;
+        bool _static_rendered = false;
 
         AbstractBlock(int rowsCount = 1)
         {
@@ -87,14 +89,14 @@ namespace screen_text
         {
         }
 
-        void set_cx_shift(int cxShift)
+        void set_row_cx_shift(int cxShift)
         {
-            cx_shift = cxShift;
+            row_cx_shift = cxShift;
         }
 
-        void set_cy_shift(int cyShift)
+        void set_row_cy_shift(int cyShift)
         {
-            cy_shift = cyShift;
+            row_cy_shift = cyShift;
         }
     };
 
