@@ -17,6 +17,9 @@ namespace screen_text
         int current_row_index = 0;
         int cx_shift = 0;
         int cy_shift = 0;
+        int custom_margin_with_last_block = 0;
+        int custom_row_height = 0;
+
         bn::sprite_text_generator *custom_text_generator = nullptr;
 
         AbstractBlock(int rowsCount = 1)

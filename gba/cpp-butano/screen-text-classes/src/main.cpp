@@ -31,6 +31,7 @@ namespace
     constexpr bn::fixed text_y_limit = (bn::display::height() / 2) - text_y_inc;
     constexpr int rows_composer_first_row_cy_shift = -bn::display::height() / 2 + 16 / 2;
     constexpr int rows_composer_line_height = 18;
+    constexpr int scrollable_block_row_height = 14;
     constexpr int key_value_pair_cx_shift = 30;
     constexpr int scrollable_block_window_rows = 6;
     constexpr int scrollable_block_window_columns = 26;
@@ -52,6 +53,7 @@ namespace
         screen_text::StaticTitle title("Scrollable blocks classes");
 
         screen_text::CaptionValuePair position("Scroll position");
+        position.custom_margin_with_last_block = 8;
         bn::string<32> position_string = "";
         bn::ostringstream position_string_stream(position_string);
 
@@ -61,6 +63,8 @@ namespace
 
         scrollable_block.cx_shift = -bn::display::width() / 2 + 8;
         scrollable_block.scroll_vertical_delta = scrollable_block_scroll_vertical_delta;
+        scrollable_block.custom_margin_with_last_block = 2;
+        scrollable_block.custom_row_height = scrollable_block_row_height;
 
         rows_composer.add_block(&title);
         rows_composer.add_block(&scrollable_block);
