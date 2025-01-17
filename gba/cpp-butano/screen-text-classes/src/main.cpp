@@ -1,19 +1,7 @@
 #define BN_CFG_LOG_MAX_SIZE 1024
-// #define _USE_MATH_DEFINES
 #define M_PI 3.14159265358979323846
 
-// #define BN_CFG_LOG_ENABLED 1
-// #define BN_CFG_LOG_BACKEND BN_LOG_BACKEND_NOCASHGBA
-// #define BN_LOG_BACKEND_NOCASHGBA   1
-// #define BN_CFG_LOG_BACKEND 1
-
-/*
- * Copyright (c) 2020-2024 Gustavo Valiente gustavo.valiente@protonmail.com
- * zlib License, see LICENSE file.
- */
-
 #include "../hw/include/bn_hw_log.h"
-// #include "../../hw/include/bn_hw_log.h"
 #include <algorithm>
 #include <cstring>
 #include <sstream>
@@ -37,8 +25,6 @@
 #include "screen_text/caption_value_pair.h"
 #include "screen_text/scrollable_block.h"
 
-// using namespace std::string_literals;
-
 namespace
 {
     constexpr bn::fixed text_y_inc = 14;
@@ -49,6 +35,8 @@ namespace
     constexpr int scrollable_block_window_rows = 6;
     constexpr int scrollable_block_window_columns = 26;
     constexpr int scrollable_block_scroll_vertical_delta = scrollable_block_window_rows - 1;
+    constexpr int rows_composer_bottom_row_index = 8;
+    constexpr const char *bottom_line_text_default = "(START: go to next scene)";
 
     constexpr const char *long_text = "Hear the voice of the Bard! Who Present, Past, & Future sees Whose ears have heard The Holy Word, That walk'd among the ancient trees. Calling the lapsed Soul And weeping in the evening dew; That might control. The starry pole; And fallen fallen light renew! O Earth O Earth return! Arise from out the dewy grass; Night is worn, And the morn Rises from the slumbrous mass. Turn away no more: Why wilt thou turn away The starry floor The watery shore Is given thee till the break of day. / William Blake";
 
@@ -62,25 +50,28 @@ namespace
         rows_composer.first_row_cy_shift = rows_composer_first_row_cy_shift;
 
         screen_text::StaticTitle title("Scrollable blocks classes");
-        screen_text::CaptionValuePair position("position");
-        position.cx_shift = key_value_pair_cx_shift;
+
+        screen_text::CaptionValuePair position("Scroll position");
+        bn::string<32> position_string = "";
+        bn::ostringstream position_string_stream(position_string);
+
+        position.cx_shift = 50;
 
         screen_text::ScrollableBlock scrollable_block(long_text, scrollable_block_window_rows, scrollable_block_window_columns);
 
-        scrollable_block.cx_shift = -8;
+        scrollable_block.cx_shift = -bn::display::width() / 2 + 8;
         scrollable_block.scroll_vertical_delta = scrollable_block_scroll_vertical_delta;
 
         rows_composer.add_block(&title);
-        rows_composer.add_block(&position);
         rows_composer.add_block(&scrollable_block);
+        rows_composer.add_block(&position);
 
-        bn::string<32> position_string = "";
-        bn::ostringstream position_string_stream(position_string);
+        screen_text::StaticTitle bottom_title(bottom_line_text_default);
+        rows_composer.add_block(&bottom_title, rows_composer_bottom_row_index);
 
         while (!bn::keypad::start_pressed())
         {
             bn::core::update();
-            // position.dynamic_value = bn::to_string<16>(frame_number).c_str();
 
             if (bn::keypad::left_pressed() || bn::keypad::up_pressed())
             {
@@ -106,6 +97,8 @@ namespace
     {
         bn::core::update();
 
+        uint64_t frame_number = 1;
+
         bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
 
         screen_text::RowsComposer<64, 32> rows_composer(&text_generator, rows_composer_line_height);
@@ -118,7 +111,8 @@ namespace
         rows_composer.add_block(&title);
         rows_composer.add_block(&frames_counter);
 
-        uint64_t frame_number = 1;
+        screen_text::StaticTitle bottom_title(bottom_line_text_default);
+        rows_composer.add_block(&bottom_title, rows_composer_bottom_row_index);
 
         while (!bn::keypad::start_pressed())
         {
@@ -154,7 +148,8 @@ namespace
         rows_composer.add_block(&right);
         rows_composer.add_block(&row4);
 
-        // rows_composer.rerender();
+        screen_text::StaticTitle bottom_title(bottom_line_text_default);
+        rows_composer.add_block(&bottom_title, rows_composer_bottom_row_index);
 
         while (!bn::keypad::start_pressed())
         {
@@ -172,7 +167,7 @@ namespace
 
         bn::vector<bn::sprite_ptr, 32> text_sprites;
         text_generator.generate(0, -text_y_limit, "Screen text classes example", text_sprites);
-        text_generator.generate(0, text_y_limit, "START: go to next scene", text_sprites);
+        text_generator.generate(0, text_y_limit, bottom_line_text_default, text_sprites);
 
         while (!bn::keypad::start_pressed())
         {

@@ -38,15 +38,15 @@ namespace screen_text
             SpritesVector *dynamicSprites,
             bn::sprite_text_generator *defaultTextGenerator)
         {
-            BN_LOG("screen_text::AbstractBlock: rerender(): cy_shift: ", cy_shift);
+            // BN_LOG("screen_text::AbstractBlock: rerender(): cy_shift: ", cy_shift);
             if (!_static_rendered)
             {
-                BN_LOG("screen_text::AbstractBlock: rerender(): calling render_static_to_sprites");
+                // BN_LOG("screen_text::AbstractBlock: rerender(): calling render_static_to_sprites");
                 render_static_to_sprites(staticSprites, defaultTextGenerator);
             }
             else
             {
-                BN_LOG("screen_text::AbstractBlock: rerender(): NOT calling render_static_to_sprites");
+                // BN_LOG("screen_text::AbstractBlock: rerender(): NOT calling render_static_to_sprites");
             }
             render_dynamic_to_sprites(dynamicSprites, defaultTextGenerator);
         }
