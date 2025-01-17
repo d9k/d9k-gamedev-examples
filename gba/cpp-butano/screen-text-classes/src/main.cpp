@@ -26,6 +26,9 @@
 #include "screen_text/caption_value_pair.h"
 #include "screen_text/scrollable_block.h"
 
+#include "bn_sprite_items_arrow_down.h"
+#include "bn_sprite_items_arrow_up.h"
+
 namespace
 {
     constexpr bn::fixed text_y_inc = 14;
@@ -48,6 +51,12 @@ namespace
     {
         bn::core::update();
 
+        bn::sprite_ptr arrow_down = bn::sprite_items::arrow_down.create_sprite();
+        arrow_down.set_visible(false);
+
+        bn::sprite_ptr arrow_up = bn::sprite_items::arrow_up.create_sprite();
+        arrow_up.set_visible(false);
+
         bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
 
         screen_text::RowsComposer<128, 32> rows_composer(&text_generator, rows_composer_line_height);
@@ -66,7 +75,6 @@ namespace
         screen_text::ScrollableBlock scrollable_block(long_text, scrollable_block_window_rows, scrollable_block_window_columns);
 
         scrollable_block.cx_shift = cx_position_at_left_border;
-        // scrollable_block.cx_shift = -bn::display::width() + 16 / 2;
 
         scrollable_block.scroll_vertical_delta = scrollable_block_scroll_vertical_delta;
         scrollable_block.custom_margin_with_last_block = 2;
@@ -137,9 +145,6 @@ namespace
     void titles_classes_scene()
     {
         bn::core::update();
-        // screen_text::AbstractBlock ablock = screen_text::AbstractBlock(3);
-
-        // BN_LOG("AbstractBlock: rows num: ", ablock.get_rows_count());
 
         bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
 
