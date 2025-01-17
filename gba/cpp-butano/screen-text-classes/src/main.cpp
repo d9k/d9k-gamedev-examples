@@ -46,6 +46,9 @@ namespace
     constexpr int rows_composer_first_row_cy_shift = -bn::display::height() / 2 + 16 / 2;
     constexpr int rows_composer_line_height = 18;
     constexpr int key_value_pair_cx_shift = 30;
+    constexpr int scrollable_block_window_rows = 6;
+    constexpr int scrollable_block_window_columns = 26;
+    constexpr int scrollable_block_scroll_vertical_delta = scrollable_block_window_rows - 1;
 
     constexpr const char *long_text = "Hear the voice of the Bard! Who Present, Past, & Future sees Whose ears have heard The Holy Word, That walk'd among the ancient trees. Calling the lapsed Soul And weeping in the evening dew; That might control. The starry pole; And fallen fallen light renew! O Earth O Earth return! Arise from out the dewy grass; Night is worn, And the morn Rises from the slumbrous mass. Turn away no more: Why wilt thou turn away The starry floor The watery shore Is given thee till the break of day. / William Blake";
 
@@ -62,19 +65,39 @@ namespace
         screen_text::CaptionValuePair position("position");
         position.cx_shift = key_value_pair_cx_shift;
 
-        // screen_text::ScrollableBlock scrollable(long_text, 4, 8);
-        screen_text::ScrollableBlock scrollable(long_text, 6, 26);
-        scrollable.cx_shift = -8;
+        screen_text::ScrollableBlock scrollable_block(long_text, scrollable_block_window_rows, scrollable_block_window_columns);
+
+        scrollable_block.cx_shift = -8;
+        scrollable_block.scroll_vertical_delta = scrollable_block_scroll_vertical_delta;
 
         rows_composer.add_block(&title);
         rows_composer.add_block(&position);
-        rows_composer.add_block(&scrollable);
+        rows_composer.add_block(&scrollable_block);
+
+        bn::string<32> position_string = "";
+        bn::ostringstream position_string_stream(position_string);
 
         while (!bn::keypad::start_pressed())
         {
             bn::core::update();
             // position.dynamic_value = bn::to_string<16>(frame_number).c_str();
-            position.dynamic_value = "TODO";
+
+            if (bn::keypad::left_pressed() || bn::keypad::up_pressed())
+            {
+                scrollable_block.dec_scroll_vertical_current();
+                rows_composer.reset();
+            }
+            if (bn::keypad::right_pressed() || bn::keypad::down_pressed())
+            {
+                scrollable_block.inc_scroll_vertical_current();
+                rows_composer.reset();
+            }
+
+            position_string.assign("");
+            position_string_stream << scrollable_block.get_scroll_vertical_current();
+            position_string_stream << " / ";
+            position_string_stream << scrollable_block.get_scroll_vertical_max();
+            position.dynamic_value = position_string.c_str();
             rows_composer.rerender();
         }
     }

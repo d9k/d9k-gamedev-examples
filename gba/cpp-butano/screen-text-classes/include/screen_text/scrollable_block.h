@@ -12,6 +12,7 @@ namespace screen_text
     public:
         const char *static_text;
         int static_text_length;
+        int scroll_vertical_delta = 1;
 
         int _window_columns_count;
         int _window_row_current = 0;
@@ -35,7 +36,7 @@ namespace screen_text
             _scroll_vertical_max = chars_count_over_window / _window_columns_count + 1;
         }
 
-        int get_scroll_row_max()
+        int get_scroll_vertical_max()
         {
             return _scroll_vertical_max;
         }
@@ -60,12 +61,12 @@ namespace screen_text
 
         void inc_scroll_vertical_current()
         {
-            set_scroll_vertical_current(_scroll_vertical_current + 1);
+            set_scroll_vertical_current(_scroll_vertical_current + scroll_vertical_delta);
         }
 
         void dec_scroll_vertical_current()
         {
-            set_scroll_vertical_current(_scroll_vertical_current - 1);
+            set_scroll_vertical_current(_scroll_vertical_current - scroll_vertical_delta);
         }
 
         // void process_render_static_to_sprites(SpritesVector *staticSprites, bn::sprite_text_generator *defaultTextGenerator) override
