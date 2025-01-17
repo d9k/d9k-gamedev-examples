@@ -20,6 +20,7 @@
 #include "common_fixed_8x16_sprite_font.h"
 #include "chars_pointer_copy_wrapper.h"
 #include "screen_text/abstract_block.h"
+#include "screen_text/align.h"
 #include "screen_text/rows_composer.h"
 #include "screen_text/title.h"
 #include "screen_text/caption_value_pair.h"
@@ -54,7 +55,7 @@ namespace
 
         screen_text::Title title("Scrollable blocks classes");
 
-        screen_text::Title position("", bn::sprite_text_generator::alignment_type::RIGHT, true);
+        screen_text::Title position("", screen_text::ALIGN_RIGHT, true);
         position.custom_margin_with_last_block = 8;
         position.cx_shift = cx_position_at_right_border - 10;
         bn::string<32> position_string;
@@ -147,23 +148,21 @@ namespace
 
         screen_text::Title title("Titles classes example");
 
-        screen_text::Title left("Left alignment", bn::sprite_text_generator::alignment_type::LEFT);
+        screen_text::Title left("Left alignment", screen_text::ALIGN_LEFT);
 
-        screen_text::Title left_shifted("Left shifted", bn::sprite_text_generator::alignment_type::LEFT);
+        screen_text::Title left_shifted("Left shifted", screen_text::ALIGN_LEFT);
         left_shifted.cx_shift = cx_position_at_left_border;
 
-        screen_text::Title left_shifted_longer("Left shifted longer", bn::sprite_text_generator::alignment_type::LEFT);
+        screen_text::Title left_shifted_longer("Left shifted longer", screen_text::ALIGN_LEFT);
         left_shifted_longer.cx_shift = cx_position_at_left_border;
 
-        screen_text::Title right("Right alignment", bn::sprite_text_generator::alignment_type::RIGHT);
+        screen_text::Title right("Right alignment", screen_text::ALIGN_RIGHT);
 
-        screen_text::Title right_shifted("Right shifted", bn::sprite_text_generator::alignment_type::RIGHT);
+        screen_text::Title right_shifted("Right shifted", screen_text::ALIGN_RIGHT);
         right_shifted.cx_shift = cx_position_at_right_border;
 
-        screen_text::Title right_shifted_longer("Right shifted longer", bn::sprite_text_generator::alignment_type::RIGHT);
+        screen_text::Title right_shifted_longer("Right shifted longer", screen_text::ALIGN_RIGHT);
         right_shifted_longer.cx_shift = cx_position_at_right_border;
-
-        screen_text::Title row4("Row 4");
 
         rows_composer.add_block(&title);
         rows_composer.add_block(&left);
@@ -172,7 +171,6 @@ namespace
         rows_composer.add_block(&right);
         rows_composer.add_block(&right_shifted);
         rows_composer.add_block(&right_shifted_longer);
-        rows_composer.add_block(&row4);
 
         screen_text::Title bottom_title(bottom_line_text_default);
         rows_composer.add_block(&bottom_title, rows_composer_bottom_row_index);

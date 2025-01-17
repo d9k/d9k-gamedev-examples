@@ -4,22 +4,23 @@
 #include "bn_vector.h"
 #include "bn_sprite_ptr.h"
 #include "bn_sprite_text_generator.h"
-#include "screen_text/sprites_vector.h"
 #include "screen_text/abstract_block.h"
+#include "screen_text/align.h"
+#include "screen_text/sprites_vector.h"
 
 namespace screen_text
 {
     class Title : public AbstractBlock
     {
     public:
-        bn::sprite_text_generator::alignment_type alignment;
+        Alignment alignment;
         const char *text;
 
         bool _dynamic;
 
         Title(
             const char *staticText,
-            bn::sprite_text_generator::alignment_type _alignment = bn::sprite_text_generator::alignment_type::CENTER,
+            Alignment _alignment = screen_text::ALIGN_CENTER,
             bool dynamic = false) : AbstractBlock(1)
         {
             text = staticText;

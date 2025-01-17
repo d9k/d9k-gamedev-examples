@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include "screen_text/abstract_block.h"
+#include "screen_text/align.h"
 #include "chars_copy.h"
 
 namespace screen_text
@@ -77,7 +78,7 @@ namespace screen_text
 
             const char *static_text_in_window = chars_copy(static_text + window_begin_char_pos, _window_columns_count);
 
-            text_generator->set_alignment(bn::sprite_text_generator::alignment_type::LEFT);
+            text_generator->set_alignment(screen_text::ALIGN_LEFT);
             text_generator->generate(cx_shift, cy_shift, static_text_in_window, *staticSprites);
 
             _window_row_current++;

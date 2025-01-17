@@ -5,6 +5,7 @@
 #include "bn_sprite_text_generator.h"
 #include "bn_vector.h"
 #include "screen_text/abstract_block.h"
+#include "screen_text/align.h"
 
 namespace screen_text
 {
@@ -32,7 +33,7 @@ namespace screen_text
             static_caption_with_separator_stream << static_caption;
             static_caption_with_separator_stream << separator;
 
-            text_generator->set_alignment(bn::sprite_text_generator::alignment_type::RIGHT);
+            text_generator->set_alignment(screen_text::ALIGN_RIGHT);
             text_generator->generate(cx_shift, cy_shift, static_caption_with_separator, *staticSprites);
         }
 
@@ -40,7 +41,7 @@ namespace screen_text
         {
             bn::sprite_text_generator *text_generator = get_current_text_generator(defaultTextGenerator);
 
-            text_generator->set_alignment(bn::sprite_text_generator::alignment_type::LEFT);
+            text_generator->set_alignment(screen_text::ALIGN_LEFT);
             text_generator->generate(cx_shift, cy_shift, dynamic_value, *dynamicSprites);
         }
     };
