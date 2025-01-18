@@ -246,13 +246,21 @@ namespace
 
         screen_text::RowsComposer<128, 32> rows_composer(&text_generator, rows_composer_line_height);
         rows_composer.first_row_cy_shift = rows_composer_first_row_cy_shift;
+
         screen_text::Title title("Palestinian movies info viewer");
+
+        screen_text::CaptionValuePair loads_counter("Loads count");
+        loads_counter.row_cx_shift = 40;
+
         rows_composer.add_block(&title);
+        rows_composer.add_block(&loads_counter);
 
         _sram_write_save_game();
 
         while (!bn::keypad::start_pressed())
         {
+            loads_counter.dynamic_value = bn::to_string<16>(save_game->loads_count).c_str();
+
             bn::core::update();
             rows_composer.rerender();
         }
