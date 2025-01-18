@@ -139,6 +139,7 @@ namespace screen_text
 
         void reset()
         {
+            dynamic_sprites.clear();
             static_sprites.clear();
             for (int i = 0; i < MAX_ROWS; i++)
             {
