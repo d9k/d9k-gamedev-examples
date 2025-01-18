@@ -1,6 +1,8 @@
 # Screen text classes
 
-Copied from [Butano 18.6.0](https://github.com/GValiente/butano/tree/18.6.0/examples/sprites).
+![screenshot](./screenshot.png)
+
+Forked from [Butano 18.6.0](https://github.com/GValiente/butano/tree/18.6.0/examples/text).
 
 ## Build
 
