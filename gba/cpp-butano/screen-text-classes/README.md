@@ -1,4 +1,4 @@
-# Sprites example copy
+# Screen text classes
 
 Copied from [Butano 18.6.0](https://github.com/GValiente/butano/tree/18.6.0/examples/sprites).
 
@@ -14,7 +14,7 @@ Then run
 make
 ```
 
-`strings.gba` would be built.
+`screen-text-classes.gba` would be built.
 
 ## Run
 
