@@ -21,7 +21,7 @@ namespace sram
         bool error = true;
         int sram_old_usage = 0;
         CharsPointerCopyWrapper old_save_game_version;
-        SaveGame *saveGame = NULL;
+        SaveGame *save_game = NULL;
     };
 
     struct GetVersionResult
@@ -87,13 +87,14 @@ public:
 
         sram::JsonCharsParseSaveGameResult json_parse_result = this->_json_chars_parse_save_game(json_chars);
 
-        if (json_parse_result.error) {
+        if (json_parse_result.error)
+        {
             delete[] sram_chars;
             return result;
         }
 
-        result.saveGame = json_parse_result.saveGame;
-        result.saveGame->loads_count++;
+        result.save_game = json_parse_result.saveGame;
+        result.save_game->loads_count++;
         result.error = false;
 
         // result.sram_old_usage = 123456;

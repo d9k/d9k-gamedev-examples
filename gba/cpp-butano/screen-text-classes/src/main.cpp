@@ -19,8 +19,6 @@
 #include "chars_copy.h"
 #include "common_fixed_8x16_sprite_font.h"
 #include "chars_pointer_copy_wrapper.h"
-#include "screen_text/abstract_block.h"
-#include "screen_text/align.h"
 #include "screen_text/rows_composer.h"
 #include "screen_text/title.h"
 #include "screen_text/caption_value_pair.h"

@@ -8,13 +8,14 @@
 #include <sstream>
 #include <stdio.h>
 
-#include "bn_core.h"
-#include "bn_log.h"
-#include "bn_string.h"
 #include "bn_bg_palettes.h"
+#include "bn_core.h"
+#include "bn_display.h"
+#include "bn_keypad.h"
+#include "bn_log.h"
 #include "bn_sprite_text_generator.h"
 #include "bn_sstream.h"
-#include "bn_display.h"
+#include "bn_string.h"
 
 #include "const.h"
 #include "common_info.h"
@@ -29,6 +30,11 @@
 #include "savegame_serializer.h"
 #include "semver_from_chars.h"
 
+#include "screen_text/rows_composer.h"
+#include "screen_text/title.h"
+#include "screen_text/caption_value_pair.h"
+#include "screen_text/scrollable_block.h"
+
 using namespace std::string_literals;
 
 namespace
@@ -39,7 +45,7 @@ namespace
         int reads_count = 0;
     };
 
-    BN_DATA_EWRAM SaveGame saveGame;
+    BN_DATA_EWRAM SaveGame *save_game;
 
     BN_DATA_EWRAM const char *palestinian_movies_cut_json =
 #include "data_palestinian_movies_cut_json.h"
@@ -49,6 +55,11 @@ namespace
     constexpr bn::fixed text_y_limit_f = (bn::display::height() / 2) - text_y_inc;
     constexpr int text_y_limit = text_y_limit_f.integer();
     constexpr int text_scene_title_y = -text_y_limit;
+    constexpr int rows_composer_first_row_cy_shift = -bn::display::height() / 2 + 16 / 2;
+    constexpr int rows_composer_line_height = 18;
+
+    /** Needed to properly fill savegame differences with zeroes */
+    int sram_old_usage = 0;
 
     bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
     bn::vector<bn::sprite_ptr, 64> text_sprites;
@@ -58,6 +69,12 @@ namespace
         text_sprites.clear();
     }
 
+    void _set_save_game(SaveGame *new_save_game)
+    {
+        delete save_game;
+        save_game = new_save_game;
+    }
+
     void _init_scene(const bn::string_view &sceneTitle)
     {
         _clear_scene();
@@ -65,6 +82,12 @@ namespace
 
         text_generator.set_center_alignment();
         text_generator.generate(0, text_scene_title_y, sceneTitle, text_sprites);
+    }
+
+    void _sram_write_save_game()
+    {
+        Sram sram;
+        sram.save(save_game, sram_old_usage);
     }
 
     void test_semver_by_neargye()
@@ -127,7 +150,6 @@ namespace
         bn::core::update();
 
         SaveGameParserHandler *root_handler;
-        // root_handler = (AbstractStackableParserHandler *)new AbstractStackableParserHandler();
         root_handler = new SaveGameParserHandler();
         rapidjson::Reader reader;
         rapidjson::StringStream ssBig(palestinian_movies_cut_json);
@@ -138,10 +160,7 @@ namespace
         {
         }
 
-        // reader2.Parse(ssBig, handler2);
-
-        // SaveGame *saveGame = root_handler->get_result();
-        saveGame = *root_handler->get_result();
+        _set_save_game(root_handler->get_result());
         root_handler->destruct_result = false;
 
         delete parsersStack;
@@ -155,14 +174,14 @@ namespace
 
         rapidjson::StringBuffer sbuf;
         rapidjson::Writer<rapidjson::StringBuffer> jsonWriter(sbuf);
-        serialize_savegame(&jsonWriter, &saveGame);
+        serialize_savegame(&jsonWriter, save_game);
         log_long_chars(sbuf.GetString(), 200, "debug log save game json");
 
         BN_LOG("\n");
 
-        for (uint32_t i = 0; i < saveGame.movies.size(); i++)
+        for (uint32_t i = 0; i < save_game->movies.size(); i++)
         {
-            Movie *movie = saveGame.movies[i];
+            Movie *movie = save_game->movies[i];
             char log_string[256];
             std::sprintf(
                 log_string,
@@ -174,9 +193,9 @@ namespace
 
         BN_LOG("\n");
 
-        for (uint32_t i = 0; i < saveGame.movies.size(); i++)
+        for (uint32_t i = 0; i < save_game->movies.size(); i++)
         {
-            Movie *movie = saveGame.movies[i];
+            Movie *movie = save_game->movies[i];
             char log_string[256];
             std::sprintf(
                 log_string,
@@ -189,57 +208,59 @@ namespace
         }
     }
 
-    // void sram_read_savegame() {
-//     char *sram_chars = new char[actual_sram_size];
-//     _bn::sram::unsafe_read(sram_chars, actual_sram_size, 0);
-//     log_long_chars(sram_chars, 200);
+    void reading_sram_scene()
+    {
+        _init_scene("Reading SRAM");
 
-//     int expected_sram_start_length = strlen(app_const::SRAM_BEGINNING_EXPECTED);
+        // _clear_scene();
+        bn::core::update();
 
-//     bn::string_view sram_beginning_string_view = bn::string_view(
-//         sram_chars,
-//         expected_sram_start_length
-//     );
+        Sram sram;
 
-//     bool sram_has_savegame = sram_beginning_string_view == app_const::SRAM_BEGINNING_EXPECTED;
+        BN_LOG("actual SRAM size: ", sram.actual_sram_size);
 
+        bn::bg_palettes::set_transparent_color(bn::color(16, 16, 16));
 
+        sram::LoadResult sram_load_result = sram.load();
 
-//     int sram_old_usage = 0;
+        BN_LOG("Old savegame version in SRAM: ", sram_load_result.old_save_game_version.get_chars());
+        BN_LOG("Old SRAM usage:", sram_load_result.sram_old_usage);
 
-//     if (sram_has_savegame)
-//     {
-//         BN_LOG("SRAM has savegame");
+        if (sram_load_result.error)
+        {
+            BN_LOG("There was error during loading savegame from SRAM");
+            BN_LOG("Formatting SRAM");
+            sram.format();
+        }
+        else
+        {
+            _set_save_game(sram_load_result.save_game);
+        }
 
-//         bn::string_view sram_version_part_string_view = bn::string_view(
-//             sram_chars + expected_sram_start_length,
-//             app_const::APP_VERSION_MAX_LENGTH
-//         );
-//         const char *chars_to_search = ":";
+        sram_old_usage = sram_load_result.sram_old_usage;
+    }
 
-//         int version_end_find = sram_version_part_string_view.find(chars_to_search);
+    void movies_info_viewer_scene()
+    {
+        _clear_scene();
 
-//         if (version_end_find) {
+        screen_text::RowsComposer<128, 32> rows_composer(&text_generator, rows_composer_line_height);
+        rows_composer.first_row_cy_shift = rows_composer_first_row_cy_shift;
+        screen_text::Title title("Palestinian movies info viewer");
+        rows_composer.add_block(&title);
 
-//         }
-//     }
-//     else
-//     {
-//         BN_LOG("Formatting SRAM");
-//         bn::sram::clear(bn::sram::size());
-//         // bn::sram::write("__TEST__");
-//     }
+        _sram_write_save_game();
 
-//     delete[] sram_chars;
-//     }
+        while (!bn::keypad::start_pressed())
+        {
+            bn::core::update();
+            rows_composer.rerender();
+        }
+    }
 }
 
 int main()
 {
-    // BN_LOG(testConcat);
-    // BN_LOG(testStdString.c_str());
-
-    // BN_DATA_EWRAM int test;
     bn::core::init();
 
     BN_LOG("BN_CFG_LOG_MAX_SIZE: ", BN_CFG_LOG_MAX_SIZE);
@@ -249,76 +270,20 @@ int main()
     parse_big_json();
     parse_big_json_movies();
     debug_log_save_game_object();
-
-    _init_scene("Reading SRAM");
-
-    // _clear_scene();
-    bn::core::update();
-
-    Sram sram;
-
-    BN_LOG("actual SRAM size: ", sram.actual_sram_size);
-
-    // bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
-    bn::bg_palettes::set_transparent_color(bn::color(16, 16, 16));
-
-    // bn::string_view info_text_lines[5];
-
-    sram::LoadResult sramLoadResult = sram.load();
-
-    BN_LOG("Old savegame version in SRAM: ", sramLoadResult.old_save_game_version.get_chars());
-    BN_LOG("Old SRAM usage:", sramLoadResult.sram_old_usage);
-
-    if (sramLoadResult.error) {
-        BN_LOG("There was error during loading savegame from SRAM");
-        BN_LOG("Formatting SRAM");
-        sram.format();
-    } else {
-        saveGame = *sramLoadResult.saveGame;
-    }
-
-    sram.save(&saveGame, sramLoadResult.sram_old_usage);
-
-    // sram_data cart_sram_data;
-    // bn::sram::read(cart_sram_data);
-
-    // bn::array<char, 32> expected_format_tag;
-    // bn::istring_base expected_format_tag_istring(expected_format_tag._data);
-    // bn::ostringstream expected_format_tag_stream(expected_format_tag_istring);
-    // expected_format_tag_stream.append("SRAM example");
-
-    // bn::string<32> sram_reads_count;
-
-    // if (cart_sram_data.format_tag == expected_format_tag)
-    // {
-    //     ++cart_sram_data.reads_count;
-
-    //     sram_reads_count = bn::to_string<32>(cart_sram_data.reads_count);
+    reading_sram_scene();
+    movies_info_viewer_scene();
 
     //     info_text_lines[0] = "SRAM is formatted!";
     //     info_text_lines[1] = "";
     //     info_text_lines[2] = "SRAM reads count:";
     //     info_text_lines[3] = sram_reads_count;
     //     info_text_lines[4] = "";
-    // }
-    // else
-    // {
-    //     cart_sram_data.format_tag = expected_format_tag;
-    //     cart_sram_data.reads_count = 1;
 
     //     info_text_lines[0] = "Formatting SRAM";
     //     info_text_lines[1] = "";
     //     info_text_lines[2] = "If you see this message again,";
     //     info_text_lines[3] = "SRAM is not working";
     //     info_text_lines[4] = "Please restart ROM manually";
-
-    //     bn::sram::clear(bn::sram::size());
-    // }
-
-    // bn::sram::write(cart_sram_data);
-
-    // common::info info("SRAM", info_text_lines, text_generator);
-    // info.set_show_always(true);
 
     while (true)
     {
