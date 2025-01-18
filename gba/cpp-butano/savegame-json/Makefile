@@ -28,6 +28,11 @@
 #
 # All directories are specified relative to the project directory where the makefile is found.
 #---------------------------------------------------------------------------------------------------------------------
+
+# RapidJSON objects corrupt memory on DevKitARM build, so disabling ability to compile with DevKitARM (Wonderful Toolchain is compulsory):
+undefine DEVKITARM
+undefine DEVKITPRO
+
 TARGET      	:=  $(notdir $(CURDIR))
 BUILD       	:=  build
 LIBBUTANO   	:=  /home/d9k/repos/_gba/butano/butano
@@ -43,7 +48,7 @@ ROMCODE     	:=  SBTP
 USERFLAGS   	:=
 USERCXXFLAGS	:=
 USERASFLAGS 	:=
-USERLDFLAGS 	:= 
+USERLDFLAGS 	:=
 USERLIBDIRS 	:=
 USERLIBS    	:=
 

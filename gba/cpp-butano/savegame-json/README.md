@@ -12,6 +12,8 @@ Used [SAX event-based parser of RapidJSON library](https://rapidjson.org/md_doc_
 
 At first install [butano and required libraries to the system](https://gvaliente.github.io/butano/getting_started_wt.html).
 
+WARNING! For now RapidJSON objects corrupt memory on DevKitARM build, so ability to compile with DevKitARM is disabled in Makefile. So Wonderful Toolchain toolkit is compulsory!
+
 Change `LIBBUTANO` in the [Makefile](./Makefile). Add this path to [.vscode/c_cpp_properties.json](.vscode/c_cpp_properties.json) too, (`configurations -> includePath`).
 
 Then run
