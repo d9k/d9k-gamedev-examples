@@ -45,7 +45,6 @@ namespace
 #include "data_palestinian_movies_cut_json.h"
         ;
 
-
     constexpr int text_y_inc = 14;
     constexpr bn::fixed text_y_limit_f = (bn::display::height() / 2) - text_y_inc;
     constexpr int text_y_limit = text_y_limit_f.integer();
@@ -114,12 +113,12 @@ namespace
 
         std::strncpy(palestinian_movies_cut_json_begin, palestinian_movies_cut_json, FIRST_CHARS);
 
+        BN_LOG("Long JSON first chars (", FIRST_CHARS, "):", palestinian_movies_cut_json_begin);
+
         DemoParseHandler handler2;
         rapidjson::Reader reader2;
         rapidjson::StringStream ssBig(palestinian_movies_cut_json);
         reader2.Parse(ssBig, handler2);
-
-        BN_LOG("Long JSON first chars (", FIRST_CHARS, "):", palestinian_movies_cut_json_begin);
     }
 
     void parse_big_json_movies()
