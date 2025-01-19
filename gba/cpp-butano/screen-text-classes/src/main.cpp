@@ -121,7 +121,7 @@ namespace
             position_string_stream << scrollable_block.get_scroll_vertical_current();
             position_string_stream << "/";
             position_string_stream << scrollable_block.get_scroll_vertical_max();
-            position.text = position_string.c_str();
+            position.chars = position_string.c_str();
             rows_composer.rerender();
 
             if (first_render)
@@ -133,9 +133,6 @@ namespace
 
                 arrow_sprites_update_visible(&arrow_up, &arrow_down, &scrollable_block);
             }
-
-            // arrow_up.set_visible(true);
-            // arrow_down.set_visible(true);
         }
     }
 

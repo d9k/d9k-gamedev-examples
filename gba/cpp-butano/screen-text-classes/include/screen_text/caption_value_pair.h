@@ -27,7 +27,9 @@ namespace screen_text
             return screen_text::block_type::KEY_VALUE_PAIR;
         }
 
-        void process_render_static_to_sprites(SpritesVector *staticSprites, bn::sprite_text_generator *defaultTextGenerator) override
+        void process_render_static_to_sprites(
+            SpritesVector *staticSprites,
+            bn::sprite_text_generator *defaultTextGenerator) override
         {
             // BN_LOG("screen_text::StaticTitle: process_render_static_to_sprites(): cy_shift: ", cy_shift, ", text: ", static_text);
 
@@ -43,7 +45,9 @@ namespace screen_text
             text_generator->generate(current_row_cx_shift, row_cy_shift, static_caption_with_separator, *staticSprites);
         }
 
-        void process_render_dynamic_to_sprites(SpritesVector *dynamicSprites, bn::sprite_text_generator *defaultTextGenerator) override
+        void process_render_dynamic_to_sprites(
+            SpritesVector *dynamicSprites,
+            bn::sprite_text_generator *defaultTextGenerator) override
         {
             bn::sprite_text_generator *text_generator = get_current_text_generator(defaultTextGenerator);
 

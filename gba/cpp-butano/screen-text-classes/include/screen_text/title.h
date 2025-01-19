@@ -15,16 +15,16 @@ namespace screen_text
     {
     public:
         Alignment alignment;
-        const char *text;
+        const char *chars;
 
         bool _dynamic;
 
         Title(
-            const char *staticText,
+            const char *_chars,
             Alignment _alignment = screen_text::ALIGN_CENTER,
             bool dynamic = false) : AbstractBlock(1)
         {
-            text = staticText;
+            chars = _chars;
             alignment = _alignment;
             _dynamic = dynamic;
         }
@@ -38,7 +38,7 @@ namespace screen_text
         {
             bn::sprite_text_generator *text_generator = get_current_text_generator(defaultTextGenerator);
             text_generator->set_alignment(alignment);
-            text_generator->generate(row_cx_shift, row_cy_shift, text, *sprites);
+            text_generator->generate(row_cx_shift, row_cy_shift, chars, *sprites);
         }
 
         void process_render_static_to_sprites(SpritesVector *staticSprites, bn::sprite_text_generator *defaultTextGenerator) override
