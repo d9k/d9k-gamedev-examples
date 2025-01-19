@@ -4,6 +4,8 @@
 #include "bn_string.h"
 #include "bn_sprite_text_generator.h"
 #include "bn_vector.h"
+
+#include "chars_pointer_copy_wrapper.h"
 #include "screen_text/abstract_block.h"
 #include "screen_text/align.h"
 
@@ -13,8 +15,8 @@ namespace screen_text
     {
     public:
         const char *static_caption;
-        const char *dynamic_value;
         const char *separator = ": ";
+        CharsPointerCopyWrapper dynamic_value;
 
         CaptionValuePair(
             const char *staticText)
@@ -53,7 +55,12 @@ namespace screen_text
 
             text_generator->set_alignment(screen_text::ALIGN_LEFT);
             int current_row_cx_shift = get_current_row_cx_shift();
-            text_generator->generate(current_row_cx_shift, row_cy_shift, dynamic_value, *dynamicSprites);
+
+            text_generator->generate(
+                current_row_cx_shift,
+                row_cy_shift,
+                dynamic_value.get_chars(),
+                *dynamicSprites);
         }
     };
 }

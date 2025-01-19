@@ -141,14 +141,16 @@ namespace
         bn::core::update();
 
         uint64_t frame_number = 1;
+        bn::fixed_t<20> pi_fixed(M_PI);
 
         bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
 
-        screen_text::RowsComposer<64, 32> rows_composer(&text_generator, rows_composer_line_height);
+        screen_text::RowsComposer<64, 64> rows_composer(&text_generator, rows_composer_line_height);
         rows_composer.first_row_cy_shift = rows_composer_first_row_cy_shift;
         rows_composer.key_value_pair_cx_shift_default = key_value_pair_cx_shift_default;
 
         screen_text::Title title("Caption/value pairs classes");
+
         screen_text::CaptionValuePair frames_counter("frame");
         screen_text::CaptionValuePair pi_display("Pi");
 
@@ -165,16 +167,20 @@ namespace
 
         while (!bn::keypad::start_pressed())
         {
-            frames_counter.dynamic_value = bn::to_string<16>(frame_number).c_str();
+            frames_counter.dynamic_value.set_chars(bn::to_string<16>(frame_number).c_str());
 
-            char pi_display_chars[16];
-            sprintf(pi_display_chars, "%.5f", M_PI);
-            pi_display.dynamic_value = pi_display_chars;
+            // char pi_display_chars[16];
+            // char *pi_display_chars = new char[16];
+            // TODO: %f built with DevKitARM corrupts memory (Allocation failed. Size in bytes: ...)
+            // sprintf(pi_display_chars, "%.5f", M_PI);
+            // pi_display.dynamic_value.set_chars(pi_display_chars);
+            // delete pi_display_chars;
 
-            custom_cx_shift_display.dynamic_value = bn::to_string<16>(key_value_pair_cx_shift_custom).c_str();
+            pi_display.dynamic_value.set_chars(bn::to_string<64>(pi_fixed).c_str());
+
+            custom_cx_shift_display.dynamic_value.set_chars(bn::to_string<16>(key_value_pair_cx_shift_custom).c_str());
 
             bn::core::update();
-
             rows_composer.rerender();
 
             frame_number++;
