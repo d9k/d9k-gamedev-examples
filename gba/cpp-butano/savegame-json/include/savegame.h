@@ -28,12 +28,25 @@ public:
 
     void check_selected_movie_id()
     {
-        if (strlen(selected_movie_id.get_chars()) == 0)
+        const char *selected_movie_id_chars = selected_movie_id.get_chars();
+
+        if (strlen(selected_movie_id_chars) == 0)
         {
             _selected_movie_index = 0;
             sync_movie_id_from_index();
             return;
         }
+
+        _selected_movie_index = -1;
+        Movie *current_movie = nullptr;
+
+        do
+        {
+            _selected_movie_index++;
+            current_movie = get_selected_movie();
+        } while (
+            current_movie != nullptr &&
+            strcmp(current_movie->id.get_chars(), selected_movie_id_chars) != 0);
     }
 
     void inc_selected_movie_id(int delta)
@@ -42,8 +55,20 @@ public:
         sync_movie_id_from_index();
     }
 
+    int get_movie_index_last()
+    {
+        return movies.size() - 1;
+    }
+
     Movie *get_selected_movie()
     {
+        int movie_index_last = get_movie_index_last();
+
+        if (_selected_movie_index < 0 || _selected_movie_index > movie_index_last)
+        {
+            return nullptr;
+        }
+
         return movies.at(_selected_movie_index);
     }
 

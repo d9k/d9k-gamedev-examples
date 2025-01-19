@@ -39,6 +39,14 @@ using namespace std::string_literals;
 
 namespace
 {
+    namespace scene_id
+    {
+        constexpr int READING_SRAM = 100;
+        constexpr int MOVIES_INFO_VIEWER = 200;
+        constexpr int HELP_MOVIES_INFO_VIEWER = 300;
+    }
+
+    int scene_id_next = scene_id::READING_SRAM;
     // struct sram_data
     // {
     //     bn::array<char, 32> format_tag;
@@ -241,6 +249,8 @@ namespace
         }
 
         sram_old_usage = sram_load_result.sram_old_usage;
+
+        scene_id_next = scene_id::MOVIES_INFO_VIEWER;
     }
 
     void movies_info_viewer_scene()
@@ -265,8 +275,6 @@ namespace
         // rows_composer.add_block(&loads_counter, 7);
         rows_composer.add_block(&title_hotkey_help, 8);
 
-        _sram_write_save_game();
-
         do
         {
             if (bn::keypad::left_pressed() || bn::keypad::up_pressed())
@@ -281,6 +289,21 @@ namespace
                 rows_composer.reset();
             }
 
+            if (bn::keypad::select_pressed())
+            {
+                scene_id_next = scene_id::HELP_MOVIES_INFO_VIEWER;
+            }
+
+            if (bn::keypad::l_pressed() || bn::keypad::r_pressed())
+            {
+                scene_id_next = scene_id::READING_SRAM;
+            }
+
+            if (bn::keypad::a_pressed() || bn::keypad::b_pressed())
+            {
+                _sram_write_save_game();
+            }
+
             Movie *movie = save_game->get_selected_movie();
 
             // loads_counter.dynamic_value.set_chars(bn::to_string<16>(save_game->loads_count).c_str());
@@ -292,7 +315,7 @@ namespace
 
             bn::core::update();
             rows_composer.rerender();
-        } while (!bn::keypad::select_released());
+        } while (scene_id_next == scene_id::MOVIES_INFO_VIEWER);
     }
 
     void help_movies_info_viewer_scene()
@@ -336,7 +359,9 @@ namespace
         {
             bn::core::update();
             rows_composer.rerender();
-        } while (!bn::keypad::select_released());
+        } while (!bn::keypad::select_pressed());
+
+        scene_id_next = scene_id::HELP_MOVIES_INFO_VIEWER;
     }
 }
 
@@ -351,14 +376,30 @@ int main()
     parse_big_json();
     parse_big_json_movies();
     debug_log_save_game_object();
-    reading_sram_scene();
 
     while (true)
     {
-        movies_info_viewer_scene();
-        help_movies_info_viewer_scene();
+        switch (scene_id_next)
+        {
+        case scene_id::READING_SRAM:
+        {
+            reading_sram_scene();
+            break;
+        }
+        case scene_id::MOVIES_INFO_VIEWER:
+        {
+            movies_info_viewer_scene();
+            break;
+        }
+        case scene_id::HELP_MOVIES_INFO_VIEWER:
+        {
+            help_movies_info_viewer_scene();
+            break;
+        }
+        default:
+            movies_info_viewer_scene();
+        }
     }
-
     //     info_text_lines[0] = "SRAM is formatted!";
     //     info_text_lines[1] = "";
     //     info_text_lines[2] = "SRAM reads count:";
