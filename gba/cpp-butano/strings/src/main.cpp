@@ -12,6 +12,7 @@
 #include <sstream>
 #include "bn_assert.h"
 #include "bn_core.h"
+#include "bn_fixed.h"
 #include "bn_math.h"
 #include "bn_keypad.h"
 #include "bn_display.h"
@@ -24,6 +25,7 @@
 #include "common_variable_8x16_sprite_font.h"
 #include "chars_pointer_copy_wrapper.h"
 #include "chars_from_int.h"
+#include "string_from_fixed.h"
 
 using namespace std::string_literals;
 
@@ -234,12 +236,37 @@ namespace
         // bn::to_string<16>(45).c_str();
         // const char* chars_to_int_result_1 = chars
 
-        // fail:
-        BN_LOG("chars to int by bn::string, 1: ", chars_from_int_by_bn_string_1);
-        BN_LOG("chars to int by bn::string, 2: ", chars_from_int_by_bn_string_2);
+        bn::fixed_t<20> pi_fixed(M_PI);
+        bn::string<64> pi_fixed_string = bn::to_string<64>(pi_fixed);
+        const char * chars_from_fixed_float_by_bn_string_copy = chars_copy(bn::to_string<64>(pi_fixed));
+        const char *chars_from_fixed = chars_copy(string_from_fixed<64>(pi_fixed));
+        const char *chars_from_fixed_precision_10 = chars_copy(string_from_fixed<64>(pi_fixed, 10));
 
-        BN_LOG("chars to int by bn::string + copy, 1: ", chars_from_int_by_bn_string_copy_1);
-        BN_LOG("chars to int by bn::string + copy, 2: ", chars_from_int_by_bn_string_copy_2);
+        // fail:
+        BN_LOG("chars from int by bn::string, 1: ", chars_from_int_by_bn_string_1);
+        BN_LOG("chars from int by bn::string, 2: ", chars_from_int_by_bn_string_2);
+
+        BN_LOG("chars from int by bn::string + copy, 1: ", chars_from_int_by_bn_string_copy_1);
+        BN_LOG("chars from int by bn::string + copy, 2: ", chars_from_int_by_bn_string_copy_2);
+
+        BN_LOG("pi_fixed: ", pi_fixed);
+        BN_LOG("pi_fixed_string: ", pi_fixed_string);
+        BN_LOG("chars from fixed by bn::string + copy, 2: ", chars_from_fixed_float_by_bn_string_copy);
+
+        BN_LOG("chars from fixed: ", chars_from_fixed);
+
+        // TODO wrong digits!
+        // 3.14159265358979323846
+        // 3.141357421
+        BN_LOG("chars from fixed (precision 10): ", chars_from_fixed_precision_10);
+
+        // BN_LOG(string_from_fixed<64>(pi_fixed, 10));
+
+        delete[] chars_from_fixed_precision_10;
+        delete[] chars_from_fixed;
+        delete[] chars_from_fixed_float_by_bn_string_copy;
+        delete[] chars_from_int_by_bn_string_copy_2;
+        delete[] chars_from_int_by_bn_string_copy_1;
 
         // const char* chars_from_int_1 = chars_from_int<16>(int_1).data();
         // const char* chars_from_int_2 = chars_from_int<16>(int_2).data();
