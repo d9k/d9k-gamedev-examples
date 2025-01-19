@@ -57,6 +57,7 @@ namespace
     constexpr int text_scene_title_y = -text_y_limit;
     constexpr int rows_composer_first_row_cy_shift = -bn::display::height() / 2 + 16 / 2;
     constexpr int rows_composer_line_height = 18;
+    constexpr int key_value_pair_cx_shift_default = 0;
 
     /** Needed to properly fill savegame differences with zeroes */
     int sram_old_usage = 0;
@@ -244,22 +245,44 @@ namespace
     {
         _clear_scene();
 
-        screen_text::RowsComposer<128, 32> rows_composer(&text_generator, rows_composer_line_height);
+        screen_text::RowsComposer<64, 64> rows_composer(&text_generator, rows_composer_line_height);
         rows_composer.first_row_cy_shift = rows_composer_first_row_cy_shift;
+        rows_composer.key_value_pair_cx_shift_default = key_value_pair_cx_shift_default;
 
         screen_text::Title title("Palestinian movies info viewer");
-
         screen_text::CaptionValuePair loads_counter("Loads count");
-        loads_counter.row_cx_shift = 40;
+        screen_text::CaptionValuePair movie_id_display("Movie id");
+        screen_text::CaptionValuePair movie_year_display("Year");
+        screen_text::Title movie_title_display("", screen_text::ALIGN_CENTER, true);
 
         rows_composer.add_block(&title);
-        rows_composer.add_block(&loads_counter);
+        rows_composer.add_block(&movie_id_display);
+        rows_composer.add_block(&movie_title_display);
+        rows_composer.add_block(&movie_year_display);
+        rows_composer.add_block(&loads_counter, 6);
 
         _sram_write_save_game();
 
         while (!bn::keypad::start_pressed())
         {
-            loads_counter.dynamic_value = bn::to_string<16>(save_game->loads_count).c_str();
+            Movie *movie = save_game->get_selected_movie();
+
+            loads_counter.dynamic_value.set_chars(bn::to_string<16>(save_game->loads_count).c_str());
+
+            movie_id_display.dynamic_value.set_chars(save_game->selected_movie_id.get_chars());
+            movie_title_display.chars = movie->title.get_chars();
+            // BN_LOG("movie title: ", movie->title.get_chars());
+            movie_year_display.dynamic_value.set_chars(bn::to_string<16>(movie->year).c_str());
+
+            if (bn::keypad::left_pressed() || bn::keypad::up_pressed())
+            {
+                save_game->inc_selected_movie_id(-1);
+            }
+
+            if (bn::keypad::right_pressed() || bn::keypad::down_pressed())
+            {
+                save_game->inc_selected_movie_id(1);
+            }
 
             bn::core::update();
             rows_composer.rerender();

@@ -15,10 +15,13 @@ namespace screen_text
         int current_row_index = 0;
         bn::sprite_text_generator *custom_text_generator = nullptr;
         int custom_margin_with_last_block = 0;
+        int custom_row_cx_shift = 0;
         int custom_row_height = 0;
         int rendered_block_cy_shift = 0;
         int rendered_block_height = 0;
         int rows_count = 1;
+
+        /** comes from RowsComposer */
         int row_cx_shift = 0;
         int row_cy_shift = 0;
 
@@ -32,6 +35,8 @@ namespace screen_text
         virtual ~AbstractBlock()
         {
         }
+
+        virtual int get_block_type();
 
         virtual int get_rows_count()
         {
@@ -89,14 +94,9 @@ namespace screen_text
         {
         }
 
-        void set_row_cx_shift(int cxShift)
+        int get_current_row_cx_shift()
         {
-            row_cx_shift = cxShift;
-        }
-
-        void set_row_cy_shift(int cyShift)
-        {
-            row_cy_shift = cyShift;
+            return custom_row_cx_shift != 0 ? custom_row_cx_shift : row_cx_shift;
         }
     };
 

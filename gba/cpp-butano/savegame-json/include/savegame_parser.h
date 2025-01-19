@@ -32,6 +32,13 @@ struct SaveGameParserHandler : public TAbstractStackableParserHandler<SaveGame *
         }
     }
 
+    SaveGame *get_result() override
+    {
+        SaveGame *result = std::any_cast<SaveGame *>(parse_result);
+        result->validate();
+        return result;
+    }
+
     inline char const *parser_name() override
     {
         return "SaveGameParserHandler";
@@ -44,7 +51,8 @@ struct SaveGameParserHandler : public TAbstractStackableParserHandler<SaveGame *
 
     virtual void process_string(const char *str, rapidjson::SizeType length, bool copy)
     {
-        if (key_is(KEY_SELECTED_MOVIE_ID)) {
+        if (key_is(KEY_SELECTED_MOVIE_ID))
+        {
             SaveGame *r = get_result();
             r->selected_movie_id.set_chars(chars_copy(str));
         }
@@ -61,7 +69,7 @@ struct SaveGameParserHandler : public TAbstractStackableParserHandler<SaveGame *
         _logToken(i, "int");
     }
 
-    void process_key(const char* /* str */, rapidjson::SizeType /* length */, bool /* copy */) override
+    void process_key(const char * /* str */, rapidjson::SizeType /* length */, bool /* copy */) override
     {
         // if (current_key == KEY_MOVIES) {
         if (key_is(KEY_MOVIES))

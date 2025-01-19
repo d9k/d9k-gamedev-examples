@@ -5,6 +5,7 @@
 #include "bn_log.h"
 #include "bn_sprite_text_generator.h"
 #include "screen_text/abstract_block.h"
+#include "screen_text/block_types.h"
 
 namespace screen_text
 {
@@ -18,7 +19,9 @@ namespace screen_text
 
         int first_row_cy_shift = 0;
         int next_new_row_index = 0;
+        int key_value_pair_cx_shift_default = 0;
         int row_height;
+
         bn::sprite_text_generator *text_generator;
         AbstractBlockPtr _row_num_to_block_object[MAX_ROWS];
 
@@ -119,7 +122,14 @@ namespace screen_text
                         current_row_block->rendered_block_cy_shift = cy_shift + margin_with_last_block;
                     }
 
-                    current_row_block->set_row_cy_shift(cy_shift + margin_with_last_block);
+                    current_row_block->row_cy_shift = cy_shift + margin_with_last_block;
+                    int current_row_block_type = current_row_block->get_block_type();
+
+                    if (current_row_block_type == block_type::KEY_VALUE_PAIR)
+                    {
+                        current_row_block->row_cx_shift = key_value_pair_cx_shift_default;
+                    }
+
                     current_row_block->rerender(&static_sprites, &dynamic_sprites, text_generator);
 
                     if (current_row_block->custom_row_height)
