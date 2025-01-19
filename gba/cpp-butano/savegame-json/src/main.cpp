@@ -19,7 +19,7 @@
 
 #include "const.h"
 #include "common_info.h"
-#include "common_variable_8x16_sprite_font.h"
+#include "common_fixed_8x16_sprite_font.h"
 #include "rapidjson_inc_no_warns.h"
 #include "demo_parse_handler.h"
 #include "log_long_chars.h"
@@ -57,12 +57,14 @@ namespace
     constexpr int text_scene_title_y = -text_y_limit;
     constexpr int rows_composer_first_row_cy_shift = -bn::display::height() / 2 + 16 / 2;
     constexpr int rows_composer_line_height = 18;
-    constexpr int key_value_pair_cx_shift_default = 0;
+    constexpr int key_value_pair_cx_shift_default = 8;
+    // constexpr int help_scene_key_value_pair_cx_shift_default = -40;
+    constexpr int help_scene_key_value_pair_cx_shift_default = 5;
 
     /** Needed to properly fill savegame differences with zeroes */
     int sram_old_usage = 0;
 
-    bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
+    bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
     bn::vector<bn::sprite_ptr, 64> text_sprites;
 
     void _clear_scene()
@@ -245,48 +247,96 @@ namespace
     {
         _clear_scene();
 
-        screen_text::RowsComposer<64, 64> rows_composer(&text_generator, rows_composer_line_height);
+        screen_text::RowsComposer<128, 64> rows_composer(&text_generator, rows_composer_line_height);
         rows_composer.first_row_cy_shift = rows_composer_first_row_cy_shift;
         rows_composer.key_value_pair_cx_shift_default = key_value_pair_cx_shift_default;
 
-        screen_text::Title title("Palestinian movies info viewer");
-        screen_text::CaptionValuePair loads_counter("Loads count");
-        screen_text::CaptionValuePair movie_id_display("Movie id");
-        screen_text::CaptionValuePair movie_year_display("Year");
-        screen_text::Title movie_title_display("", screen_text::ALIGN_CENTER, true);
+        // screen_text::Title title("Palestinian movies info viewer");
+        // screen_text::CaptionValuePair loads_counter("Loads count");
+        screen_text::CaptionValuePair display_movie_id("Movie id");
+        screen_text::CaptionValuePair display_movie_year("Year");
+        screen_text::Title display_movie_title("");
+        screen_text::Title title_hotkey_help("(Select: show help)");
 
-        rows_composer.add_block(&title);
-        rows_composer.add_block(&movie_id_display);
-        rows_composer.add_block(&movie_title_display);
-        rows_composer.add_block(&movie_year_display);
-        rows_composer.add_block(&loads_counter, 6);
+        // rows_composer.add_block(&title);
+        rows_composer.add_block(&display_movie_id);
+        rows_composer.add_block(&display_movie_title);
+        rows_composer.add_block(&display_movie_year);
+        // rows_composer.add_block(&loads_counter, 7);
+        rows_composer.add_block(&title_hotkey_help, 8);
 
         _sram_write_save_game();
 
-        while (!bn::keypad::start_pressed())
+        do
         {
-            Movie *movie = save_game->get_selected_movie();
-
-            loads_counter.dynamic_value.set_chars(bn::to_string<16>(save_game->loads_count).c_str());
-
-            movie_id_display.dynamic_value.set_chars(save_game->selected_movie_id.get_chars());
-            movie_title_display.chars = movie->title.get_chars();
-            // BN_LOG("movie title: ", movie->title.get_chars());
-            movie_year_display.dynamic_value.set_chars(bn::to_string<16>(movie->year).c_str());
-
             if (bn::keypad::left_pressed() || bn::keypad::up_pressed())
             {
                 save_game->inc_selected_movie_id(-1);
+                rows_composer.reset();
             }
 
             if (bn::keypad::right_pressed() || bn::keypad::down_pressed())
             {
                 save_game->inc_selected_movie_id(1);
+                rows_composer.reset();
             }
+
+            Movie *movie = save_game->get_selected_movie();
+
+            // loads_counter.dynamic_value.set_chars(bn::to_string<16>(save_game->loads_count).c_str());
+
+            display_movie_id.dynamic_value.set_chars(save_game->selected_movie_id.get_chars());
+            display_movie_title.chars = movie->title.get_chars();
+            // BN_LOG("movie title: ", movie->title.get_chars());
+            display_movie_year.dynamic_value.set_chars(bn::to_string<16>(movie->year).c_str());
 
             bn::core::update();
             rows_composer.rerender();
-        }
+        } while (!bn::keypad::select_released());
+    }
+
+    void help_movies_info_viewer_scene()
+    {
+        _clear_scene();
+
+        screen_text::RowsComposer<128, 64> rows_composer(&text_generator, rows_composer_line_height);
+
+        screen_text::Title title("Palestinian movies info viewer");
+
+        screen_text::CaptionValuePair counter_loads("Loads count");
+        counter_loads.custom_row_cx_shift = 45;
+
+        screen_text::Title title_hotkey_return("(Select: return)");
+
+        screen_text::Title title_hotkeys_delimiter("");
+
+        screen_text::CaptionValuePair title_hotkey_switch_movie("Switch movie");
+        title_hotkey_switch_movie.dynamic_value.set_chars("Left/Right");
+
+        screen_text::CaptionValuePair title_hotkey_save("Save");
+        title_hotkey_save.dynamic_value.set_chars("A/B");
+
+        screen_text::CaptionValuePair title_hotkey_load("Load");
+        title_hotkey_load.dynamic_value.set_chars("LB/RB");
+
+        rows_composer.first_row_cy_shift = rows_composer_first_row_cy_shift;
+        rows_composer.key_value_pair_cx_shift_default = help_scene_key_value_pair_cx_shift_default;
+        rows_composer.add_block(&title);
+        rows_composer.add_block(&title_hotkeys_delimiter);
+        rows_composer.add_block(&title_hotkey_switch_movie);
+        rows_composer.add_block(&title_hotkey_save);
+        rows_composer.add_block(&title_hotkey_load);
+
+        rows_composer.add_block(&counter_loads, 7);
+        rows_composer.add_block(&title_hotkey_return, 8);
+
+        counter_loads.dynamic_value.set_chars(bn::to_string<16>(save_game->loads_count).c_str());
+
+        do
+        {
+            bn::core::update();
+            rows_composer.rerender();
+        } while (!bn::keypad::select_released());
     }
 }
 
@@ -302,7 +352,12 @@ int main()
     parse_big_json_movies();
     debug_log_save_game_object();
     reading_sram_scene();
-    movies_info_viewer_scene();
+
+    while (true)
+    {
+        movies_info_viewer_scene();
+        help_movies_info_viewer_scene();
+    }
 
     //     info_text_lines[0] = "SRAM is formatted!";
     //     info_text_lines[1] = "";
@@ -316,9 +371,9 @@ int main()
     //     info_text_lines[3] = "SRAM is not working";
     //     info_text_lines[4] = "Please restart ROM manually";
 
-    while (true)
-    {
-        // info.update();
-        bn::core::update();
-    }
+    // while (true)
+    // {
+    //     // info.update();
+    //     bn::core::update();
+    // }
 }
