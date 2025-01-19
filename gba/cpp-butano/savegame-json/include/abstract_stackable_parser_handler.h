@@ -114,10 +114,14 @@ struct TAbstractStackableParserHandler : public rapidjson::BaseReaderHandler<rap
     bool Double(double d)
     {
         process_token_begin();
-        char doubleText[32];
-        sprintf(doubleText, "%.6f", d);
+        // char doubleText[32];
+        // %f built with DevKitARM corrupts memory (Allocation failed. Size in bytes: ...)
+        // sprintf(doubleText, "%.6f", d);
         // TODO process fn
-        _logToken(doubleText, "double");
+        bn::fixed_t<20> fixed = d;
+        bn::string<32> fixed_string = string_from_fixed<32>(fixed);
+
+        _logToken(fixed_string.c_str(), "double");
         return true;
     }
 

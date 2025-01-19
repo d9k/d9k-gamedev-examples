@@ -39,11 +39,11 @@ using namespace std::string_literals;
 
 namespace
 {
-    struct sram_data
-    {
-        bn::array<char, 32> format_tag;
-        int reads_count = 0;
-    };
+    // struct sram_data
+    // {
+    //     bn::array<char, 32> format_tag;
+    //     int reads_count = 0;
+    // };
 
     BN_DATA_EWRAM SaveGame *save_game;
 

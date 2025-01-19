@@ -2,78 +2,101 @@
 #define DEMO_PARSE_HANDLER_H
 
 #include "rapidjson_inc_no_warns.h"
+#include "string_from_fixed.h"
 
 /** [RapidJSON: SAX](https://rapidjson.org/md_doc_sax.html) */
-struct DemoParseHandler : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>, DemoParseHandler> {
+struct DemoParseHandler : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>, DemoParseHandler>
+{
     uint64_t tokensCount = 0;
 
-    inline bool _logString(const char* str, rapidjson::SizeType length, bool copy, const char * logPrefix = "string") {
+    inline bool _logString(const char *str, rapidjson::SizeType length, bool copy, const char *logPrefix = "string")
+    {
         tokensCount++;
         BN_LOG("#", tokensCount, ": ", logPrefix, " \"", str, "\"; len: ", length, copy ? "" : "not copy");
         return true;
     }
 
-    template<typename T>
-    inline bool _logToken(const T value, const char * logPrefix = "") {
+    template <typename T>
+    inline bool _logToken(const T value, const char *logPrefix = "")
+    {
         tokensCount++;
         BN_LOG("#", tokensCount, ": ", logPrefix, strlen(logPrefix) > 0 ? " " : "", value);
         return true;
     }
 
-    bool String(const char* str, rapidjson::SizeType length, bool copy) {
+    bool String(const char *str, rapidjson::SizeType length, bool copy)
+    {
         return _logString(str, length, copy);
     }
 
-    bool Null() {
+    bool Null()
+    {
         return _logToken("null");
     }
 
-    bool Bool(bool b) {
+    bool Bool(bool b)
+    {
         // cout << "Bool(" << std::boolalpha << b << ")" << endl; return true;
         return _logToken(b, "bool");
     }
 
-    bool Int(int i) {
+    bool Int(int i)
+    {
         return _logToken(i, "int");
     }
 
-    bool Uint(unsigned u) {
+    bool Uint(unsigned u)
+    {
         return _logToken(u, "uint");
     }
 
-    bool Int64(int64_t i) {
+    bool Int64(int64_t i)
+    {
         return _logToken(i, "int64");
     }
 
-    bool Uint64(uint64_t u) {
+    bool Uint64(uint64_t u)
+    {
         return _logToken(u, "uint64");
     }
 
-    bool Double(double d) {
-        char doubleText[32];
-        sprintf(doubleText, "%.6f", d);
-        return _logToken(doubleText, "double");
+    bool Double(double d)
+    {
+        // char doubleText[32];
+        // %f built with DevKitARM corrupts memory (Allocation failed. Size in bytes: ...)
+        // sprintf(doubleText, "%.6f", d);
+        // TODO process fn
+        bn::fixed_t<20> fixed = d;
+        bn::string<32> fixed_string = string_from_fixed<32>(fixed);
+
+        _logToken(fixed_string.c_str(), "double");
+        return true;
     }
 
-    bool StartObject() {
+    bool StartObject()
+    {
         return _logToken("start object {");
     }
 
-    bool EndObject(rapidjson::SizeType memberCount) {
+    bool EndObject(rapidjson::SizeType memberCount)
+    {
         char objectText[32];
         sprintf(objectText, "} end object with %d members", memberCount);
         return _logToken(objectText);
     }
 
-    bool Key(const char* str, rapidjson::SizeType length, bool copy) {
+    bool Key(const char *str, rapidjson::SizeType length, bool copy)
+    {
         return _logString(str, length, copy, "key");
     }
 
-    bool StartArray() {
+    bool StartArray()
+    {
         return _logToken("start array [");
     }
 
-    bool EndArray(rapidjson::SizeType elementCount) {
+    bool EndArray(rapidjson::SizeType elementCount)
+    {
         char objectText[32];
         sprintf(objectText, "] end array with %d elements", elementCount);
         return _logToken(objectText);
