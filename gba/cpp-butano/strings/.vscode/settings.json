@@ -5,7 +5,11 @@
         "cstddef": "cpp",
         "unordered_map": "cpp",
         "iosfwd": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "array": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "span": "cpp"
     },
     "makefile.configureOnOpen": true,
     "C_Cpp.default.compilerPath": "/opt/wonderful/toolchain/gcc-arm-none-eabi/bin/arm-none-eabi-g++"

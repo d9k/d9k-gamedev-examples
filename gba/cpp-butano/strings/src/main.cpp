@@ -23,6 +23,7 @@
 #include "chars_copy.h"
 #include "common_variable_8x16_sprite_font.h"
 #include "chars_pointer_copy_wrapper.h"
+#include "chars_from_int.h"
 
 using namespace std::string_literals;
 
@@ -33,7 +34,7 @@ namespace
 
     class Person {
     public:
-        CharsPointerCopyWrapper name = CharsPointerCopyWrapper("John");
+        CharsPointerCopyWrapper name{"John"};
     };
 
     void test_std_string()
@@ -177,7 +178,12 @@ namespace
         BN_LOG("\n\n# Test sprintf\n");
 
         char buf[256];
-        sprintf(buf, "Hello, %s! %d %.5f", "world", 123456, M_PI);
+
+        sprintf(buf, "Hello, %s! %d", "world", 123456);
+
+        // TODO: %f built with DevKitARM corrupts memory (Allocation failed. Size in bytes: 4)
+        // sprintf(buf, "Hello, %s! %d %.5f", "world", 123456, M_PI);
+
         BN_LOG("test_sprintf(): ", buf);
     }
 
@@ -191,6 +197,7 @@ namespace
 
         person.name.set_chars("Tom");
 
+        BN_LOG("test_object_with_chars(): after rename, before person.name.get_chars() call");
         BN_LOG("test_object_with_chars(): after rename: person.name.get_chars(): ", person.name.get_chars());
 
         CharsPointerCopyWrapper local_chars_pointer_copy_wrapper = person.name;
@@ -206,10 +213,40 @@ namespace
         std::ostringstream stringStream; // = std::stringstream(myString);
         const char* userName = "Admin";
         int id = 400;
-        stringStream << "Hi, " << userName << " with id=" << id << "!";
-        const std::string &tmp = stringStream.str();
-        const char* chars = tmp.c_str();
-        BN_LOG(chars);
+
+        // TODO: doesn't work with DevKitARM
+        // stringStream << "Hi, " << userName << " with id=" << id << "!";
+        // const std::string &tmp = stringStream.str();
+        // const char* chars = tmp.c_str();
+        // BN_LOG(chars);
+    }
+
+    void test_chars_from_data()
+    {
+        BN_LOG("\n\n# Test chars from data\n");
+        int int_1 = 123;
+        int int_2 = 45;
+        const char * chars_from_int_by_bn_string_1 = bn::to_string<16>(int_1).c_str();
+        const char * chars_from_int_by_bn_string_2 = bn::to_string<16>(int_2).c_str();
+
+        const char * chars_from_int_by_bn_string_copy_1 = chars_copy(bn::to_string<16>(int_1));
+        const char * chars_from_int_by_bn_string_copy_2 = chars_copy(bn::to_string<16>(int_2));
+        // bn::to_string<16>(45).c_str();
+        // const char* chars_to_int_result_1 = chars
+
+        // fail:
+        BN_LOG("chars to int by bn::string, 1: ", chars_from_int_by_bn_string_1);
+        BN_LOG("chars to int by bn::string, 2: ", chars_from_int_by_bn_string_2);
+
+        BN_LOG("chars to int by bn::string + copy, 1: ", chars_from_int_by_bn_string_copy_1);
+        BN_LOG("chars to int by bn::string + copy, 2: ", chars_from_int_by_bn_string_copy_2);
+
+        // const char* chars_from_int_1 = chars_from_int<16>(int_1).data();
+        // const char* chars_from_int_2 = chars_from_int<16>(int_2).data();
+
+        // TODO fail
+        // BN_LOG("chars to int, 1: ", chars_from_int_1);
+        // BN_LOG("chars to int, 2: ", chars_from_int_2);
     }
 
     void text_scene()
@@ -226,6 +263,7 @@ namespace
             bn::core::update();
         }
     }
+
 
     void test_assert_will_break_run()
     {
@@ -250,6 +288,7 @@ int main()
     test_sprintf();
     test_object_with_chars();
     test_std_string_stream();
+    test_chars_from_data();
     // test_assert_will_break_run();
 
     bn::bg_palettes::set_transparent_color(bn::color(16, 16, 16));
