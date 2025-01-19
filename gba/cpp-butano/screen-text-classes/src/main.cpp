@@ -34,7 +34,8 @@ namespace
     constexpr int rows_composer_first_row_cy_shift = -bn::display::height() / 2 + 16 / 2;
     constexpr int rows_composer_line_height = 18;
     constexpr int scrollable_block_row_height = 14;
-    constexpr int key_value_pair_cx_shift = 30;
+    constexpr int key_value_pair_cx_shift_default = 40;
+    constexpr int key_value_pair_cx_shift_custom = 25;
     constexpr int scrollable_block_window_rows = 6;
     constexpr int scrollable_block_window_columns = 26;
     constexpr int scrollable_block_scroll_vertical_delta = scrollable_block_window_rows - 1;
@@ -148,22 +149,37 @@ namespace
 
         screen_text::RowsComposer<64, 32> rows_composer(&text_generator, rows_composer_line_height);
         rows_composer.first_row_cy_shift = rows_composer_first_row_cy_shift;
+        rows_composer.key_value_pair_cx_shift_default = key_value_pair_cx_shift_default;
 
         screen_text::Title title("Caption/value pairs classes");
         screen_text::CaptionValuePair frames_counter("frame");
-        frames_counter.row_cx_shift = key_value_pair_cx_shift;
+        screen_text::CaptionValuePair pi_display("Pi");
+
+        screen_text::CaptionValuePair custom_cx_shift_display("Custom cx shift");
+        custom_cx_shift_display.custom_row_cx_shift = key_value_pair_cx_shift_custom;
 
         rows_composer.add_block(&title);
         rows_composer.add_block(&frames_counter);
+        rows_composer.add_block(&pi_display);
+        rows_composer.add_block(&custom_cx_shift_display);
 
         screen_text::Title bottom_title(bottom_line_text_default);
         rows_composer.add_block(&bottom_title, rows_composer_bottom_row_index);
 
         while (!bn::keypad::start_pressed())
         {
-            bn::core::update();
             frames_counter.dynamic_value = bn::to_string<16>(frame_number).c_str();
+
+            char pi_display_chars[16];
+            sprintf(pi_display_chars, "%.5f", M_PI);
+            pi_display.dynamic_value = pi_display_chars;
+
+            custom_cx_shift_display.dynamic_value = bn::to_string<16>(key_value_pair_cx_shift_custom).c_str();
+
+            bn::core::update();
+
             rows_composer.rerender();
+
             frame_number++;
         }
     }

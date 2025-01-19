@@ -27,6 +27,11 @@ namespace screen_text
             set_static_text(staticText);
         }
 
+        int get_block_type() override
+        {
+            return screen_text::block_type::SCROLLABLE_BLOCK;
+        }
+
         void set_static_text(const char *staticText)
         {
             static_text = staticText;

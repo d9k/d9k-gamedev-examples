@@ -6,6 +6,7 @@
 #include "bn_sprite_text_generator.h"
 #include "screen_text/abstract_block.h"
 #include "screen_text/align.h"
+#include "screen_text/block_types.h"
 #include "screen_text/sprites_vector.h"
 
 namespace screen_text
@@ -26,6 +27,11 @@ namespace screen_text
             text = staticText;
             alignment = _alignment;
             _dynamic = dynamic;
+        }
+
+        int get_block_type() override
+        {
+            return screen_text::block_type::TITLE;
         }
 
         void _render_to_sprites(SpritesVector *sprites, bn::sprite_text_generator *defaultTextGenerator)

@@ -22,6 +22,11 @@ namespace screen_text
             static_caption = staticText;
         }
 
+        int get_block_type() override
+        {
+            return screen_text::block_type::KEY_VALUE_PAIR;
+        }
+
         void process_render_static_to_sprites(SpritesVector *staticSprites, bn::sprite_text_generator *defaultTextGenerator) override
         {
             // BN_LOG("screen_text::StaticTitle: process_render_static_to_sprites(): cy_shift: ", cy_shift, ", text: ", static_text);
@@ -34,7 +39,8 @@ namespace screen_text
             static_caption_with_separator_stream << separator;
 
             text_generator->set_alignment(screen_text::ALIGN_RIGHT);
-            text_generator->generate(row_cx_shift, row_cy_shift, static_caption_with_separator, *staticSprites);
+            int current_row_cx_shift = get_current_row_cx_shift();
+            text_generator->generate(current_row_cx_shift, row_cy_shift, static_caption_with_separator, *staticSprites);
         }
 
         void process_render_dynamic_to_sprites(SpritesVector *dynamicSprites, bn::sprite_text_generator *defaultTextGenerator) override
@@ -42,7 +48,8 @@ namespace screen_text
             bn::sprite_text_generator *text_generator = get_current_text_generator(defaultTextGenerator);
 
             text_generator->set_alignment(screen_text::ALIGN_LEFT);
-            text_generator->generate(row_cx_shift, row_cy_shift, dynamic_value, *dynamicSprites);
+            int current_row_cx_shift = get_current_row_cx_shift();
+            text_generator->generate(current_row_cx_shift, row_cy_shift, dynamic_value, *dynamicSprites);
         }
     };
 }
