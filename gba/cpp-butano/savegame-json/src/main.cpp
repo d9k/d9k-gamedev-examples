@@ -402,6 +402,7 @@ namespace
                 scrollable_movie_title.set_static_text(movie->title.get_chars());
                 display_movie_year.dynamic_value.set_chars(bn::to_string<16>(movie->year));
                 scrollable_plot_text.set_static_text(movie->plot_text.get_chars());
+                ui_partial_redraw_required = true;
             }
             if (ui_redraws_count == 2)
             {

@@ -40,7 +40,7 @@ namespace screen_text
             _scroll_vertical_current = 0;
             int window_chars_count = rows_count * _window_columns_count;
             int chars_count_over_window = std::max(static_text_length - window_chars_count, 0);
-            _scroll_vertical_max = chars_count_over_window / _window_columns_count + 1;
+            _scroll_vertical_max = chars_count_over_window ? chars_count_over_window / _window_columns_count + 1 : 0;
         }
 
         int get_scroll_vertical_max()
