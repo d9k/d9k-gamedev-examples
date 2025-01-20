@@ -36,6 +36,11 @@
 #include "screen_text/caption_value_pair.h"
 #include "screen_text/scrollable_block.h"
 
+#include "bn_sprite_items_arrow_down.h"
+#include "bn_sprite_items_arrow_left.h"
+#include "bn_sprite_items_arrow_right.h"
+#include "bn_sprite_items_arrow_up.h"
+
 using namespace std::string_literals;
 
 namespace
@@ -269,6 +274,26 @@ namespace
         _clear_scene();
         BN_LOG("\n\n# movies_info_viewer_scene()\n");
 
+        bn::sprite_ptr arrow_down = bn::sprite_items::arrow_down.create_sprite(
+            cx_position_at_right_border - 4,
+            0);
+        arrow_down.set_visible(false);
+
+        bn::sprite_ptr arrow_up = bn::sprite_items::arrow_up.create_sprite(
+            cx_position_at_right_border - 4,
+            0);
+        arrow_up.set_visible(false);
+
+        bn::sprite_ptr arrow_left = bn::sprite_items::arrow_left.create_sprite(
+            cx_position_at_left_border,
+            0);
+        arrow_down.set_visible(false);
+
+        bn::sprite_ptr arrow_right = bn::sprite_items::arrow_right.create_sprite(
+            cx_position_at_right_border,
+            0);
+        arrow_down.set_visible(false);
+
         screen_text::RowsComposer<128, 64> rows_composer(&text_generator, rows_composer_row_height);
         rows_composer.first_row_cy_shift = rows_composer_first_row_cy_shift;
         rows_composer.key_value_pair_cx_shift_default = key_value_pair_cx_shift_default;
@@ -304,11 +329,13 @@ namespace
         rows_composer.add_block(&scrollable_plot_text);
         rows_composer.add_block(&title_hotkey_help, 9);
 
+        int ui_redraws_count = 0;
         bool ui_redraw_required = true;
-        bool ui_partial_redraw_required = true;
+        bool ui_partial_redraw_required = false;
 
         do
         {
+            ui_redraws_count++;
             bn::core::update();
 
             if (bn::keypad::left_pressed())
@@ -355,11 +382,6 @@ namespace
 
             // loads_counter.dynamic_value.set_chars(bn::to_string<16>(save_game->loads_count).c_str());
 
-            if (ui_partial_redraw_required)
-            {
-                ui_partial_redraw_required = false;
-                rows_composer.reset();
-            }
             if (ui_redraw_required)
             {
                 ui_redraw_required = false;
@@ -380,6 +402,23 @@ namespace
                 scrollable_movie_title.set_static_text(movie->title.get_chars());
                 display_movie_year.dynamic_value.set_chars(bn::to_string<16>(movie->year));
                 scrollable_plot_text.set_static_text(movie->plot_text.get_chars());
+            }
+            if (ui_redraws_count == 2)
+            {
+                arrow_left.set_y(display_movie_id.rendered_block_cy_shift + 1);
+                arrow_right.set_y(display_movie_id.rendered_block_cy_shift + 1);
+                arrow_up.set_y(scrollable_plot_text.rendered_block_cy_shift + 4);
+                arrow_down.set_y(scrollable_plot_text.rendered_block_cy_shift + scrollable_plot_text.rendered_block_height - 14);
+                ui_partial_redraw_required = true;
+            }
+            if (ui_partial_redraw_required)
+            {
+                ui_partial_redraw_required = false;
+                rows_composer.reset();
+                arrow_up.set_visible(scrollable_plot_text.can_scroll_up());
+                arrow_down.set_visible(scrollable_plot_text.can_scroll_down());
+                arrow_left.set_visible(true);
+                arrow_right.set_visible(true);
             }
 
             rows_composer.rerender();
