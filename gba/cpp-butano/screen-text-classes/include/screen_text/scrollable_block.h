@@ -92,10 +92,13 @@ namespace screen_text
 
             int window_begin_char_pos = (_scroll_vertical_current + _window_row_current) * _window_columns_count;
 
-            const char *static_text_in_window = chars_copy(static_text + window_begin_char_pos, _window_columns_count);
+            if (window_begin_char_pos < static_text_length)
+            {
+                const char *static_text_in_window = chars_copy(static_text + window_begin_char_pos, _window_columns_count);
 
-            text_generator->set_alignment(alignment);
-            text_generator->generate(row_cx_shift, row_cy_shift, static_text_in_window, *staticSprites);
+                text_generator->set_alignment(alignment);
+                text_generator->generate(row_cx_shift, row_cy_shift, static_text_in_window, *staticSprites);
+            }
 
             _window_row_current++;
 
