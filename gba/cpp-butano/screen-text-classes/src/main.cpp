@@ -167,7 +167,7 @@ namespace
 
         while (!bn::keypad::start_pressed())
         {
-            frames_counter.dynamic_value.set_chars(bn::to_string<16>(frame_number).c_str());
+            frames_counter.dynamic_value.set_chars(bn::to_string<16>(frame_number));
 
             // char pi_display_chars[16];
             // char *pi_display_chars = new char[16];
@@ -176,9 +176,9 @@ namespace
             // pi_display.dynamic_value.set_chars(pi_display_chars);
             // delete pi_display_chars;
 
-            pi_display.dynamic_value.set_chars(bn::to_string<64>(pi_fixed).c_str());
+            pi_display.dynamic_value.set_chars(bn::to_string<64>(pi_fixed));
 
-            custom_cx_shift_display.dynamic_value.set_chars(bn::to_string<16>(key_value_pair_cx_shift_custom).c_str());
+            custom_cx_shift_display.dynamic_value.set_chars(bn::to_string<16>(key_value_pair_cx_shift_custom));
 
             bn::core::update();
             rows_composer.rerender();

@@ -11,6 +11,7 @@ namespace screen_text
     class ScrollableBlock : public AbstractBlock
     {
     public:
+        Alignment alignment = screen_text::ALIGN_LEFT;
         const char *static_text;
         int static_text_length;
         int scroll_vertical_delta = 1;
@@ -93,7 +94,7 @@ namespace screen_text
 
             const char *static_text_in_window = chars_copy(static_text + window_begin_char_pos, _window_columns_count);
 
-            text_generator->set_alignment(screen_text::ALIGN_LEFT);
+            text_generator->set_alignment(alignment);
             text_generator->generate(row_cx_shift, row_cy_shift, static_text_in_window, *staticSprites);
 
             _window_row_current++;

@@ -5,6 +5,10 @@
 
 class CharsPointerCopyWrapper
 {
+private:
+    // Moved to private because allowed to compile with type errors (assign char*)
+    // Use copy_fields_from() and set_chars() instead
+    CharsPointerCopyWrapper& operator=(const CharsPointerCopyWrapper& other) = default;
 public:
     char *_chars = nullptr;
     const char *_default_chars;
@@ -14,12 +18,9 @@ public:
         _default_chars = default_value;
     }
 
-    CharsPointerCopyWrapper(const CharsPointerCopyWrapper &source)
-    {
+    CharsPointerCopyWrapper(const CharsPointerCopyWrapper &source) {
         this->copy_fields_from(&source);
     }
-
-    CharsPointerCopyWrapper &operator=(const CharsPointerCopyWrapper &other) = default;
 
     void copy_fields_from(const CharsPointerCopyWrapper *source)
     {
@@ -34,12 +35,15 @@ public:
         _destruct_chars();
     }
 
-    inline void _destruct_chars()
-    {
+    inline void _destruct_chars() {
+        // BN_LOG("CharsPointerCopyWrapper: 100");
         if (_chars != nullptr)
         {
+            // BN_LOG("CharsPointerCopyWrapper: 200");
             delete[] _chars;
+            // BN_LOG("CharsPointerCopyWrapper: 300");
         }
+        // BN_LOG("CharsPointerCopyWrapper: 400");
     }
 
     const char *get_chars()
