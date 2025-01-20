@@ -206,7 +206,22 @@ namespace
         BN_LOG("local chars pointer copy wrapper: ", local_chars_pointer_copy_wrapper.get_chars());
 
         CharsPointerCopyWrapper local_chars_pointer_copy_wrapper_copy = CharsPointerCopyWrapper(person.name);
-        BN_LOG("local chars pointer copy wrapper copy: ", local_chars_pointer_copy_wrapper.get_chars());
+
+        BN_LOG(
+            "local chars pointer copy wrapper copy: ",
+            local_chars_pointer_copy_wrapper.get_chars(),
+            " ",
+            local_chars_pointer_copy_wrapper._chars,
+            " ",
+            local_chars_pointer_copy_wrapper._default_chars
+        );
+
+        // char* example_chars = "Example chars";
+        // CharsPointerCopyWrapper cpcw_try_to_set_chars;
+        // cpcw_try_to_set_chars = example_chars;
+
+        // BN_LOG("char pointer copy wrapper ", wtf.get_chars(), wtf._default_chars);
+        // BN_LOG("char pointer copy wrapper assigned char* to ", wtf.get_chars(), wtf._default_chars);
     }
 
     void test_std_string_stream() {
