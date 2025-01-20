@@ -10,13 +10,13 @@ using namespace savegame_parser_keys;
 
 void serialize_savegame(
     rapidjson::Writer<rapidjson::StringBuffer> *writer,
-    SaveGame *saveGame
-) {
+    SaveGame *saveGame)
+{
     writer->StartObject();
 
     writer->Key(KEY_SELECTED_MOVIE_ID);
 
-    writer->String(saveGame->selected_movie_id.get_chars());
+    writer->String(saveGame->chars_wrapper_selected_movie_id.get_chars());
 
     writer->Key(KEY_LOADS_COUNT);
 

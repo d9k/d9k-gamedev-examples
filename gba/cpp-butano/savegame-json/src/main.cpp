@@ -17,6 +17,7 @@
 #include "bn_sstream.h"
 #include "bn_string.h"
 
+#include "chars_pointer_copy_wrapper.h"
 #include "const.h"
 #include "common_info.h"
 #include "common_fixed_8x16_sprite_font.h"
@@ -59,18 +60,24 @@ namespace
 #include "data_palestinian_movies_cut_json.h"
         ;
 
+    constexpr int cx_position_at_right_border = bn::display::width() / 2 - 8;
+    constexpr int cx_position_at_left_border = -bn::display::width() / 2 + 8;
     constexpr int text_y_inc = 14;
     constexpr bn::fixed text_y_limit_f = (bn::display::height() / 2) - text_y_inc;
     constexpr int text_y_limit = text_y_limit_f.integer();
     constexpr int text_scene_title_y = -text_y_limit;
     constexpr int rows_composer_first_row_cy_shift = -bn::display::height() / 2 + 16 / 2;
-    constexpr int rows_composer_line_height = 18;
+    constexpr int rows_composer_row_height = 18;
     constexpr int key_value_pair_cx_shift_default = 8;
     // constexpr int help_scene_key_value_pair_cx_shift_default = -40;
     constexpr int help_scene_key_value_pair_cx_shift_default = 5;
+    // constexpr int scrollable_block_window_rows = 6;
+    constexpr int scrollable_block_window_columns = 26;
+    constexpr int scrollable_block_row_height = 12;
 
     /** Needed to properly fill savegame differences with zeroes */
     int sram_old_usage = 0;
+    CharsPointerCopyWrapper sram_old_char_wrapper_selected_movie_id;
 
     bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
     bn::vector<bn::sprite_ptr, 64> text_sprites;
@@ -98,7 +105,9 @@ namespace
     void _sram_write_save_game()
     {
         Sram sram;
-        sram.save(save_game, sram_old_usage);
+        sram::SaveResult save_result = sram.save(save_game, sram_old_usage);
+        sram_old_usage = save_result.sram_new_usage;
+        sram_old_char_wrapper_selected_movie_id.copy_fields_from(&save_game->chars_wrapper_selected_movie_id);
     }
 
     void test_semver_by_neargye()
@@ -211,7 +220,7 @@ namespace
             std::sprintf(
                 log_string,
                 "(id: %10s) movies[%2lu]: (%4d) %s",
-                movie->id.get_chars(),
+                movie->chars_wrapper_id.get_chars(),
                 i,
                 movie->year,
                 movie->title.get_chars());
@@ -234,8 +243,10 @@ namespace
 
         sram::LoadResult sram_load_result = sram.load();
 
+        sram_old_usage = sram_load_result.sram_old_usage;
+
         BN_LOG("Old savegame version in SRAM: ", sram_load_result.old_save_game_version.get_chars());
-        BN_LOG("Old SRAM usage:", sram_load_result.sram_old_usage);
+        BN_LOG("Old SRAM usage:", sram_old_usage);
 
         if (sram_load_result.error)
         {
@@ -248,7 +259,7 @@ namespace
             _set_save_game(sram_load_result.save_game);
         }
 
-        sram_old_usage = sram_load_result.sram_old_usage;
+        sram_old_char_wrapper_selected_movie_id.copy_fields_from(&save_game->chars_wrapper_selected_movie_id);
 
         scene_id_next = scene_id::MOVIES_INFO_VIEWER;
     }
@@ -257,36 +268,47 @@ namespace
     {
         _clear_scene();
 
-        screen_text::RowsComposer<128, 64> rows_composer(&text_generator, rows_composer_line_height);
+        screen_text::RowsComposer<128, 64> rows_composer(&text_generator, rows_composer_row_height);
         rows_composer.first_row_cy_shift = rows_composer_first_row_cy_shift;
         rows_composer.key_value_pair_cx_shift_default = key_value_pair_cx_shift_default;
 
         // screen_text::Title title("Palestinian movies info viewer");
         // screen_text::CaptionValuePair loads_counter("Loads count");
         screen_text::CaptionValuePair display_movie_id("Movie id");
+
+        screen_text::ScrollableBlock scrollable_movie_title("", 2, scrollable_block_window_columns);
+        // scrollable_movie_title.row_cx_shift = cx_position_at_left_border - 2;
+        scrollable_movie_title.alignment = screen_text::ALIGN_CENTER;
+        scrollable_movie_title.custom_row_height = scrollable_block_row_height;
+
         screen_text::CaptionValuePair display_movie_year("Year");
-        screen_text::Title display_movie_title("");
+        display_movie_year.custom_margin_with_last_block = 8;
+
+        // screen_text::Title display_movie_title("");
+
         screen_text::Title title_hotkey_help("(Select: show help)");
 
         // rows_composer.add_block(&title);
         rows_composer.add_block(&display_movie_id);
-        rows_composer.add_block(&display_movie_title);
+        rows_composer.add_block(&scrollable_movie_title);
         rows_composer.add_block(&display_movie_year);
         // rows_composer.add_block(&loads_counter, 7);
         rows_composer.add_block(&title_hotkey_help, 8);
+
+        bool ui_redraw_required = true;
 
         do
         {
             if (bn::keypad::left_pressed() || bn::keypad::up_pressed())
             {
                 save_game->inc_selected_movie_id(-1);
-                rows_composer.reset();
+                ui_redraw_required = true;
             }
 
             if (bn::keypad::right_pressed() || bn::keypad::down_pressed())
             {
                 save_game->inc_selected_movie_id(1);
-                rows_composer.reset();
+                ui_redraw_required = true;
             }
 
             if (bn::keypad::select_pressed())
@@ -302,16 +324,33 @@ namespace
             if (bn::keypad::a_pressed() || bn::keypad::b_pressed())
             {
                 _sram_write_save_game();
+                ui_redraw_required = true;
             }
 
             Movie *movie = save_game->get_selected_movie();
 
             // loads_counter.dynamic_value.set_chars(bn::to_string<16>(save_game->loads_count).c_str());
 
-            display_movie_id.dynamic_value.set_chars(save_game->selected_movie_id.get_chars());
-            display_movie_title.chars = movie->title.get_chars();
-            // BN_LOG("movie title: ", movie->title.get_chars());
-            display_movie_year.dynamic_value.set_chars(bn::to_string<16>(movie->year).c_str());
+            if (ui_redraw_required)
+            {
+                ui_redraw_required = false;
+
+                rows_composer.reset();
+
+                const char *chars_selected_movie_id = save_game->chars_wrapper_selected_movie_id.get_chars();
+                bn::string<64> string_display_movie_id(chars_selected_movie_id);
+                bn::ostringstream string_stream_display_movie_id(string_display_movie_id);
+
+                if (strcmp(chars_selected_movie_id, sram_old_char_wrapper_selected_movie_id.get_chars()) != 0)
+                {
+                    string_stream_display_movie_id << " *";
+                }
+
+                display_movie_id.dynamic_value.set_chars(string_display_movie_id);
+                // display_movie_title.chars = movie->title.get_chars();
+                scrollable_movie_title.set_static_text(movie->title.get_chars());
+                display_movie_year.dynamic_value.set_chars(bn::to_string<16>(movie->year));
+            }
 
             bn::core::update();
             rows_composer.rerender();
@@ -322,7 +361,7 @@ namespace
     {
         _clear_scene();
 
-        screen_text::RowsComposer<128, 64> rows_composer(&text_generator, rows_composer_line_height);
+        screen_text::RowsComposer<128, 64> rows_composer(&text_generator, rows_composer_row_height);
 
         screen_text::Title title("Palestinian movies info viewer");
 

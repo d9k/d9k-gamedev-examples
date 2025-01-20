@@ -56,7 +56,7 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
             if (key_is(KEY_ID))
             {
                 Movie *r = get_result();
-                r->id.set_chars(str);
+                r->chars_wrapper_id.set_chars(str);
                 // BN_LOG(this->parser_name(), ": check result id: ", r->id.get_chars());
             }
             if (key_is(KEY_TITLE))
@@ -70,7 +70,7 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
         _logTokenString(str, length, copy);
     }
 
-    void process_key(const char* /* str */, rapidjson::SizeType /* length */, bool /* copy */) override
+    void process_key(const char * /* str */, rapidjson::SizeType /* length */, bool /* copy */) override
     {
         if (key_is(KEY_TITLE_TEXT_DEPRECATED))
         {

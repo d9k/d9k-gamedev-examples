@@ -18,7 +18,8 @@ struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies *>
 
     ~MoviesParserHandler()
     {
-        if (destruct_result) {
+        if (destruct_result)
+        {
             Movies *r = get_result();
             delete r;
         }
@@ -57,12 +58,13 @@ struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies *>
 
         switch (subparser_type_id)
         {
-            case parsers_types::MOVIE: {
-                Movie *m = std::any_cast<Movie *>(subparser_result);
-                BN_LOG("Adding movie with id ", m->id.get_chars(), " to movies");
-                r->push_back(m);
-                return false;
-                break;
+        case parsers_types::MOVIE:
+        {
+            Movie *m = std::any_cast<Movie *>(subparser_result);
+            BN_LOG("Adding movie with id ", m->chars_wrapper_id.get_chars(), " to movies");
+            r->push_back(m);
+            return false;
+            break;
         }
         default:
             this->error_no_subparser_found();

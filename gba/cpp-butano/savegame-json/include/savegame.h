@@ -9,7 +9,7 @@
 class SaveGame
 {
 public:
-    CharsPointerCopyWrapper selected_movie_id;
+    CharsPointerCopyWrapper chars_wrapper_selected_movie_id;
     int loads_count = 0;
     int _selected_movie_index = 0;
 
@@ -20,17 +20,17 @@ public:
         check_selected_movie_id();
     }
 
-    void set_selected_movie_id(CharsPointerCopyWrapper newMovieId)
-    {
-        selected_movie_id = newMovieId;
-        check_selected_movie_id();
-    }
+    // void set_selected_movie_id(char *newMovieId)
+    // {
+    //     selected_movie_id.set_chars(newMovieId);
+    //     check_selected_movie_id();
+    // }
 
     void check_selected_movie_id()
     {
-        const char *selected_movie_id_chars = selected_movie_id.get_chars();
+        const char *chars_selected_movie_id = chars_wrapper_selected_movie_id.get_chars();
 
-        if (strlen(selected_movie_id_chars) == 0)
+        if (strlen(chars_selected_movie_id) == 0)
         {
             _selected_movie_index = 0;
             sync_movie_id_from_index();
@@ -46,7 +46,7 @@ public:
             current_movie = get_selected_movie();
         } while (
             current_movie != nullptr &&
-            strcmp(current_movie->id.get_chars(), selected_movie_id_chars) != 0);
+            strcmp(current_movie->chars_wrapper_id.get_chars(), chars_selected_movie_id) != 0);
     }
 
     void inc_selected_movie_id(int delta)
@@ -101,7 +101,7 @@ public:
             return sync_movie_id_from_index();
         }
 
-        selected_movie_id = selected_movie->id;
+        chars_wrapper_selected_movie_id.copy_fields_from(&selected_movie->chars_wrapper_id);
     }
 };
 

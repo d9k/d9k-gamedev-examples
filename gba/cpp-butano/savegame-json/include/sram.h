@@ -24,6 +24,12 @@ namespace sram
         SaveGame *save_game = NULL;
     };
 
+    struct SaveResult
+    {
+        bool error = true;
+        int sram_new_usage = 0;
+    };
+
     struct GetVersionResult
     {
         bool error = true;
@@ -107,8 +113,10 @@ public:
         bn::sram::clear(bn::sram::size());
     }
 
-    void save(SaveGame *saveGame, int sram_old_usage)
+    sram::SaveResult save(SaveGame *saveGame, int sram_old_usage)
     {
+        sram::SaveResult result;
+
         rapidjson::StringBuffer sbuf;
         rapidjson::Writer<rapidjson::StringBuffer> jsonWriter(sbuf);
         serialize_savegame(&jsonWriter, saveGame);
@@ -137,6 +145,10 @@ public:
         _bn::sram::unsafe_write(data_to_save_in_sram_chars, sram_new_usage, 0);
 
         delete data_to_save_in_sram_string;
+
+        result.sram_new_usage = sram_new_usage;
+        result.error = false;
+        return result;
     }
 
     void _load_chars(char *sram_chars)

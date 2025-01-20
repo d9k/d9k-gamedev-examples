@@ -54,7 +54,7 @@ struct SaveGameParserHandler : public TAbstractStackableParserHandler<SaveGame *
         if (key_is(KEY_SELECTED_MOVIE_ID))
         {
             SaveGame *r = get_result();
-            r->selected_movie_id.set_chars(chars_copy(str));
+            r->chars_wrapper_selected_movie_id.set_chars(chars_copy(str));
         }
         _logTokenString(str, length, copy);
     }

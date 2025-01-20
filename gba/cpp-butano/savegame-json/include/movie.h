@@ -6,9 +6,10 @@
 #include "bn_string.h"
 #include "chars_pointer_copy_wrapper.h"
 
-class Movie {
+class Movie
+{
 public:
-    CharsPointerCopyWrapper id = CharsPointerCopyWrapper("[no id]");
+    CharsPointerCopyWrapper chars_wrapper_id = CharsPointerCopyWrapper("[no id]");
     CharsPointerCopyWrapper title = CharsPointerCopyWrapper("[no title]");
     CharsPointerCopyWrapper plot_text = CharsPointerCopyWrapper("[no plot text]");
     int year = 0;

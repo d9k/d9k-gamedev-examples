@@ -8,12 +8,12 @@
 
 void serialize_movie(
     rapidjson::Writer<rapidjson::StringBuffer> *writer,
-    Movie *movie
-) {
+    Movie *movie)
+{
     writer->StartObject();
 
     writer->Key(movie_parser_keys::KEY_ID);
-    writer->String(movie->id.get_chars());
+    writer->String(movie->chars_wrapper_id.get_chars());
 
     writer->Key(movie_parser_keys::KEY_TITLE);
     writer->String(movie->title.get_chars());
