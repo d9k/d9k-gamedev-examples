@@ -267,6 +267,7 @@ namespace
     void movies_info_viewer_scene()
     {
         _clear_scene();
+        BN_LOG("\n\n# movies_info_viewer_scene()\n");
 
         screen_text::RowsComposer<128, 64> rows_composer(&text_generator, rows_composer_row_height);
         rows_composer.first_row_cy_shift = rows_composer_first_row_cy_shift;
@@ -286,29 +287,52 @@ namespace
 
         // screen_text::Title display_movie_title("");
 
+        screen_text::ScrollableBlock scrollable_plot_text("", 5, scrollable_block_window_columns);
+        scrollable_plot_text.row_cx_shift = cx_position_at_left_border - 2;
+        scrollable_plot_text.scroll_vertical_delta = 4;
+        // scrollable_movie_title.alignment = screen_text::ALIGN_CENTER;
+        scrollable_plot_text.custom_row_height = scrollable_block_row_height;
+
         screen_text::Title title_hotkey_help("(Select: show help)");
+        title_hotkey_help.custom_margin_with_last_block = 12;
 
         // rows_composer.add_block(&title);
         rows_composer.add_block(&display_movie_id);
         rows_composer.add_block(&scrollable_movie_title);
         rows_composer.add_block(&display_movie_year);
         // rows_composer.add_block(&loads_counter, 7);
-        rows_composer.add_block(&title_hotkey_help, 8);
+        rows_composer.add_block(&scrollable_plot_text);
+        rows_composer.add_block(&title_hotkey_help, 9);
 
         bool ui_redraw_required = true;
+        bool ui_partial_redraw_required = true;
 
         do
         {
-            if (bn::keypad::left_pressed() || bn::keypad::up_pressed())
+            bn::core::update();
+
+            if (bn::keypad::left_pressed())
             {
                 save_game->inc_selected_movie_id(-1);
                 ui_redraw_required = true;
             }
 
-            if (bn::keypad::right_pressed() || bn::keypad::down_pressed())
+            if (bn::keypad::right_pressed())
             {
                 save_game->inc_selected_movie_id(1);
                 ui_redraw_required = true;
+            }
+
+            if (bn::keypad::up_pressed())
+            {
+                scrollable_plot_text.dec_scroll_vertical_current();
+                ui_partial_redraw_required = true;
+            }
+
+            if (bn::keypad::down_pressed())
+            {
+                scrollable_plot_text.inc_scroll_vertical_current();
+                ui_partial_redraw_required = true;
             }
 
             if (bn::keypad::select_pressed())
@@ -331,6 +355,11 @@ namespace
 
             // loads_counter.dynamic_value.set_chars(bn::to_string<16>(save_game->loads_count).c_str());
 
+            if (ui_partial_redraw_required)
+            {
+                ui_partial_redraw_required = false;
+                rows_composer.reset();
+            }
             if (ui_redraw_required)
             {
                 ui_redraw_required = false;
@@ -350,9 +379,9 @@ namespace
                 // display_movie_title.chars = movie->title.get_chars();
                 scrollable_movie_title.set_static_text(movie->title.get_chars());
                 display_movie_year.dynamic_value.set_chars(bn::to_string<16>(movie->year));
+                scrollable_plot_text.set_static_text(movie->plot_text.get_chars());
             }
 
-            bn::core::update();
             rows_composer.rerender();
         } while (scene_id_next == scene_id::MOVIES_INFO_VIEWER);
     }
@@ -360,6 +389,7 @@ namespace
     void help_movies_info_viewer_scene()
     {
         _clear_scene();
+        BN_LOG("\n\n# help_movies_info_viewer_scene()\n");
 
         screen_text::RowsComposer<128, 64> rows_composer(&text_generator, rows_composer_row_height);
 
@@ -383,6 +413,7 @@ namespace
 
         rows_composer.first_row_cy_shift = rows_composer_first_row_cy_shift;
         rows_composer.key_value_pair_cx_shift_default = help_scene_key_value_pair_cx_shift_default;
+
         rows_composer.add_block(&title);
         rows_composer.add_block(&title_hotkeys_delimiter);
         rows_composer.add_block(&title_hotkey_switch_movie);
@@ -397,10 +428,11 @@ namespace
         do
         {
             bn::core::update();
+
             rows_composer.rerender();
         } while (!bn::keypad::select_pressed());
 
-        scene_id_next = scene_id::HELP_MOVIES_INFO_VIEWER;
+        scene_id_next = scene_id::MOVIES_INFO_VIEWER;
     }
 }
 
