@@ -2,6 +2,70 @@ R"=====({
   "movies": [
     {
       "titleText": {
+        "text": "Curfew"
+      },
+      "id": "tt0109996",
+      "primaryImage": {
+        "id": "rm777481472",
+        "width": 315,
+        "height": 420,
+        "url": "https://m.media-amazon.com/images/M/MV5BZWJhODQ3NWQtMDk1YS00Y2FlLWE0ZDMtNTlhODUxMzI0MWI3XkEyXkFqcGdeQXVyNzQwMzAwNTI@._V1_.jpg",
+        "caption": {
+          "plainText": "Curfew (1994)"
+        }
+      },
+      "releaseDate": {
+        "day": 5,
+        "month": 12,
+        "year": 1994,
+        "country": {
+          "id": "US",
+          "text": "United States"
+        }
+      },
+      "plot": {
+        "plotText": {
+          "plainText": "24 hours of family drama during a curfew announced by the Israeli army in a Palestinian refugee camp on the Gaza Strip in 1993."
+        },
+        "language": {
+          "id": "en-US"
+        }
+      }
+    },
+    {
+      "titleText": {
+        "text": "Hikayatul jawahiri thalath"
+      },
+      "id": "tt0111354",
+      "primaryImage": {
+        "id": "rm4037123328",
+        "width": 284,
+        "height": 475,
+        "url": "https://m.media-amazon.com/images/M/MV5BMTk5MTk2Njk5NF5BMl5BanBnXkFtZTcwODk4OTUyMQ@@._V1_.jpg",
+        "caption": {
+          "plainText": "Hikayatul jawahiri thalath (1995)"
+        }
+      },
+      "releaseDate": {
+        "day": 6,
+        "month": 12,
+        "year": 1995,
+        "country": {
+          "id": "FR",
+          "text": "France"
+        }
+      },
+      "plot": {
+        "plotText": {
+          "plainText": "A Palestinian boy becomes entranced with a beautiful Gypsy girl and a fairy tale world she weaves amidst conflict in Gaza. The children explore nature, mysticism and what their future holds, while learning to live with the surrounding brutality c. 1990. Yusef's family scrapes by in a seaside camp while his father's in prison and his heavily-armed brother's on the run, parrying with Israeli troops. Salah, Yusef's schoolmate from a well-off Arab family strives faithfully to assist them, while Yusef helps an elderly, blind neighbor escape from his lonely abandonment into the North American dreamworld he's waited so long for."
+        },
+        "language": {
+          "id": "en-US"
+        }
+      }
+    },
+    {
+      "titleText": {
         "text": "Giraffada"
       },
       "id": "tt3132086",
@@ -194,6 +258,102 @@ R"=====({
     },
     {
       "titleText": {
+        "text": "Chronicle of a Disappearance"
+      },
+      "id": "tt0115895",
+      "primaryImage": {
+        "id": "rm2871237888",
+        "width": 344,
+        "height": 500,
+        "url": "https://m.media-amazon.com/images/M/MV5BMTc3ODMwMzg1NV5BMl5BanBnXkFtZTcwNjg3NjAzMQ@@._V1_.jpg",
+        "caption": {
+          "plainText": "Chronicle of a Disappearance (1996)"
+        }
+      },
+      "releaseDate": {
+        "day": null,
+        "month": null,
+        "year": 1996,
+        "country": {
+          "id": "IL",
+          "text": "Israel"
+        }
+      },
+      "plot": {
+        "plotText": {
+          "plainText": "A Palestinian expatriate filmmaker (Elia Suleiman) documents the loss of national identity in Israel's Arab population."
+        },
+        "language": {
+          "id": "en-US"
+        }
+      }
+    },
+    {
+      "titleText": {
+        "text": "Laila's Birthday"
+      },
+      "id": "tt1281951",
+      "primaryImage": {
+        "id": "rm3684775681",
+        "width": 560,
+        "height": 800,
+        "url": "https://m.media-amazon.com/images/M/MV5BMjhmOTZjMTMtMDQ4ZS00NDcwLTkxNzctYmE2MmQzOThjMDQ1XkEyXkFqcGdeQXVyMTQ4OTk3MzM@._V1_.jpg",
+        "caption": {
+          "plainText": "Laila's Birthday (2008)"
+        }
+      },
+      "releaseDate": {
+        "day": 9,
+        "month": 4,
+        "year": 2009,
+        "country": {
+          "id": "NL",
+          "text": "Netherlands"
+        }
+      },
+      "plot": {
+        "plotText": {
+          "plainText": "Abu Laila used to be a judge, but because the government doesn't have the means to renew his assignment he is forced to be a taxi driver. On the day his daughter Laila becomes seven years old his wife insists that he'll be at home early and bring her a present and a cake. Abu Laila's has nothing else on his mind then completing this mission. But the daily life in Palestine has other plans."
+        },
+        "language": {
+          "id": "en-US"
+        }
+      }
+    },
+    {
+      "titleText": {
+        "text": "Lemon Tree"
+      },
+      "id": "tt1172963",
+      "primaryImage": {
+        "id": "rm3732179712",
+        "width": 260,
+        "height": 382,
+        "url": "https://m.media-amazon.com/images/M/MV5BMTg5NTM0OTE3OV5BMl5BanBnXkFtZTcwMjk4ODM0Mg@@._V1_.jpg",
+        "caption": {
+          "plainText": "Lemon Tree (2008)"
+        }
+      },
+      "releaseDate": {
+        "day": 27,
+        "month": 3,
+        "year": 2008,
+        "country": {
+          "id": "IL",
+          "text": "Israel"
+        }
+      },
+      "plot": {
+        "plotText": {
+          "plainText": "The story of a Palestinian widow who must defend her lemontree field when a new Israeli Defense Minister moves next to her and threatens to have her lemon grove torn down."
+        },
+        "language": {
+          "id": "en-US"
+        }
+      }
+    },
+    {
+      "titleText": {
         "text": "Degrade"
       },
       "id": "tt4429074",
@@ -218,6 +378,38 @@ R"=====({
       "plot": {
         "plotText": {
           "plainText": "In Gaza, two hairdressers and ten customers of various ages and backgrounds spend the day trapped in a beauty salon while Hamas police fight a gang in the street."
+        },
+        "language": {
+          "id": "en-US"
+        }
+      }
+    },
+    {
+      "titleText": {
+        "text": "Bethlehem"
+      },
+      "id": "tt2915160",
+      "primaryImage": {
+        "id": "rm1833487360",
+        "width": 4015,
+        "height": 5787,
+        "url": "https://m.media-amazon.com/images/M/MV5BMTc5OTUwMjgyOF5BMl5BanBnXkFtZTgwNTA3NzAwMjE@._V1_.jpg",
+        "caption": {
+          "plainText": "Shadi Mar'i and Tsahi Halevi in Bethlehem (2013)"
+        }
+      },
+      "releaseDate": {
+        "day": 26,
+        "month": 9,
+        "year": 2013,
+        "country": {
+          "id": "IL",
+          "text": "Israel"
+        }
+      },
+      "plot": {
+        "plotText": {
+          "plainText": "Tells the story of the complex relationship between an Israeli Secret Service officer and his teenage Palestinian informant. Shuttling back and forth between conflicting points of view, the film is a raw portrayal of characters torn apart by competing loyalties and impossible moral dilemmas, giving an unparalleled glimpse into the dark and fascinating world of human intelligence."
         },
         "language": {
           "id": "en-US"
@@ -346,6 +538,38 @@ R"=====({
       "plot": {
         "plotText": {
           "plainText": "In the beginning was Palestine, and the story of Younes (Orwa Nyrabia) began, known as Abou Salem, known as the Man, said to be the father of Ibrahim, fighting the English from the age of 16, still fighting, but retrenched in the Lebanon, illegal in his own country ; the story of Nahila (Rim Turki) also began, married to him when she was twelve, breast-feeding their first child, born during the villagers' exhausting trek towards the North, fleeing their burning homes, Nahila whom he met secretly in a cave in Bab El Chams, in Galilee. Again it is the story of Doctor Khalil (Bassel Khayat), abandoned by his mother in the shambles of the refugee camps, who, in Beirut, rescued Younes in a deep coma, lulling him with the tragic story of his people ; and yet again it is that of Chams (Hala Omran) whom Khalil loved and was executed by his companions in arms. Fifty years of history full of suffering, hope and love."
+        },
+        "language": {
+          "id": "en-US"
+        }
+      }
+    },
+    {
+      "titleText": {
+        "text": "Al-mor wa al rumman"
+      },
+      "id": "tt1320282",
+      "primaryImage": {
+        "id": "rm850923776",
+        "width": 517,
+        "height": 800,
+        "url": "https://m.media-amazon.com/images/M/MV5BYTc0MmUyNTEtZWQ4MS00ZWU3LThmYjktZTE1OWUyOGJkZDgyXkEyXkFqcGdeQXVyMzExODEzNDA@._V1_.jpg",
+        "caption": {
+          "plainText": "Al-mor wa al rumman (2008)"
+        }
+      },
+      "releaseDate": {
+        "day": null,
+        "month": 2,
+        "year": 2009,
+        "country": {
+          "id": "DE",
+          "text": "Germany"
+        }
+      },
+      "plot": {
+        "plotText": {
+          "plainText": "A free spirited Palestinian dancer becomes the wife of a prisoner."
         },
         "language": {
           "id": "en-US"
@@ -642,6 +866,38 @@ R"=====({
     },
     {
       "titleText": {
+        "text": "Life in Occupied Palestine: Eyewitness Stories & Photos"
+      },
+      "id": "tt16749956",
+      "primaryImage": {
+        "id": "rm2157044225",
+        "width": 650,
+        "height": 910,
+        "url": "https://m.media-amazon.com/images/M/MV5BNWQyZjgyZjktNDE2ZS00MDBkLWFjNzctZjllNzA0NWRjZmJkXkEyXkFqcGdeQXVyNzQ3MDc3ODI@._V1_.jpg",
+        "caption": {
+          "plainText": "Life in Occupied Palestine: Eyewitness Stories & Photos (1997)"
+        }
+      },
+      "releaseDate": {
+        "day": null,
+        "month": null,
+        "year": 1997,
+        "country": {
+          "id": "US",
+          "text": "United States"
+        }
+      },
+      "plot": {
+        "plotText": {
+          "plainText": "Anna Baltzer, the Jewish-American granddaughter of Holocaust refugees, provides a straightforward account of the Israeli-Palestinian conflict, while chronicling the almost unbearable living conditions of Palestinians under the Occupation."
+        },
+        "language": {
+          "id": "en-US"
+        }
+      }
+    },
+    {
+      "titleText": {
         "text": "Gaza Fights for Freedom"
       },
       "id": "tt10825504",
@@ -770,6 +1026,38 @@ R"=====({
     },
     {
       "titleText": {
+        "text": "Eyes of a Thief"
+      },
+      "id": "tt2993406",
+      "primaryImage": {
+        "id": "rm22085376",
+        "width": 814,
+        "height": 1137,
+        "url": "https://m.media-amazon.com/images/M/MV5BNDIwODE3MjcwOV5BMl5BanBnXkFtZTgwNTYxMjU5MzE@._V1_.jpg",
+        "caption": {
+          "plainText": "Eyes of a Thief (2014)"
+        }
+      },
+      "releaseDate": {
+        "day": 1,
+        "month": 10,
+        "year": 2014,
+        "country": {
+          "id": "PS",
+          "text": "Occupied Palestinian Territory"
+        }
+      },
+      "plot": {
+        "plotText": {
+          "plainText": "A father with a dangerous secret searches for his daughter."
+        },
+        "language": {
+          "id": "en-US"
+        }
+      }
+    },
+    {
+      "titleText": {
         "text": "Ghost Hunting"
       },
       "id": "tt6568868",
@@ -794,6 +1082,38 @@ R"=====({
       "plot": {
         "plotText": {
           "plainText": "Some Palestinians who were held in an Israeli detention center are assembled to re-enact their experience in an effort to heal."
+        },
+        "language": {
+          "id": "en-US"
+        }
+      }
+    },
+    {
+      "titleText": {
+        "text": "Hikayatul jawahiri thalath"
+      },
+      "id": "tt0111354",
+      "primaryImage": {
+        "id": "rm4037123328",
+        "width": 284,
+        "height": 475,
+        "url": "https://m.media-amazon.com/images/M/MV5BMTk5MTk2Njk5NF5BMl5BanBnXkFtZTcwODk4OTUyMQ@@._V1_.jpg",
+        "caption": {
+          "plainText": "Hikayatul jawahiri thalath (1995)"
+        }
+      },
+      "releaseDate": {
+        "day": 6,
+        "month": 12,
+        "year": 1995,
+        "country": {
+          "id": "FR",
+          "text": "France"
+        }
+      },
+      "plot": {
+        "plotText": {
+          "plainText": "A Palestinian boy becomes entranced with a beautiful Gypsy girl and a fairy tale world she weaves amidst conflict in Gaza. The children explore nature, mysticism and what their future holds, while learning to live with the surrounding brutality c. 1990. Yusef's family scrapes by in a seaside camp while his father's in prison and his heavily-armed brother's on the run, parrying with Israeli troops. Salah, Yusef's schoolmate from a well-off Arab family strives faithfully to assist them, while Yusef helps an elderly, blind neighbor escape from his lonely abandonment into the North American dreamworld he's waited so long for."
         },
         "language": {
           "id": "en-US"
@@ -858,6 +1178,38 @@ R"=====({
       "plot": {
         "plotText": {
           "plainText": "Gaza, today. Sixty-year-old fisherman Issa is secretly in love with Siham, a woman who works at the market with her daughter Leila. When he discovers an ancient phallic statue of Apollo in his fishing nets, Issa hides it, not knowing what to do with this mysterious and potent treasure. Yet deep inside, he feels that this discovery will change his life forever. Strangely, his confidence starts to grow and eventually he decides to approach Siham."
+        },
+        "language": {
+          "id": "en-US"
+        }
+      }
+    },
+    {
+      "titleText": {
+        "text": "Ambulance"
+      },
+      "id": "tt6141880",
+      "primaryImage": {
+        "id": "rm448135936",
+        "width": 1786,
+        "height": 2500,
+        "url": "https://m.media-amazon.com/images/M/MV5BOTI1Mzg1NjgtNWUwZC00MGY5LWIxZWEtNmFiYjI0ODhmOTdkXkEyXkFqcGdeQXVyNTgzNjU1MzU@._V1_.jpg",
+        "caption": {
+          "plainText": "Ambulance (2016)"
+        }
+      },
+      "releaseDate": {
+        "day": 7,
+        "month": 6,
+        "year": 2017,
+        "country": {
+          "id": "US",
+          "text": "United States"
+        }
+      },
+      "plot": {
+        "plotText": {
+          "plainText": "During the summer of 2014, Mohamed Jabaly joins an ambulance crew attempting to save those injured during the war in Gaza."
         },
         "language": {
           "id": "en-US"

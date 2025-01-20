@@ -61,8 +61,8 @@ namespace
 
     BN_DATA_EWRAM SaveGame *save_game;
 
-    BN_DATA_EWRAM const char *palestinian_movies_cut_json =
-#include "data_palestinian_movies_cut_json.h"
+    BN_DATA_EWRAM const char *palestinian_movies_json =
+#include "data_palestinian_movies_json.h"
         ;
 
     constexpr int cx_position_at_right_border = bn::display::width() / 2 - 8;
@@ -159,13 +159,13 @@ namespace
 
         char palestinian_movies_cut_json_begin[255];
 
-        std::strncpy(palestinian_movies_cut_json_begin, palestinian_movies_cut_json, FIRST_CHARS);
+        std::strncpy(palestinian_movies_cut_json_begin, palestinian_movies_json, FIRST_CHARS);
 
         BN_LOG("Long JSON first chars (", FIRST_CHARS, "):", palestinian_movies_cut_json_begin);
 
         DemoParseHandler handler2;
         rapidjson::Reader reader2;
-        rapidjson::StringStream ssBig(palestinian_movies_cut_json);
+        rapidjson::StringStream ssBig(palestinian_movies_json);
         reader2.Parse(ssBig, handler2);
     }
 
@@ -177,7 +177,7 @@ namespace
         SaveGameParserHandler *root_handler;
         root_handler = new SaveGameParserHandler();
         rapidjson::Reader reader;
-        rapidjson::StringStream ssBig(palestinian_movies_cut_json);
+        rapidjson::StringStream ssBig(palestinian_movies_json);
 
         ParsersStack *parsersStack = new ParsersStack((AbstractStackableParserHandler *)root_handler, &reader, &ssBig);
 
