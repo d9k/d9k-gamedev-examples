@@ -1,13 +1,15 @@
+#define BN_CFG_SPRITE_TILES_LOG_ENABLED true
 /*
  * Copyright (c) 2020-2024 Gustavo Valiente gustavo.valiente@protonmail.com
  * zlib License, see LICENSE file.
  */
 
-#define BN_CFG_LOG_MAX_SIZE 1024
+// #define BN_CFG_LOG_MAX_SIZE 1024
 
 #include <sstream>
 #include <stdio.h>
 
+#include "bn_config_sprite_tiles.h"
 #include "bn_bg_palettes.h"
 #include "bn_core.h"
 #include "bn_display.h"
@@ -294,7 +296,7 @@ namespace
             0);
         arrow_down.set_visible(false);
 
-        screen_text::RowsComposer<128, 64> rows_composer(&text_generator, rows_composer_row_height);
+        screen_text::RowsComposer<384, 128> rows_composer(&text_generator, rows_composer_row_height);
         rows_composer.first_row_cy_shift = rows_composer_first_row_cy_shift;
         rows_composer.key_value_pair_cx_shift_default = key_value_pair_cx_shift_default;
 
@@ -481,6 +483,7 @@ int main()
     bn::core::init();
 
     BN_LOG("BN_CFG_LOG_MAX_SIZE: ", BN_CFG_LOG_MAX_SIZE);
+    BN_LOG("BN_CFG_SPRITE_TILES_MAX_ITEMS: ", BN_CFG_SPRITE_TILES_MAX_ITEMS);
 
     test_semver_by_neargye();
     parse_small_json();

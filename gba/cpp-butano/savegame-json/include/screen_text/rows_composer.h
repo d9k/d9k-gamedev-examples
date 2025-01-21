@@ -103,6 +103,8 @@ namespace screen_text
 
             for (int i = 0; i < MAX_ROWS; i++)
             {
+                // BN_LOG("RowsComposer rerender() row ", i, ": dynamic_sprites.size(): ", dynamic_sprites.size(), " static_sprites.size(): ", static_sprites.size());
+
                 AbstractBlock *current_row_block = _row_num_to_block_object[i];
                 AbstractBlock *previous_row_block = get_block_from_row_index(i - 1);
                 AbstractBlock *next_row_block = get_block_from_row_index(i + 1);
