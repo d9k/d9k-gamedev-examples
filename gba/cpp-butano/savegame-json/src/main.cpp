@@ -506,15 +506,15 @@ int main()
     parse_big_json();
 
     parse_big_json_movies();
-    parse_big_json_movies();
-    parse_big_json_movies();
-    parse_big_json_movies();
-    parse_big_json_movies();
-    parse_big_json_movies();
-    parse_big_json_movies();
-    parse_big_json_movies();
-    parse_big_json_movies();
-    parse_big_json_movies();
+    // parse_big_json_movies();
+    // parse_big_json_movies();
+    // parse_big_json_movies();
+    // parse_big_json_movies();
+    // parse_big_json_movies();
+    // parse_big_json_movies();
+    // parse_big_json_movies();
+    // parse_big_json_movies();
+    // parse_big_json_movies();
 
     debug_log_save_game_object();
 
