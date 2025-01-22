@@ -187,21 +187,18 @@ namespace
         _init_scene("Parsing big JSON movies");
         bn::core::update();
 
-        SaveGameParserHandler *root_handler = new SaveGameParserHandler();
+        SaveGameParserHandler root_handler;
         rapidjson::Reader reader;
         rapidjson::StringStream ssBig(palestinian_movies_json);
 
-        ParsersStack *parsersStack = new ParsersStack((AbstractStackableParserHandler *)root_handler, &reader, &ssBig);
+        ParsersStack parsersStack((AbstractStackableParserHandler *)&root_handler, &reader, &ssBig);
 
-        while (parsersStack->parse_next_token())
+        while (parsersStack.parse_next_token())
         {
         }
 
-        _set_save_game(root_handler->get_result());
-        root_handler->destruct_result = false;
-
-        delete parsersStack;
-        delete root_handler;
+        _set_save_game(root_handler.get_result());
+        root_handler.destruct_result = false;
     }
 
     void debug_log_save_game_object()
