@@ -187,8 +187,7 @@ namespace
         _init_scene("Parsing big JSON movies");
         bn::core::update();
 
-        SaveGameParserHandler *root_handler;
-        root_handler = new SaveGameParserHandler();
+        SaveGameParserHandler *root_handler = new SaveGameParserHandler();
         rapidjson::Reader reader;
         rapidjson::StringStream ssBig(palestinian_movies_json);
 

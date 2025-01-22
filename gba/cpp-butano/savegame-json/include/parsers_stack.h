@@ -36,6 +36,22 @@ public:
         _input_stream = input_stream;
     }
 
+    ~ParsersStack()
+    {
+        int last_index = _parsers_handlers.size() - 1;
+
+        // root must be deleted manually
+        for (int i = last_index; i > 0; i--)
+        {
+            AbstractStackableParserHandler *subparser = _parsers_handlers.at(i);
+            if (subparser != nullptr)
+            {
+                delete subparser;
+                _parsers_handlers[i] = nullptr;
+            }
+        }
+    }
+
     // void add(AbstractStackableParserHandler *new_parser_handler, bool subparser_inc_level = false)
     void add(AbstractStackableParserHandler *new_parser_handler)
     {

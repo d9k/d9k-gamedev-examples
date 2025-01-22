@@ -201,8 +201,7 @@ public:
     sram::JsonCharsParseSaveGameResult _json_chars_parse_save_game(char *jsonChars)
     {
         sram::JsonCharsParseSaveGameResult result;
-        SaveGameParserHandler *root_handler;
-        root_handler = new SaveGameParserHandler();
+        SaveGameParserHandler *root_handler = new SaveGameParserHandler();
         rapidjson::Reader reader;
         rapidjson::StringStream json_chars_string_stream(jsonChars);
         ParsersStack *parsersStack = new ParsersStack((AbstractStackableParserHandler *)root_handler, &reader, &json_chars_string_stream);
