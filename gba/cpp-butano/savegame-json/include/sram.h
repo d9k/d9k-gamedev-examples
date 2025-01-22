@@ -144,10 +144,12 @@ public:
         // bn::sram::write(data_to_save_in_sram_chars);
         _bn::sram::unsafe_write(data_to_save_in_sram_chars, sram_new_usage, 0);
 
-        delete data_to_save_in_sram_string;
-
         result.sram_new_usage = sram_new_usage;
         result.error = false;
+
+        // delete data_to_save_in_sram_string;
+        // delete[] json;
+
         return result;
     }
 

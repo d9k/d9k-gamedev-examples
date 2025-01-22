@@ -33,6 +33,8 @@ void log_long_chars(const char *longChars, int partMaxSize, const char *caption)
             ":\n",
             part);
     } while (partEnd < longCharsEnd);
+
+    delete[] part;
 }
 
 #endif // LOG_LONG_CHARS_H

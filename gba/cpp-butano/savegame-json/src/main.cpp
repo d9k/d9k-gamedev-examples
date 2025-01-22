@@ -26,6 +26,7 @@
 #include "rapidjson_inc_no_warns.h"
 #include "demo_parse_handler.h"
 #include "log_long_chars.h"
+#include "memory_log_usage.h"
 #include "movie.h"
 #include "sram.h"
 #include "parsers_stack.h"
@@ -100,10 +101,14 @@ namespace
         save_game = new_save_game;
     }
 
-    void _init_scene(const bn::string_view &sceneTitle)
+    // void _init_scene(const bn::string_view &sceneTitle)
+
+    void _init_scene(const char *sceneTitle)
     {
         _clear_scene();
         BN_LOG("\n\n# ", sceneTitle, "\n");
+        memory_log_usage(sceneTitle);
+        // memory_log_usage(sceneTitle.data());
 
         text_generator.set_center_alignment();
         text_generator.generate(0, text_scene_title_y, sceneTitle, text_sprites);
@@ -111,15 +116,18 @@ namespace
 
     void _sram_write_save_game()
     {
+        memory_log_usage("_sram_write_save_game(): begin");
         Sram sram;
         sram::SaveResult save_result = sram.save(save_game, sram_old_usage);
         sram_old_usage = save_result.sram_new_usage;
         sram_old_char_wrapper_selected_movie_id.copy_fields_from(&save_game->chars_wrapper_selected_movie_id);
+        memory_log_usage("_sram_write_save_game(): end");
     }
 
     void test_semver_by_neargye()
     {
-        BN_LOG("\n\n# Test semver by Neargye\n");
+        _init_scene("Test semver by Neargye");
+        memory_log_usage("test_semver_by_neargye(): begin");
         const char *version_string = "1.2.3";
 
         semver::version v = semver_from_chars(version_string);
@@ -135,8 +143,11 @@ namespace
         BN_LOG("test_semver_by_neargye(): v < v_older: ", v_less_then_v_older);
         BN_LOG("test_semver_by_neargye(): v > v_older: ", v > v_older);
 
-        BN_LOG("test_semver_by_neargye(): v < v_newer: ", v < v_newer);
-        BN_LOG("test_semver_by_neargye(): v > v_newer: ", v > v_newer);
+        // TODO causes memory corruption
+        //
+        // BN_LOG("test_semver_by_neargye(): v < v_newer: ", v < v_newer);
+        // BN_LOG("test_semver_by_neargye(): v > v_newer: ", v > v_newer);
+        memory_log_usage("test_semver_by_neargye(): end");
     }
 
     void parse_small_json()
@@ -263,7 +274,9 @@ namespace
         }
         else
         {
+            memory_log_usage("before set savegame");
             _set_save_game(sram_load_result.save_game);
+            memory_log_usage("after set savegame");
         }
 
         sram_old_char_wrapper_selected_movie_id.copy_fields_from(&save_game->chars_wrapper_selected_movie_id);
@@ -274,7 +287,9 @@ namespace
     void movies_info_viewer_scene()
     {
         _clear_scene();
+
         BN_LOG("\n\n# movies_info_viewer_scene()\n");
+        memory_log_usage();
 
         bn::sprite_ptr arrow_down = bn::sprite_items::arrow_down.create_sprite(
             cx_position_at_right_border - 4,
@@ -485,7 +500,10 @@ int main()
     BN_LOG("BN_CFG_LOG_MAX_SIZE: ", BN_CFG_LOG_MAX_SIZE);
     BN_LOG("BN_CFG_SPRITE_TILES_MAX_ITEMS: ", BN_CFG_SPRITE_TILES_MAX_ITEMS);
 
+    memory_log_usage("before test_semver_by_neargye()");
     test_semver_by_neargye();
+    memory_log_usage("after test_semver_by_neargye()");
+
     parse_small_json();
     parse_big_json();
     parse_big_json_movies();
