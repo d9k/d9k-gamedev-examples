@@ -21,6 +21,12 @@ struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies *>
         if (destruct_result)
         {
             Movies *r = get_result();
+            int last_index = r->size() - 1;
+            for (int i = last_index; i >= 0; i--)
+            {
+                Movie *movie = r->at(i);
+                delete movie;
+            }
             delete r;
         }
     }

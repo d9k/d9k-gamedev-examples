@@ -15,6 +15,15 @@ public:
 
     Movies movies = {};
 
+    ~SaveGame()
+    {
+        int last_index = movies.size() - 1;
+        for (int i = last_index; i >= 0; i--)
+        {
+            delete movies.at(i);
+        }
+    }
+
     void validate()
     {
         check_selected_movie_id();

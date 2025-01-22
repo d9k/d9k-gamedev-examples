@@ -401,6 +401,7 @@ namespace
 
             if (ui_redraw_required)
             {
+                memory_log_usage("movies_info_viewer_scene(): ui_redraw_required: begin");
                 ui_redraw_required = false;
 
                 rows_composer.reset();
@@ -420,6 +421,7 @@ namespace
                 display_movie_year.dynamic_value.set_chars(bn::to_string<16>(movie->year));
                 scrollable_plot_text.set_static_text(movie->plot_text.get_chars());
                 ui_partial_redraw_required = true;
+                memory_log_usage("movies_info_viewer_scene(): ui_redraw_required: end");
             }
             if (ui_redraws_count == 2)
             {
@@ -507,6 +509,11 @@ int main()
     parse_small_json();
     parse_big_json();
     parse_big_json_movies();
+    // parse_big_json_movies();
+    // parse_big_json_movies();
+
+    // exit(1);
+
     debug_log_save_game_object();
 
     while (true)
