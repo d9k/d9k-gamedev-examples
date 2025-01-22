@@ -98,6 +98,7 @@ namespace screen_text
 
                 text_generator->set_alignment(alignment);
                 text_generator->generate(row_cx_shift, row_cy_shift, static_text_in_window, *staticSprites);
+                delete[] static_text_in_window;
             }
 
             _window_row_current++;
