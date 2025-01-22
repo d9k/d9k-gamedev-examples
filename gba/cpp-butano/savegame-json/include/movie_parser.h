@@ -74,12 +74,12 @@ struct MovieParserHandler : public TAbstractStackableParserHandler<Movie *>
     {
         if (key_is(KEY_TITLE_TEXT_DEPRECATED))
         {
-            this->subparser_type_id = parsers_types::MOVIE_TITLETEXT_DEPRECATED;
+            // this->subparser_type_id = parsers_types::MOVIE_TITLETEXT_DEPRECATED;
         }
 
         if (key_is(KEY_PLOT_TEXT))
         {
-            this->subparser_type_id = parsers_types::MOVIE_PLOT;
+            // this->subparser_type_id = parsers_types::MOVIE_PLOT;
         }
 
         BN_LOG(

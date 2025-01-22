@@ -13,6 +13,14 @@ public:
     CharsPointerCopyWrapper title = CharsPointerCopyWrapper("[no title]");
     CharsPointerCopyWrapper plot_text = CharsPointerCopyWrapper("[no plot text]");
     int year = 0;
+
+    void copy_fields_from(Movie *other)
+    {
+        chars_wrapper_id.copy_fields_from(&other->chars_wrapper_id);
+        title.copy_fields_from(&other->title);
+        plot_text.copy_fields_from(&other->plot_text);
+        year = other->year;
+    }
 };
 
 #endif

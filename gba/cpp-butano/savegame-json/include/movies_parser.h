@@ -21,12 +21,12 @@ struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies *>
         if (destruct_result)
         {
             Movies *r = get_result();
-            int last_index = r->size() - 1;
-            for (int i = last_index; i >= 0; i--)
-            {
-                Movie *movie = r->at(i);
-                delete movie;
-            }
+            // int last_index = r->size() - 1;
+            // for (int i = last_index; i >= 0; i--)
+            // {
+            //     Movie movie = r->at(i);
+            //     delete movie;
+            // }
             delete r;
         }
     }
@@ -67,9 +67,14 @@ struct MoviesParserHandler : public TAbstractStackableParserHandler<Movies *>
         case parsers_types::MOVIE:
         {
             Movie *m = std::any_cast<Movie *>(subparser_result);
-            BN_LOG("Adding movie with id ", m->chars_wrapper_id.get_chars(), " to movies");
-            r->push_back(m);
-            return false;
+
+            Movie movie;
+            movie.copy_fields_from(m);
+
+            BN_LOG("Adding movie with id ", movie.chars_wrapper_id.get_chars(), " to movies");
+            r->push_back(movie);
+            // return false;
+            return true;
             break;
         }
         default:

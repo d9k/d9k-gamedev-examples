@@ -26,10 +26,11 @@ void serialize_savegame(
 
     writer->StartArray();
 
-    for (uint32_t i = 0; i < saveGame->_movies->size(); i++)
+    // for (uint32_t i = 0; i < saveGame->_movies->size(); i++)
+    for (int i = 0; i < saveGame->_movies->size(); i++)
     {
-        Movie *movie = saveGame->_movies->at(i);
-        serialize_movie(writer, movie);
+        Movie movie = saveGame->_movies->at(i);
+        serialize_movie(writer, &movie);
     }
 
     writer->EndArray();

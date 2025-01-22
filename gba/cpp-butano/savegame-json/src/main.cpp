@@ -213,31 +213,33 @@ namespace
 
         BN_LOG("\n");
 
-        for (uint32_t i = 0; i < save_game->_movies->size(); i++)
+        for (int i = 0; i < save_game->_movies->size(); i++)
         {
-            Movie *movie = save_game->_movies->at(i);
+            Movie movie = save_game->_movies->at(i);
             char log_string[256];
             std::sprintf(
                 log_string,
-                "movies[%2lu].plotText: %s",
+                // "movies[%2lu].plotText: %s",
+                "movies[%2d].plotText: %s",
                 i,
-                movie->plot_text.get_chars());
+                movie.plot_text.get_chars());
             BN_LOG(log_string);
         }
 
         BN_LOG("\n");
 
-        for (uint32_t i = 0; i < save_game->_movies->size(); i++)
+        for (int i = 0; i < save_game->_movies->size(); i++)
         {
-            Movie *movie = save_game->_movies->at(i);
+            Movie movie = save_game->_movies->at(i);
             char log_string[256];
             std::sprintf(
                 log_string,
-                "(id: %10s) movies[%2lu]: (%4d) %s",
-                movie->chars_wrapper_id.get_chars(),
+                // "(id: %10s) movies[%2lu]: (%4d) %s",
+                "(id: %10s) movies[%2d]: (%4d) %s",
+                movie.chars_wrapper_id.get_chars(),
                 i,
-                movie->year,
-                movie->title.get_chars());
+                movie.year,
+                movie.title.get_chars());
             BN_LOG(log_string);
         }
     }
@@ -505,10 +507,16 @@ int main()
     parse_small_json();
     parse_big_json();
     parse_big_json_movies();
-    // parse_big_json_movies();
-    // parse_big_json_movies();
-    // parse_big_json_movies();
-    // parse_big_json_movies();
+    parse_big_json_movies();
+    parse_big_json_movies();
+    parse_big_json_movies();
+    parse_big_json_movies();
+
+    parse_big_json_movies();
+    parse_big_json_movies();
+    parse_big_json_movies();
+    parse_big_json_movies();
+    parse_big_json_movies();
 
     // exit(1);
 

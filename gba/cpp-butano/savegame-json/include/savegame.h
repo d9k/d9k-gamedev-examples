@@ -27,11 +27,11 @@ public:
 
     void destruct_movies()
     {
-        int last_index = _movies->size() - 1;
-        for (int i = last_index; i >= 0; i--)
-        {
-            delete _movies->at(i);
-        }
+        // int last_index = _movies->size() - 1;
+        // for (int i = last_index; i >= 0; i--)
+        // {
+        //     delete _movies->at(i);
+        // }
         delete _movies;
     }
 
@@ -100,7 +100,7 @@ public:
             return nullptr;
         }
 
-        return _movies->at(_selected_movie_index);
+        return &_movies->at(_selected_movie_index);
     }
 
     void sync_movie_id_from_index()
@@ -124,7 +124,7 @@ public:
             _selected_movie_index = 0;
         }
 
-        Movie *selected_movie = _movies->at(_selected_movie_index);
+        Movie *selected_movie = &_movies->at(_selected_movie_index);
 
         if (selected_movie == nullptr)
         {
