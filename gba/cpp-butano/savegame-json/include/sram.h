@@ -122,6 +122,7 @@ public:
         serialize_savegame(&jsonWriter, saveGame);
         const char *json = sbuf.GetString();
 
+        // on heap to be created on EWRAM
         bn::string<actual_sram_size> *data_to_save_in_sram_string = new bn::string<actual_sram_size>();
         bn::ostringstream data_to_save_in_sram_stream(*data_to_save_in_sram_string);
         data_to_save_in_sram_stream << app_const::SRAM_BEGINNING_EXPECTED << app_const::APP_VERSION << ":" << json;
@@ -147,7 +148,7 @@ public:
         result.sram_new_usage = sram_new_usage;
         result.error = false;
 
-        // delete data_to_save_in_sram_string;
+        delete data_to_save_in_sram_string;
         // delete[] json;
 
         return result;
