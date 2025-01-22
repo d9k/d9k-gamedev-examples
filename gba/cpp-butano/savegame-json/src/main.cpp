@@ -505,8 +505,10 @@ int main()
     parse_small_json();
     parse_big_json();
     parse_big_json_movies();
-    // parse_big_json_movies();
-    // parse_big_json_movies();
+    parse_big_json_movies();
+    parse_big_json_movies();
+    parse_big_json_movies();
+    parse_big_json_movies();
 
     // exit(1);
 
