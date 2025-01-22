@@ -213,9 +213,9 @@ namespace
 
         BN_LOG("\n");
 
-        for (uint32_t i = 0; i < save_game->movies.size(); i++)
+        for (uint32_t i = 0; i < save_game->_movies->size(); i++)
         {
-            Movie *movie = save_game->movies[i];
+            Movie *movie = save_game->_movies->at(i);
             char log_string[256];
             std::sprintf(
                 log_string,
@@ -227,9 +227,9 @@ namespace
 
         BN_LOG("\n");
 
-        for (uint32_t i = 0; i < save_game->movies.size(); i++)
+        for (uint32_t i = 0; i < save_game->_movies->size(); i++)
         {
-            Movie *movie = save_game->movies[i];
+            Movie *movie = save_game->_movies->at(i);
             char log_string[256];
             std::sprintf(
                 log_string,
@@ -505,10 +505,10 @@ int main()
     parse_small_json();
     parse_big_json();
     parse_big_json_movies();
-    parse_big_json_movies();
-    parse_big_json_movies();
-    parse_big_json_movies();
-    parse_big_json_movies();
+    // parse_big_json_movies();
+    // parse_big_json_movies();
+    // parse_big_json_movies();
+    // parse_big_json_movies();
 
     // exit(1);
 

@@ -13,15 +13,37 @@ public:
     int loads_count = 0;
     int _selected_movie_index = 0;
 
-    Movies movies = {};
+    Movies *_movies;
+
+    SaveGame()
+    {
+        _movies = new Movies();
+    }
 
     ~SaveGame()
     {
-        int last_index = movies.size() - 1;
+        destruct_movies();
+    }
+
+    void destruct_movies()
+    {
+        int last_index = _movies->size() - 1;
         for (int i = last_index; i >= 0; i--)
         {
-            delete movies.at(i);
+            delete _movies->at(i);
         }
+        delete _movies;
+    }
+
+    void set_movies(Movies *movies)
+    {
+        destruct_movies();
+        _movies = movies;
+    }
+
+    Movies *get_movies()
+    {
+        return _movies;
     }
 
     void validate()
@@ -66,7 +88,7 @@ public:
 
     int get_movie_index_last()
     {
-        return movies.size() - 1;
+        return _movies->size() - 1;
     }
 
     Movie *get_selected_movie()
@@ -78,12 +100,12 @@ public:
             return nullptr;
         }
 
-        return movies.at(_selected_movie_index);
+        return _movies->at(_selected_movie_index);
     }
 
     void sync_movie_id_from_index()
     {
-        int movies_size = movies.size();
+        int movies_size = _movies->size();
 
         if (!movies_size)
         {
@@ -102,7 +124,7 @@ public:
             _selected_movie_index = 0;
         }
 
-        Movie *selected_movie = movies.at(_selected_movie_index);
+        Movie *selected_movie = _movies->at(_selected_movie_index);
 
         if (selected_movie == nullptr)
         {

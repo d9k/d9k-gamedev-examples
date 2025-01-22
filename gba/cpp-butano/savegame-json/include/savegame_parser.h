@@ -95,7 +95,7 @@ struct SaveGameParserHandler : public TAbstractStackableParserHandler<SaveGame *
         {
             Movies *m = std::any_cast<Movies *>(subparser_result);
             BN_LOG("Adding movies with size ", m->size(), " to save game object");
-            r->movies = *m;
+            r->set_movies(m);
             return false;
             break;
         }
