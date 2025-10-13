@@ -111,12 +111,6 @@ class GameCanvas extends Canvas implements Runnable {
 			// Отрисовка
 			repaint();
 			//serviceRepaints();
-
-			// Небольшая задержка для экономии батареи
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-			}
 		}
 	}
 
