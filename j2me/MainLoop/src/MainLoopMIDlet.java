@@ -79,13 +79,6 @@ class GameCanvas extends Canvas implements Runnable {
 				continue;
 			}
 			deltaTime = currentTime - lastTime;
-			if (deltaTime == 0) {
-				try {
-			  	Thread.sleep(1);
-			  } catch (InterruptedException e) {
-			  }
-				continue;
-			}
 
 			// Обновление логики игры с учетом deltaTime
 
