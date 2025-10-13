@@ -94,6 +94,7 @@ class GameCanvas extends Canvas implements Runnable {
 				  Thread.sleep(MIN_FRAME_TIME_MS - deltaTime);
 				} catch (InterruptedException e) {
 				}
+				continue;
 			}
 
 			if (deltaTime > MAX_FRAME_TIME_MS) {
