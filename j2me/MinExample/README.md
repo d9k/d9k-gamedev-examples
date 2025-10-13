@@ -32,6 +32,6 @@ Try build and run with emulator.
 
 ## Autocompletion in IDE
 
-`"Projects" sidebar -> [Your project] -> Build -> Libraries & Resources -> Add Jar/Zip ->`
+`Tools -> Platforms -> CLDC -> Sun Java(TM) Wireless Toolkit -> Sources -> Add Folder...`.
 
-Select `lib/midpapi10.jar` from WTK distribution.
+Select `lib` from WTK distribution (which contains `midpapi10.jar`). 
