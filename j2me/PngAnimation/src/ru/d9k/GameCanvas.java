@@ -18,14 +18,14 @@ class GameCanvas extends Canvas implements Runnable {
 
   private int screenWidth, screenHeight;
 
-	private int MIN_FRAME_TIME_MS = 4;
-	private int MAX_FRAME_TIME_MS = 200;
+	private final int MIN_FRAME_TIME_MS = 4;
+	private final int MAX_FRAME_TIME_MS = 200;
 
 	// Игровые переменные в процентах от пикселя
 	private int x = 50*100, y = 50*100;
 	private int speedXPxPInS = 80*100, speedYPxPInS = 30*100;
 
-	private Image pig1;
+	private final Image pig1;
 
 	public GameCanvas() throws IOException {
 		screenWidth = getWidth();

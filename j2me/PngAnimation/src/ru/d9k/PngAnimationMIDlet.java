@@ -4,25 +4,17 @@ import javax.microedition.lcdui.Display;
 import javax.microedition.midlet.MIDlet;
 import java.io.IOException;
 
-/*
- * This is the main class of the hello world demo.
- */
 public class PngAnimationMIDlet extends MIDlet {
 
 	private GameCanvas gameCanvas;
 
 	/**
-	 * This is constructor of class HelloWorld. The Command objects appear as
-	 * buttons.
+	 * Constructor
 	 */
 	public PngAnimationMIDlet() {
 
 	}
-	//  implementation of MIDlet
 
-	/**
-	 * Start the application.
-	 */
 	protected void startApp() {
 		try {
 			gameCanvas = new GameCanvas();
