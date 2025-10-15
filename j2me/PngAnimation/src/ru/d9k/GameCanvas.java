@@ -16,16 +16,20 @@ class GameCanvas extends Canvas implements Runnable {
 	private int frameCount;
 	private long fpsTime;
 
-  private int screenWidth, screenHeight;
+	private int screenWidth;
+	private int screenHeight;
 
 	private final int MIN_FRAME_TIME_MS = 4;
 	private final int MAX_FRAME_TIME_MS = 200;
 
-	// Игровые переменные в процентах от пикселя
-	private int x = 50*100, y = 50*100;
-	private int speedXPxPInS = 80*100, speedYPxPInS = 30*100;
+	private ImagesManager imagesManager;
+	Image[] pigRightArray;
+	private PngAnimation pigAnimation;
 
-	private final Image pig1;
+	// Игровые переменные в процентах от пикселя
+	private int x = 50 * 100, y = 50 * 100;
+	private int speedXPxPInS = 50 * 100;
+	private int speedYPxPInS = 20 * 100;
 
 	public GameCanvas() throws IOException {
 		screenWidth = getWidth();
@@ -34,7 +38,11 @@ class GameCanvas extends Canvas implements Runnable {
 		// setFullScreenMode(true);
 		lastTime = System.currentTimeMillis();
 
-		pig1 = Image.createImage("/characters/pig-right-1.png");
+		// pig1 = Image.createImage("/characters/pig-right-1.png");
+		imagesManager = new ImagesManager();
+		pigRightArray = imagesManager.getPigRightArray();
+		pigAnimation = new PngAnimation(pigRightArray);
+		pigAnimation.reset();
 	}
 
 	public void run() {
@@ -48,10 +56,9 @@ class GameCanvas extends Canvas implements Runnable {
 			deltaTime = currentTime - lastTime;
 
 			// Обновление логики игры с учетом deltaTime
-
 			if (deltaTime < MIN_FRAME_TIME_MS) {
 				try {
-				  Thread.sleep(MIN_FRAME_TIME_MS - deltaTime);
+					Thread.sleep(MIN_FRAME_TIME_MS - deltaTime);
 				} catch (InterruptedException e) {
 				}
 				continue;
@@ -73,7 +80,7 @@ class GameCanvas extends Canvas implements Runnable {
 				fpsTime = 0;
 			}
 
-			update(deltaTime);
+			update((int) deltaTime);
 
 			// Отрисовка
 			repaint();
@@ -81,7 +88,7 @@ class GameCanvas extends Canvas implements Runnable {
 		}
 	}
 
-	private void update(long deltaMs) {
+	private void update(int deltaMs) {
 		// Преобразуем delta в секунды для удобства
 		//float deltaSeconds = deltaMs / 1000.0f;
 
@@ -92,7 +99,9 @@ class GameCanvas extends Canvas implements Runnable {
 		x += dx;
 		y += dy;
 
-		System.out.println("dx=" + dx+ " dy=" + dy + " deltaMs=" + deltaMs);
+		pigAnimation.increaseTime(deltaMs);
+
+		System.out.println("dx=" + dx + " dy=" + dy + " deltaMs=" + deltaMs);
 
 		// Teleport on edges
 		if (x < -10 * 100) {
@@ -117,11 +126,15 @@ class GameCanvas extends Canvas implements Runnable {
 		// Отрисовка объекта
 		//g.setColor(0xFFFFFF);
 		//g.fillRect(x, y, 20, 20);
-
 		// Отображение FPS
 		g.setColor(0x00FF00);
 		g.drawString("FPS: " + fps, 0, 0, Graphics.TOP | Graphics.LEFT);
-		g.drawImage(pig1, x / 100, y / 100, Graphics.TOP | Graphics.LEFT);
+		g.drawImage(
+						pigAnimation.currentImage(),
+						x / 100,
+						y / 100,
+						Graphics.TOP | Graphics.LEFT
+		);
 		//g.drawString("Delta: " + deltaTime + "ms", 5, 20, Graphics.TOP | Graphics.LEFT);
 	}
 
