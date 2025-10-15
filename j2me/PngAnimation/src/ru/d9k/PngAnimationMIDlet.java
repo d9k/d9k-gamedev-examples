@@ -21,7 +21,8 @@ public class PngAnimationMIDlet extends MIDlet {
 			Display.getDisplay(this).setCurrent(gameCanvas);
 			new Thread(gameCanvas).start();
 		} catch (IOException e) {
-
+			System.err.println("IOException in startApp: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

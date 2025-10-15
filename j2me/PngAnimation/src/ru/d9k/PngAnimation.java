@@ -1,15 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ru.d9k;
 import javax.microedition.lcdui.Image;
 
-/**
- *
- * @author d9k
- */
 public class PngAnimation {
   private final Image[] imagesFrames;
 	private final int framesCount;
