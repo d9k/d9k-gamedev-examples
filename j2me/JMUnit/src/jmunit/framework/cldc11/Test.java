@@ -54,7 +54,8 @@ public abstract class Test extends Assertion {
 	}
 
 	// Create the test results.
-	private void createTestResult() {
+//	private void createTestResult() {
+	protected void createTestResult() {
 		if (results == null) {
 			results = new TestResult();
 			results.addListener(new ConsoleListener());
@@ -67,7 +68,8 @@ public abstract class Test extends Assertion {
 	 * 
 	 * @since JMUnit 1.0
 	 */
-	public final void startApp() {
+//	public final void startApp() {
+	public void startApp() {
 		createTestResult();
 
 		// Call the template method.
