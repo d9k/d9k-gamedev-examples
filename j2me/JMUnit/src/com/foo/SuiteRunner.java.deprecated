@@ -1,0 +1,19 @@
+package com.foo;
+
+import jmunit.framework.cldc11.Test;
+import jmunit.framework.cldc11.TestRunner;
+
+public class SuiteRunner extends TestRunner {
+
+	private Test nestedTest;
+	
+	public SuiteRunner() {
+		super(3000);
+		this.nestedTest = new Suite();
+	}
+	
+	protected Test getNestedTest() {
+		return this.nestedTest;
+	}
+
+}
