@@ -101,7 +101,7 @@ class GameCanvas extends Canvas implements Runnable {
 
 		pigAnimation.increaseTime(deltaMs);
 
-		System.out.println("dx=" + dx + " dy=" + dy + " deltaMs=" + deltaMs);
+//		System.out.println("dx=" + dx + " dy=" + dy + " deltaMs=" + deltaMs);
 
 		// Teleport on edges
 		if (x < -10 * 100) {

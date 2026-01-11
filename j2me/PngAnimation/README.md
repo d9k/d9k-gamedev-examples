@@ -1,5 +1,6 @@
-# J2ME Png Animation example
+# J2ME MIDP 1 Png Animation example (IDEA)
 
+- Project created with [shinovon/KEmulator: KEmulator nnmod](https://github.com/shinovon/KEmulator) via `View -> IntelliJ IDEA support -> Create a new project`
 - See [J2ME MinExample](../MinExample/README.md) first.
 
 ## Used image assets from

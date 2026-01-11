@@ -38,7 +38,6 @@ class GameCanvas extends Canvas implements Runnable {
 		// setFullScreenMode(true);
 		lastTime = System.currentTimeMillis();
 
-		// pig1 = Image.createImage("/characters/pig-right-1.png");
 		imagesManager = new ImagesManager();
 		pigRightArray = imagesManager.getPigRightArray();
 		pigAnimation = new PngAnimation(pigRightArray);

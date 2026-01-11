@@ -1,4 +1,4 @@
-# J2ME Png Animation example
+# J2ME MIDP 1 Png Animation example (NetBeans)
 
 - See [J2ME MinExample](../MinExample/README.md) first.
 
