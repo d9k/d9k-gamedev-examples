@@ -1,3 +1,4 @@
+import path from 'path';
 import { defineConfig } from 'vite';
 
 const phasermsg = () => {
@@ -10,15 +11,22 @@ const phasermsg = () => {
             const line = "---------------------------------------------------------";
             const msg = `❤️❤️❤️ Tell us about your game! - games@phaser.io ❤️❤️❤️`;
             process.stdout.write(`${line}\n${msg}\n${line}\n`);
-            
+
             process.stdout.write(`✨ Done ✨\n`);
         }
     }
-}   
+}
 
 export default defineConfig({
     base: './',
-    logLevel: 'warning',
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, 'src'),
+            '~': path.resolve(__dirname, 'src/game'),
+        },
+    },
+    // logLevel: 'warning',
+    logLevel: 'warn',
     build: {
         rollupOptions: {
             output: {
