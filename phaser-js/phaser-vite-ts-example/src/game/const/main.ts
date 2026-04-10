@@ -1,1 +1,0 @@
-export const GAME_TITLE = 'Phaser Vite TS Example';
