@@ -1,1 +1,1 @@
-export const GAME_TITLE = 'Phaser 3 Vite TS Example';
+export const GAME_TITLE = 'Phaser 4 Vite TS Example';

@@ -1,5 +1,5 @@
 {
-    "name": "phaser-3-vite-ts-example",
+    "name": "phaser-4-vite-ts-example",
     "description": "A Phaser 3 TypeScript template using Vite.",
     "version": "1.4.0",
     "repository": {
@@ -25,7 +25,7 @@
     },
     "dependencies": {
         "@types/node": "20.19.39",
-        "phaser": "^3.90.0",
+        "phaser": "4.0.0",
         "terser": "^5.39.0"
     }
 }
