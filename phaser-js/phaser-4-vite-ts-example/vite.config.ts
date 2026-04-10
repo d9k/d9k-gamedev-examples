@@ -29,6 +29,10 @@ export default defineConfig({
     logLevel: 'warn',
     build: {
         rollupOptions: {
+            treeshake: {
+                moduleSideEffects: false,
+                preset: 'smallest',
+            },
             output: {
                 manualChunks: {
                     phaser: ['phaser']
