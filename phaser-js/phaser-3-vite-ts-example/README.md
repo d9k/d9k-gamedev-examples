@@ -1,4 +1,4 @@
-# d9k phaser vite TS example
+# d9k Phaser 3 vite TS example
 
 Used [template-vite-ts](https://github.com/phaserjs/template-vite-ts) with
 
@@ -7,6 +7,8 @@ git clone https://github.com/phaserjs/template-vite-ts phaser-vite-ts-example --
 cd phaser-vite-ts-example
 rm -r .git
 ```
+
+You can minimize example build if you place custom Phaser build from [d9k/phaser-custom](https://github.com/d9k/phaser-custom?tab=readme-ov-file#build-for-template-vite-ts) (see subheader `Build for template-vite-ts`) to `node_modules_override/phaser/dist/`.
 
 # Phaser Vite TypeScript Template
 
@@ -62,7 +64,7 @@ We have provided a default project structure to get you started:
 | `src/main.ts`                | Application bootstrap.                                     |
 | `src/game`                   | Folder containing the game code.                           |
 | `src/game/main.ts`           | Game entry point: configures and starts the game.          |
-| `src/game/scenes`            | Folder with all Phaser game scenes.                        | 
+| `src/game/scenes`            | Folder with all Phaser game scenes.                        |
 
 
 ## Handling Assets
