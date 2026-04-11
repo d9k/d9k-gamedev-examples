@@ -8,7 +8,9 @@ cd phaser-vite-ts-example
 rm -r .git
 ```
 
-You can minimize example build if you place custom Phaser build from [d9k/phaser-custom](https://github.com/d9k/phaser-custom?tab=readme-ov-file#build-for-template-vite-ts) (see subheader `Build for template-vite-ts`) to `node_modules_override/phaser/dist/`.
+## Example build minimization
+
+You can minimize example build if you place custom `phaser.js` build from [d9k/phaser-custom](https://github.com/d9k/phaser-custom?tab=readme-ov-file#build-for-template-vite-ts) (see subheader `Build for template-vite-ts`) to `node_modules_override/phaser/dist/`. Build size can be reduced by 40%.
 
 # Phaser Vite TypeScript Template
 
