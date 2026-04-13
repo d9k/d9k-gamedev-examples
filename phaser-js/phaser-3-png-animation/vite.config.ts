@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { Alias, defineConfig } from "vite";
+import { Alias, defineConfig, Plugin } from "vite";
 
 const NODE_MODULES_OVERRIDE_PATH = path.resolve(
   __dirname,
@@ -38,6 +38,27 @@ const phasermsg = () => {
   };
 };
 
+/**
+ *  Plugin to replace logPrefixFilename(import.meta.url) with a static path. Made with the help of AI "Kat Coder Pro v2".
+ **/
+const logPrefixTransform = (): Plugin => {
+  return {
+    name: "log-prefix-transform",
+    transform(code, id) {
+      const match = code.match(/logPrefixFilename\s*\(\s*import\.meta\.url\s*\)/g);
+      if (match) {
+        const parts = id.split('/');
+        // Get the last two parts (parent folder + filename)
+        const relativePath = parts.slice(-2).join('/');
+        const replacement = `"${relativePath}"`;
+        code = code.replace(/logPrefixFilename\s*\(\s*import\.meta\.url\s*\)/g, replacement);
+        return { code, map: null };
+      }
+      return null;
+    },
+  };
+};
+
 export default defineConfig({
   base: "./",
   resolve: {
@@ -67,5 +88,5 @@ export default defineConfig({
   server: {
     port: 8080,
   },
-  plugins: [phasermsg()],
+  plugins: [phasermsg(), logPrefixTransform()],
 });

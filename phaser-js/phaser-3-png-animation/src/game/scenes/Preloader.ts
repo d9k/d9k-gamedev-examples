@@ -1,11 +1,6 @@
 import { GAME_HEIGHT_CENTER, GAME_WIDTH, GAME_WIDTH_CENTER } from '@/game/const/main';
 import { Scene } from 'phaser';
-
-const __filename = (() => {
-    const name = import.meta.url.substring(import.meta.url.lastIndexOf('/') + 1);
-    const qIndex = name.lastIndexOf('?');
-    return qIndex !== -1 ? name.substring(0, qIndex) : name;
-})();
+import { logPrefixFilename } from '@/helpers/vite';
 
 export class Preloader extends Scene
 {
@@ -31,7 +26,7 @@ export class Preloader extends Scene
             //  Update the progress bar (our bar is 464px wide, so 100% = 464px)
             bar.width = 4 + ((GAME_WIDTH_CENTER - 40) * progress);
 
-            console.log(__filename, ': progress:', progress);
+            console.log(`${logPrefixFilename(import.meta.url)}: progress:`, progress);
 
         });
     }
