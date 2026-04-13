@@ -1,3 +1,4 @@
+import { FONT_SIZE_SMALL, GAME_WIDTH_CENTER } from '@/game/const/main';
 import { Scene } from 'phaser';
 
 export class Game extends Scene
@@ -16,15 +17,14 @@ export class Game extends Scene
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0x00ff00);
 
-        this.background = this.add.image(512, 384, 'background');
+        this.background = this.add.image(GAME_WIDTH_CENTER, 0, 'background');
         this.background.setAlpha(0.5);
 
-        this.msg_text = this.add.text(512, 384, 'Make something fun!\nand share it with us:\nsupport@phaser.io', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
+        this.msg_text = this.add.text(GAME_WIDTH_CENTER, 4, 'Make something fun!\nand share it with us:\nsupport@phaser.io', {
+            fontFamily: 'Arial Black', fontSize: FONT_SIZE_SMALL, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 3,
             align: 'center'
-        });
-        this.msg_text.setOrigin(0.5);
+        }).setOrigin(0.5, 0);
 
         this.input.once('pointerdown', () => {
 

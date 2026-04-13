@@ -1,4 +1,11 @@
+import { GAME_HEIGHT_CENTER, GAME_WIDTH, GAME_WIDTH_CENTER } from '@/game/const/main';
 import { Scene } from 'phaser';
+
+const __filename = (() => {
+    const name = import.meta.url.substring(import.meta.url.lastIndexOf('/') + 1);
+    const qIndex = name.lastIndexOf('?');
+    return qIndex !== -1 ? name.substring(0, qIndex) : name;
+})();
 
 export class Preloader extends Scene
 {
@@ -10,19 +17,21 @@ export class Preloader extends Scene
     init ()
     {
         //  We loaded this image in our Boot Scene, so we can display it here
-        this.add.image(512, 384, 'background');
+        this.add.image(GAME_WIDTH_CENTER, GAME_HEIGHT_CENTER, 'background');
 
         //  A simple progress bar. This is the outline of the bar.
-        this.add.rectangle(512, 384, 468, 32).setStrokeStyle(1, 0xffffff);
+        this.add.rectangle(GAME_WIDTH_CENTER, GAME_HEIGHT_CENTER, GAME_WIDTH - 40, 32).setStrokeStyle(1, 0xffffff);
 
         //  This is the progress bar itself. It will increase in size from the left based on the % of progress.
-        const bar = this.add.rectangle(512-230, 384, 4, 28, 0xffffff);
+        const bar = this.add.rectangle(20, GAME_HEIGHT_CENTER, 4, 28, 0xffffff).setOrigin(0, 0.5);
 
         //  Use the 'progress' event emitted by the LoaderPlugin to update the loading bar
         this.load.on('progress', (progress: number) => {
 
             //  Update the progress bar (our bar is 464px wide, so 100% = 464px)
-            bar.width = 4 + (460 * progress);
+            bar.width = 4 + ((GAME_WIDTH_CENTER - 40) * progress);
+
+            console.log(__filename, ': progress:', progress);
 
         });
     }

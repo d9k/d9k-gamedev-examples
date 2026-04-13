@@ -1,5 +1,5 @@
 import { Scene, GameObjects } from 'phaser';
-import { GAME_TITLE } from '~/const/main';
+import { FONT_SIZE_SMALL, GAME_HEIGHT_CENTER, GAME_TITLE, GAME_WIDTH_CENTER } from '~/const/main';
 
 export class MainMenu extends Scene
 {
@@ -15,21 +15,21 @@ export class MainMenu extends Scene
 
     create ()
     {
-        this.background = this.add.image(512, 384, 'background');
+        this.background = this.add.image(GAME_WIDTH_CENTER, GAME_HEIGHT_CENTER, 'background');
 
-        this.logo = this.add.image(512, 300, 'logo');
+        this.logo = this.add.image(GAME_WIDTH_CENTER, 30, 'logo').setScale(0.5);
 
         const textStyle =  {
             fontFamily: 'Arial Black',
-            fontSize: 38,
+            fontSize: FONT_SIZE_SMALL,
             color: '#ffffff',
             stroke: '#000000',
-            strokeThickness: 8,
+            strokeThickness: 3,
             align: 'center'
         }
 
-        this.gameTitle = this.add.text(512, 420, GAME_TITLE, {...textStyle, color: '#ffff00', stroke: '#222222'}).setOrigin(0.5);
-        this.sceneTitle = this.add.text(512, 500, 'Main Menu', textStyle).setOrigin(0.5);
+        this.gameTitle = this.add.text(GAME_WIDTH_CENTER, GAME_HEIGHT_CENTER, GAME_TITLE, {...textStyle, color: '#ffff00', stroke: '#222222'}).setOrigin(0.5);
+        this.sceneTitle = this.add.text(GAME_WIDTH_CENTER, GAME_HEIGHT_CENTER + 30, 'Main Menu', textStyle).setOrigin(0.5);
 
         this.input.once('pointerdown', () => {
 
