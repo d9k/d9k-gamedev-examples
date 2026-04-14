@@ -63,10 +63,6 @@ export class Game extends Scene {
 
         this.input.once('pointerdown', () => {
             this.piglet.play(ASSET_PIGLET_ANIMATION_WALK, true);
-
-            this.input.once('pointerdown', () => {
-                this.scene.start('GameOver');
-            });
         });
 
         this.createInputEvents();
