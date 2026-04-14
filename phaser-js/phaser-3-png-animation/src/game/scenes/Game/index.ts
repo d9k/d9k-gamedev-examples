@@ -7,7 +7,11 @@ import {
     ASSET_PIGLET_FRAME_SIDE_PX,
     ASSET_PIGLET_PATH,
 } from '@/game/const/assets';
-import { DELTA, PIGLET_SPEED_CELLS_BY_S, PX_IN_CELL } from '@/game/const/gamePhysics';
+import {
+    DELTA,
+    PIGLET_SPEED_CELLS_BY_S,
+    PX_IN_CELL,
+} from '@/game/const/gamePhysics';
 
 import {
     FONT_SIZE_SMALL,
@@ -52,6 +56,8 @@ export class Game extends Scene {
     keyRight?: Phaser.Input.Keyboard.Key;
     keyBottom?: Phaser.Input.Keyboard.Key;
 
+    gamepad?: Phaser.Input.Gamepad.Gamepad;
+
     constructor() {
         super('Game');
     }
@@ -68,8 +74,7 @@ export class Game extends Scene {
         this.createUI();
         this.createGameObjects();
 
-        this.input.once('pointerdown', () => {
-        });
+        this.input.once('pointerdown', () => {});
 
         this.createInputEvents();
 
@@ -77,23 +82,6 @@ export class Game extends Scene {
             delay: UPDATE_UI_INTERVAL_MS,
             callback: () => {
                 this.fpsText.text = formatFps(this.game.loop.actualFps);
-
-                // if ((this.input.keyboard as any)?.[Phaser.Input.Keyboard.KeyCodes.W]) {
-                //     console.log(`${logPrefixFilename(import.meta.url)}:`, 'W key pressed');
-                // }
-                if (this.keyW?.isDown) {
-                    console.log(
-                        `${logPrefixFilename(import.meta.url)}:`,
-                        'W key pressed'
-                    );
-                }
-
-                if (this.keyUp?.isDown) {
-                    console.log(
-                        `${logPrefixFilename(import.meta.url)}:`,
-                        'Up key pressed'
-                    );
-                }
             },
             loop: true,
         });
@@ -175,24 +163,31 @@ export class Game extends Scene {
         this.keyBottom = this.input.keyboard?.addKey(
             Phaser.Input.Keyboard.KeyCodes.LEFT
         );
+
+        this.gamepad = this.input.gamepad?.pad1;
+        if (!this.gamepad) {
+            this.input.gamepad?.once('connected', (pad: Phaser.Input.Gamepad.Gamepad) => {
+                this.gamepad = pad;
+            });
+        }
     }
 
     update(currentTime: number, deltaMs: number): void {
         this.moveDirectionVector = new Phaser.Math.Vector2(0, 0);
 
         // Horizontal movement (D/Right and A/Left)
-        if (this.keyRight?.isDown || this.keyD?.isDown) {
+        if (this.keyRight?.isDown || this.keyD?.isDown || this.gamepad?.right) {
             this.moveDirectionVector.x = 1;
         }
-        if (this.keyBottom?.isDown || this.keyA?.isDown) {
+        if (this.keyBottom?.isDown || this.keyA?.isDown || this.gamepad?.left) {
             this.moveDirectionVector.x = -1;
         }
 
         // Vertical movement (W/Up and S/Down)
-        if (this.keyUp?.isDown || this.keyW?.isDown) {
+        if (this.keyUp?.isDown || this.keyW?.isDown || this.gamepad?.up) {
             this.moveDirectionVector.y = -1;
         }
-        if (this.keyDown?.isDown || this.keyS?.isDown) {
+        if (this.keyDown?.isDown || this.keyS?.isDown || this.gamepad?.down) {
             this.moveDirectionVector.y = 1;
         }
 
@@ -214,6 +209,5 @@ export class Game extends Scene {
         } else {
             this.piglet.anims.pause();
         }
-
     }
 }

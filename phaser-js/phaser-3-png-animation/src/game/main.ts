@@ -22,7 +22,10 @@ const config: Phaser.Types.Core.GameConfig = {
         Boot,
         Preloader,
         MainGame
-    ]
+    ],
+    input: {
+        gamepad: true,
+    },
 };
 
 const StartGame = (parent: string) => {
