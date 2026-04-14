@@ -1,4 +1,4 @@
-# d9k Phaser 3 vite TS example
+# d9k Phaser 3 PNG animation example
 
 Used [template-vite-ts](https://github.com/phaserjs/template-vite-ts) with
 
@@ -10,7 +10,7 @@ rm -r .git
 
 ## Example build minimization
 
-You can minimize example build if you place custom `phaser.js` build from [d9k/phaser-custom](https://github.com/d9k/phaser-custom?tab=readme-ov-file#build-for-template-vite-ts) (see subheader `Build for template-vite-ts`) to `node_modules_override/phaser/dist/`. Build size can be reduced by 40%.
+You can minimize example build if you place custom `phaser.js` build from [d9k/phaser-custom](https://github.com/d9k/phaser-custom?tab=readme-ov-file#build-for-template-vite-ts) (see subheader `Build for template-vite-ts`) to `node_modules_override/phaser/dist/`. Build size can be reduced by 40%. Adjust build config if you experience runtime errors (add more of required engine features).
 
 # Phaser Vite TypeScript Template
 
