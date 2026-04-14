@@ -1,5 +1,5 @@
 {
-    "name": "phaser-3-vite-ts-example",
+    "name": "phaser-3-png-animation",
     "description": "A Phaser 3 TypeScript template using Vite.",
     "version": "1.4.0",
     "repository": {
@@ -20,6 +20,7 @@
         "build-nolog": "vite build"
     },
     "devDependencies": {
+        "prettier": "3.8.2",
         "typescript": "~5.7.2",
         "vite": "^6.3.1"
     },
