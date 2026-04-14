@@ -61,8 +61,6 @@ export class Game extends Scene {
         this.createUI();
         this.createGameObjects();
 
-        // this.layerUI.depth;
-
         this.input.once('pointerdown', () => {
             this.piglet.play(ASSET_PIGLET_ANIMATION_WALK, true);
 
@@ -109,7 +107,6 @@ export class Game extends Scene {
 
         this.layerUI = this.add.layer([this.fpsText]);
         this.layerUI.depth = LAYER_UI_DEPTH;
-        // this.layerUI.add([this.fpsText]);
     }
 
     createAnimations() {
@@ -140,7 +137,6 @@ export class Game extends Scene {
 
         this.layerTiles = this.add.layer([this.background, this.piglet]);
         this.layerTiles.depth = LAYER_TILES_DEPTH;
-        // this.layerTiles.add([this.background, this.piglet]);
     }
 
     createInputEvents() {

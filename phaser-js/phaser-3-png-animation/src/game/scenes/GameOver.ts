@@ -20,9 +20,9 @@ export class GameOver extends Scene
         this.background = this.add.image(GAME_WIDTH_CENTER, GAME_HEIGHT_CENTER, 'background');
         this.background.setAlpha(0.5);
 
-        this.gameover_text = this.add.text(GAME_WIDTH_CENTER, GAME_HEIGHT_CENTER, 'Game Over', {
+        this.gameover_text = this.add.text(GAME_WIDTH_CENTER, GAME_HEIGHT_CENTER, 'Thanks for trying\nthis demo!', {
             fontFamily: 'Arial Black', fontSize: 32, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 4,
+            stroke: '#000000', strokeThickness: 3,
             align: 'center'
         });
         this.gameover_text.setOrigin(0.5);
