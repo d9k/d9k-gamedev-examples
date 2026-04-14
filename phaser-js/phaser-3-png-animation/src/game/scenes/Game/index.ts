@@ -7,13 +7,18 @@ import {
     ASSET_PIGLET_FRAME_SIDE_PX,
     ASSET_PIGLET_PATH,
 } from '@/game/const/assets';
+import { DELTA, PIGLET_SPEED_CELLS_BY_S, PX_IN_CELL } from '@/game/const/gamePhysics';
 
 import {
     FONT_SIZE_SMALL,
     GAME_HEIGHT_CENTER,
     GAME_WIDTH_CENTER,
 } from '@/game/const/main';
-import { LAYER_TILES_DEPTH, LAYER_UI_DEPTH, UPDATE_UI_INTERVAL_MS } from '@/game/scenes/Game/const';
+import {
+    LAYER_TILES_DEPTH,
+    LAYER_UI_DEPTH,
+    UPDATE_UI_INTERVAL_MS,
+} from '@/game/scenes/Game/const';
 import { logPrefixFilename } from '@/helpers/vite';
 
 import { Scene } from 'phaser';
@@ -34,6 +39,8 @@ export class Game extends Scene {
     piglet: Phaser.GameObjects.Sprite;
     fpsText: Phaser.GameObjects.Text;
     timerUpdateUI: Phaser.Time.TimerEvent;
+
+    moveDirectionVector?: Phaser.Math.Vector2;
 
     keyW?: Phaser.Input.Keyboard.Key;
     keyA?: Phaser.Input.Keyboard.Key;
@@ -62,7 +69,6 @@ export class Game extends Scene {
         this.createGameObjects();
 
         this.input.once('pointerdown', () => {
-            this.piglet.play(ASSET_PIGLET_ANIMATION_WALK, true);
         });
 
         this.createInputEvents();
@@ -76,11 +82,17 @@ export class Game extends Scene {
                 //     console.log(`${logPrefixFilename(import.meta.url)}:`, 'W key pressed');
                 // }
                 if (this.keyW?.isDown) {
-                    console.log(`${logPrefixFilename(import.meta.url)}:`, 'W key pressed');
+                    console.log(
+                        `${logPrefixFilename(import.meta.url)}:`,
+                        'W key pressed'
+                    );
                 }
 
                 if (this.keyUp?.isDown) {
-                    console.log(`${logPrefixFilename(import.meta.url)}:`, 'Up key pressed');
+                    console.log(
+                        `${logPrefixFilename(import.meta.url)}:`,
+                        'Up key pressed'
+                    );
                 }
             },
             loop: true,
@@ -136,15 +148,72 @@ export class Game extends Scene {
     }
 
     createInputEvents() {
+        // WASD keys
         this.keyW = this.input.keyboard?.addKey(
-            Phaser.Input.Keyboard.KeyCodes.W,
+            Phaser.Input.Keyboard.KeyCodes.W
+        );
+        this.keyA = this.input.keyboard?.addKey(
+            Phaser.Input.Keyboard.KeyCodes.A
+        );
+        this.keyS = this.input.keyboard?.addKey(
+            Phaser.Input.Keyboard.KeyCodes.S
+        );
+        this.keyD = this.input.keyboard?.addKey(
+            Phaser.Input.Keyboard.KeyCodes.D
         );
 
+        // Arrow keys
         this.keyUp = this.input.keyboard?.addKey(
-            Phaser.Input.Keyboard.KeyCodes.UP,
+            Phaser.Input.Keyboard.KeyCodes.UP
+        );
+        this.keyDown = this.input.keyboard?.addKey(
+            Phaser.Input.Keyboard.KeyCodes.DOWN
+        );
+        this.keyRight = this.input.keyboard?.addKey(
+            Phaser.Input.Keyboard.KeyCodes.RIGHT
+        );
+        this.keyBottom = this.input.keyboard?.addKey(
+            Phaser.Input.Keyboard.KeyCodes.LEFT
         );
     }
 
-    update(time: number, delta: number): void {
+    update(currentTime: number, deltaMs: number): void {
+        this.moveDirectionVector = new Phaser.Math.Vector2(0, 0);
+
+        // Horizontal movement (D/Right and A/Left)
+        if (this.keyRight?.isDown || this.keyD?.isDown) {
+            this.moveDirectionVector.x = 1;
+        }
+        if (this.keyBottom?.isDown || this.keyA?.isDown) {
+            this.moveDirectionVector.x = -1;
+        }
+
+        // Vertical movement (W/Up and S/Down)
+        if (this.keyUp?.isDown || this.keyW?.isDown) {
+            this.moveDirectionVector.y = -1;
+        }
+        if (this.keyDown?.isDown || this.keyS?.isDown) {
+            this.moveDirectionVector.y = 1;
+        }
+
+        this.moveDirectionVector.normalize();
+
+        if (this.moveDirectionVector.length() > DELTA) {
+            const moveVector = this.moveDirectionVector
+                .clone()
+                .scale((PIGLET_SPEED_CELLS_BY_S * PX_IN_CELL * deltaMs) / 1000);
+
+            this.piglet.x += moveVector.x;
+            this.piglet.y += moveVector.y;
+
+            if (!this.piglet.anims.hasStarted) {
+                this.piglet.play(ASSET_PIGLET_ANIMATION_WALK, true);
+            } else {
+                this.piglet.anims.resume();
+            }
+        } else {
+            this.piglet.anims.pause();
+        }
+
     }
 }
